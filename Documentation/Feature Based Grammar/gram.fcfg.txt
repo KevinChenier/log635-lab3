@@ -1,0 +1,16 @@
+%start S
+# ===== Grammar =====
+S[SEM=<?vp(?suj)>] -> NP[SEM=?suj] VP[SEM=?vp]
+NP[SEM=?np] -> Nprop[SEM=?np]
+VP[SEM=?pp] -> IV PP[SEM=?pp]
+VP[SEM=<?vp(?pp)>] -> VP[SEM=?vp] PP[SEM=?pp]
+PP[SEM=<?p(?np)>] -> P[SEM=?p] NP[SEM=?np]
+PP[SEM=<?t>] -> P T[SEM=?t]
+# Personnages
+Nprop[SEM=<Maxime>] -> 'Maxime'
+# Lieux
+Nprop[SEM=<Salon>] -> 'Salon'
+P[SEM=<\t.\l.\p.Presence(p, t, l)>] -> 'au'
+T[SEM=<18>] -> '18'
+P -> 'à'
+IV -> 'est'

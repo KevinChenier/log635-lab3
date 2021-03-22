@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://realpython.com/python-speech-recognition/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="https://files.realpython.com/" rel="preconnect">
+<title>The Ultimate Guide To Speech Recognition With Python – Real Python</title>
+<meta name="author" content="Real Python">
+<meta name="description" content="An in-depth tutorial on speech recognition with Python. Learn which speech recognition library gives the best results and build a full-featured &quot;Guess The Word&quot; game with it.">
+<meta name="keywords" content="">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
+<link rel="stylesheet" href="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/font.32be62914940.css">
+<link rel="stylesheet" href="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/realpython.min.14d880ad4b12.css">
+<link rel="canonical" href="https://realpython.com/python-speech-recognition/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://files.realpython.com/media/The-Ultimate-Guide-To-Speech-Recognition-With-Python_Watermarked.c0511baf27ba.jpg">
+<meta property="og:image" content="https://files.realpython.com/media/The-Ultimate-Guide-To-Speech-Recognition-With-Python_Watermarked.c0511baf27ba.jpg">
+<meta name="twitter:creator" content="@realpython">
+<meta name="twitter:site" content="@realpython">
+<meta property="og:title" content="The Ultimate Guide To Speech Recognition With Python – Real Python">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://realpython.com/python-speech-recognition/">
+<meta property="og:description" content="An in-depth tutorial on speech recognition with Python. Learn which speech recognition library gives the best results and build a full-featured &quot;Guess The Word&quot; game with it.">
+<link href="https://realpython.com/static/favicon.68cbf4197b0c.png" rel="icon">
+<link href="https://realpython.com/atom.xml" rel="alternate" title="Real Python" type="application/atom+xml">
+<link rel="manifest" href="https://realpython.com/manifest.json">
+<script async="" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/fbevents.js.download"></script><script type="text/javascript" async="" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/6214500.js.download"></script><script async="" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/analytics.js.download"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-35184939-1', 'auto', {'allowLinker': true});
+
+  
+
+  
+
+  
+  
+  ga('set', {
+    dimension1: false,
+    dimension2: false
+  });
+  
+
+  ga('send', 'pageview');
+  
+</script>
+<script async="" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/api.js.download"></script><script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/count-data.js.download"></script></head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark flex-column nav-message">
+<div class="container flex-row">
+<a class="navbar-brand" href="https://realpython.com/">
+<img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/real-python-logo.893c30edea53.svg" height="40" class="d-inline-block align-top" alt="Real Python">
+</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse navbar-nav-scroll" id="navbarSupportedContent">
+<ul class="navbar-nav mr-2 flex-fill">
+<li class="nav-item">
+<a class="nav-link" href="https://realpython.com/start-here/">Start&nbsp;Here</a>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="https://realpython.com/python-speech-recognition/#" id="navbarDropdownLibrary" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<span class="fa fa-graduation-cap"></span> Learn Python
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownLibrary">
+<a class="dropdown-item" href="https://realpython.com/" style="color: #ff7e73; line-height: 110%;"><i class="fa fa-fw mr-1 fa-graduation-cap"></i> Python Tutorials →<br><small class="text-secondary">In-depth articles and tutorials</small></a>
+<a class="dropdown-item" href="https://realpython.com/courses/" style="color: #abe5b1; line-height: 110%;"><i class="fa fa-fw mr-1 fa-film"></i> Video Courses →<br><small class="text-secondary">Step-by-step video lessons</small></a>
+<a class="dropdown-item" href="https://realpython.com/quizzes/" style="color: #abe0e5; line-height: 110%;"><i class="fa fa-fw mr-1 fa-trophy"></i> Quizzes →<br><small class="text-secondary">Check your learning progress</small></a>
+<a class="dropdown-item" href="https://realpython.com/learning-paths/" style="color: #ffc873; line-height: 110%;"><i class="fa fa-fw mr-1 fa-map-o"></i> Learning Paths →<br><small class="text-secondary">Guided study plans for accelerated learning</small></a>
+<a class="dropdown-item" href="https://realpython.com/community/" style="color: #e5c6ab; line-height: 110%;"><i class="fa fa-fw mr-1 fa-slack"></i> Community →<br><small class="text-secondary">Learn with other Pythonistas</small></a>
+<a class="dropdown-item pb-3" href="https://realpython.com/tutorials/all/" style="color: #b8abe5; line-height: 110%;"><i class="fa fa-fw mr-1 fa-tags"></i> Topics →<br><small class="text-secondary">Focus on a specific area or skill level</small></a>
+<a class="dropdown-item border-top" href="https://realpython.com/account/join/"><i class="fa fa-fw fa-star text-warning"></i> Unlock All Content</a>
+</div>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="https://realpython.com/python-speech-recognition/#" id="navbarDropdownBooksCourses" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+Store
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownBooksCourses">
+<a class="dropdown-item" href="https://realpython.com/account/join/"><i class="fa fa-fw fa-star text-warning"></i> RP Membership</a>
+<a class="dropdown-item" href="https://realpython.com/products/python-basics-book/">Python Basics Book</a>
+<a class="dropdown-item" href="https://realpython.com/products/python-tricks-book/">Python Tricks Book</a>
+<a class="dropdown-item" href="https://realpython.com/products/cpython-internals-book/">CPython Internals Book</a>
+<a class="dropdown-item" href="https://realpython.com/products/real-python-course/">The Real Python Course</a>
+<a class="dropdown-item" href="https://realpython.com/products/managing-python-dependencies/">Managing Python Dependencies</a>
+<a class="dropdown-item" href="https://realpython.com/products/sublime-python/">Sublime Text + Python Setup</a>
+<a class="dropdown-item" href="https://realpython.com/products/pythonic-wallpapers/">Pythonic Wallpapers Pack</a>
+<a class="dropdown-item" href="https://nerdlettering.com/" target="_blank">Python Mugs, T-Shirts, and More</a>
+<a class="dropdown-item" href="https://www.pythonistacafe.com/" target="_blank">Pythonista Cafe Community</a>
+<a class="dropdown-item border-top" href="https://realpython.com/products/">Browse All »</a>
+</div>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="https://realpython.com/python-speech-recognition/#" id="navbarDropdownMore" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+More
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownMore">
+<a class="dropdown-item" href="https://realpython.com/newsletter/">Python Newsletter</a>
+<a class="dropdown-item" href="https://realpython.com/podcasts/rpp/">Python Podcast</a>
+<a class="dropdown-item" href="https://www.pythonjobshq.com/" target="_blank">Python Job Board</a>
+<a class="dropdown-item" href="https://realpython.com/team/">Meet the Team</a>
+<a class="dropdown-item" href="https://realpython.com/write-for-us/">Become a Tutorial Author</a>
+<a class="dropdown-item" href="https://realpython.com/become-an-instructor/">Become a Video Instructor</a>
+</div>
+</li>
+</ul>
+<div class="d-block d-xl-none">
+<ul class="navbar-nav">
+<li class="nav-item">
+<a class="nav-link" href="https://realpython.com/search" title="Search"><span class="d-block d-lg-none"><i class="fa fa-search"></i> Search</span><span class="d-none d-lg-block"><i class="fa fa-search"></i></span></a>
+</li>
+</ul>
+</div>
+<div class="d-none d-xl-flex align-items-center mr-2">
+<form class="form-inline" action="https://realpython.com/search" method="GET">
+<a class="js-search-form-submit position-absolute" href="https://realpython.com/search" title="Search"><i class="fa fa-search fa-fw text-muted pl-2"></i></a>
+<input class="search-field form-control form-control-md mr-sm-1 mr-lg-2 w-100" style="padding-left: 2rem;" maxlength="50" type="search" placeholder="Search" aria-label="Search" name="q">
+<input type="hidden" name="_from" value="nav">
+</form>
+</div>
+<ul class="navbar-nav">
+<li class="nav-item form-inline">
+<a class="ml-2 ml-lg-0 btn btn-sm btn-primary px-3" href="https://realpython.com/account/join/">Join</a>
+</li>
+<li class="nav-item">
+<a class="btn text-light" href="https://realpython.com/account/login/">Sign‑In</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="flex-row w-100" style="border-top: 1px dashed #ffc107 !important;">
+<div class="container">
+<a class="link-unstyled mx-auto" href="https://realpython.com/free-courses-march-2020"><p class="my-1 small"><span class="text-warning">😷 <strong>Stuck at home?</strong> Enjoy free courses, on&nbsp;us&nbsp;→</span></p></a>
+</div>
+</div>
+</nav>
+<div class="container main-content">
+<div class="row justify-content-center">
+<div class="col-md-11 col-lg-8 article with-headerlinks">
+<figure class="embed-responsive embed-responsive-16by9">
+<img class="card-img-top m-0 p-0 embed-responsive-item rounded" style="object-fit: contain;" alt="Python Speech Recognition" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/The-Ultimate-Guide-To-Speech-Recognition-With-Python_Watermarked.webp" width="1920" height="1080" srcset="https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/The-Ultimate-Guide-To-Speech-Recognition-With-Python_Watermarked.c0511baf27ba.jpg&amp;w=480&amp;sig=9c3dbe8b9e5c0a05b993b7908bd6063b12664c1f 480w, https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/The-Ultimate-Guide-To-Speech-Recognition-With-Python_Watermarked.c0511baf27ba.jpg&amp;w=960&amp;sig=c9fcc84aebc4f9e27842f9955fde304104c0ef3e 960w, https://files.realpython.com/media/The-Ultimate-Guide-To-Speech-Recognition-With-Python_Watermarked.c0511baf27ba.jpg 1920w" sizes="75vw">
+</figure>
+<h1>The Ultimate Guide To Speech Recognition With Python</h1>
+<p class="mb-0">
+<span class="text-muted">by <a class="text-muted" href="https://realpython.com/python-speech-recognition/#author">David Amos</a>
+<span class="ml-2 mr-1 fa fa-comments"></span><a class="text-muted" href="https://realpython.com/python-speech-recognition/#reader-comments"><span class="disqus-comment-count" data-disqus-identifier="https://realpython.com/python-speech-recognition/">121 Comments</span></a>
+<span class="ml-2 fa fa-tags"></span>
+<a href="https://realpython.com/tutorials/advanced/" class="badge badge-light text-muted">advanced</a>
+<a href="https://realpython.com/tutorials/data-science/" class="badge badge-light text-muted">data-science</a>
+<a href="https://realpython.com/tutorials/machine-learning/" class="badge badge-light text-muted">machine-learning</a>
+</span></p><div class="d-sm-flex flex-row justify-content-between my-2">
+<div class="jsCompletionStatusWidget btn-group mb-0">
+<button title="Click to mark as completed" class="jsBtnCompletion btn btn-secondary border-right" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Mark as Completed</button>
+<button title="Add bookmark" class="jsBtnBookmark btn btn-secondary border-left"><i class="fa fa-fw fa-bookmark-o"></i></button>
+</div>
+<div class="align-self-center">
+<span>
+<a target="_blank" rel="nofollow" href="https://twitter.com/intent/tweet/?text=Check%20out%20this%20%23Python%20tutorial:%20The%20Ultimate%20Guide%20To%20Speech%20Recognition%20With%20Python%20by%20@realpython&amp;url=https%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-twitter text-light mb-1"><i class="mr-1 fa fa-twitter text-light"></i>Tweet</a>
+<a target="_blank" rel="nofollow" href="https://facebook.com/sharer/sharer.php?u=https%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-facebook text-light mb-1"><i class="mr-1 fa fa-facebook text-light"></i>Share</a>
+<a target="_blank" rel="nofollow" href="mailto:?subject=Python%20article%20for%20you&amp;body=Check%20out%20this%20Python%20tutorial:%0A%0AThe%20Ultimate%20Guide%20To%20Speech%20Recognition%20With%20Python%0A%0Ahttps%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-red text-light mb-1"><i class="mr-1 fa fa-envelope text-light"></i>Email</a>
+</span>
+</div>
+</div>
+<p></p>
+<div class="article-body">
+<div class="bg-light sidebar-module sidebar-module-inset" id="toc">
+<p class="h3 mb-2 text-muted">Table of Contents</p>
+<div class="toc">
+<ul>
+<li><a href="https://realpython.com/python-speech-recognition/#how-speech-recognition-works-an-overview">How Speech Recognition Works – An Overview</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#picking-a-python-speech-recognition-package">Picking a Python Speech Recognition Package</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#installing-speechrecognition">Installing SpeechRecognition</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#the-recognizer-class">The Recognizer Class</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#working-with-audio-files">Working With Audio Files</a><ul>
+<li><a href="https://realpython.com/python-speech-recognition/#supported-file-types">Supported File Types</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#using-record-to-capture-data-from-a-file">Using record() to Capture Data From a File</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#capturing-segments-with-offset-and-duration">Capturing Segments With offset and duration</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#the-effect-of-noise-on-speech-recognition">The Effect of Noise on Speech Recognition</a></li>
+</ul>
+</li>
+<li><a href="https://realpython.com/python-speech-recognition/#working-with-microphones">Working With Microphones</a><ul>
+<li><a href="https://realpython.com/python-speech-recognition/#installing-pyaudio">Installing PyAudio</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#the-microphone-class">The Microphone Class</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#using-listen-to-capture-microphone-input">Using listen() to Capture Microphone Input</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#handling-unrecognizable-speech">Handling Unrecognizable Speech</a></li>
+</ul>
+</li>
+<li><a href="https://realpython.com/python-speech-recognition/#putting-it-all-together-a-guess-the-word-game">Putting It All Together: A “Guess the Word” Game</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#recap-and-additional-resources">Recap and Additional Resources</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#appendix-recognizing-speech-in-languages-other-than-english">Appendix: Recognizing Speech in Languages Other Than English</a></li>
+</ul>
+</div>
+</div>
+<div class="sidebar-module sidebar-module-inset p-0" style="overflow:hidden;">
+<div style="display:block;position:relative;">
+<div style="display:block;width:100%;padding-top:12.5%;"></div>
+<div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/33911031100/?c=48874902176&amp;p=58946116052&amp;r=08710" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/c2032f8e413c3322e9ba1029b4adcb98" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div>
+</div>
+<a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"> <i class="fa fa-info-circle" aria-hidden="true"> </i> Remove ads</a>
+</div>
+<p>Have you ever wondered how to add speech recognition to your Python project? If so, then keep reading! It’s easier than you might think.</p>
+<p>Far from a being a fad, the overwhelming success of speech-enabled products like <a href="https://realpython.com/alexa-python-skill/">Amazon Alexa</a> has proven that some degree of speech support will be an essential aspect of household tech for the foreseeable future. If you think about it, the reasons why are pretty obvious. Incorporating speech recognition into your Python application offers a level of interactivity and accessibility that few technologies can match.</p>
+<p>The accessibility improvements alone are worth considering. Speech recognition allows the elderly and the physically and visually impaired to interact with state-of-the-art products and services quickly and naturally—no GUI needed!</p>
+<p>Best of all, including speech recognition in a Python project is really simple. In this guide, you’ll find out how. You’ll learn:</p>
+<ul>
+<li>How speech recognition works,</li>
+<li>What packages are available on PyPI; and</li>
+<li>How to install and use the SpeechRecognition package—a full-featured and easy-to-use Python speech recognition library.</li>
+</ul>
+<p>In the end, you’ll apply what you’ve learned to a simple “Guess the Word” game and see how it all comes together.</p>
+<div class="alert alert-warning" role="alert"><p><strong>Free Bonus:</strong> <a href="https://realpython.com/python-speech-recognition/#" class="alert-link" data-toggle="modal" data-target="#modal-python-speech-recognition-code" data-focus="false">Click here to download a Python speech recognition sample project with full source code </a> that you can use as a basis for your own speech recognition apps.</p></div>
+<div><div class="rounded border border-light" style="display:block;position:relative;"><div style="display:block;width:100%;padding-top:12.5%;"></div><div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/16642766600/?c=48874902176&amp;p=58946116052&amp;r=80405" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/f1ef724573f8d74cc59cd07ea9e20a6b" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div></div><a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"><i aria-hidden="true" class="fa fa-info-circle"> </i> Remove ads</a></div><section class="section2" id="how-speech-recognition-works-an-overview"><h2>How Speech Recognition Works – An Overview<a class="headerlink" href="https://realpython.com/python-speech-recognition/#how-speech-recognition-works-an-overview" title="Permanent link"></a></h2>
+<p>Before we get to the nitty-gritty of doing speech recognition in Python, let’s take a moment to talk about how speech recognition works. A full discussion would fill a book, so I won’t bore you with all of the technical details here. In fact, this section is not pre-requisite to the rest of the tutorial. If you’d like to get straight to the point, then feel free to skip ahead.</p>
+<p>Speech recognition has its roots in research done at Bell Labs in the early 1950s. Early systems were limited to a single speaker and had limited vocabularies of about a dozen words. Modern speech recognition systems have come a long way since their ancient counterparts. They can recognize speech from multiple speakers and have enormous vocabularies in numerous languages.</p>
+<p>The first component of speech recognition is, of course, speech. Speech must be converted from physical sound to an electrical signal with a microphone, and then to digital data with an analog-to-digital converter. Once digitized, several models can be used to transcribe the audio to text.</p>
+<p>Most modern speech recognition systems rely on what is known as a <a href="https://en.wikipedia.org/wiki/Hidden_Markov_model">Hidden Markov Model</a> (HMM). This approach works on the assumption that a speech signal, when viewed on a short enough timescale (say, ten milliseconds), can be reasonably approximated as a stationary process—that is, a process in which statistical properties do not change over time.</p>
+<p>In a typical HMM, the speech signal is divided into 10-millisecond fragments. The power spectrum of each fragment, which is essentially a plot of the signal’s power as a function of frequency, is mapped to a vector of real numbers known as <a href="https://en.wikipedia.org/wiki/Cepstrum">cepstral</a> coefficients. The dimension of this vector is usually small—sometimes as low as 10, although more accurate systems may have dimension 32 or more. The final output of the HMM is a sequence of these vectors.</p>
+<p>To decode the speech into text, groups of vectors are matched to one or more <a href="https://en.wikipedia.org/wiki/Phoneme">phonemes</a>—a fundamental unit of speech. This calculation requires training, since the sound of a phoneme varies from speaker to speaker, and even varies from one utterance to another by the same speaker. A special algorithm is then applied to determine the most likely word (or words) that produce the given sequence of phonemes.</p>
+<p>One can imagine that this whole process may be computationally expensive. In many modern speech recognition systems, neural networks are used to simplify the speech signal using techniques for feature transformation and dimensionality reduction <em>before</em> HMM recognition. Voice activity detectors (VADs) are also used to reduce an audio signal to only the portions that are likely to contain speech. This prevents the recognizer from wasting time analyzing unnecessary parts of the signal.</p>
+<p>Fortunately, as a Python programmer, you don’t have to worry about any of this. A number of speech recognition services are available for use online through an API, and many of these services offer <a href="https://realpython.com/api-integration-in-python/">Python SDKs</a>.</p>
+</section><section class="section2" id="picking-a-python-speech-recognition-package"><h2>Picking a Python Speech Recognition Package<a class="headerlink" href="https://realpython.com/python-speech-recognition/#picking-a-python-speech-recognition-package" title="Permanent link"></a></h2>
+<p>A handful of packages for speech recognition exist on PyPI. A few of them include:</p>
+<ul>
+<li><a href="https://pypi.org/project/apiai/">apiai</a></li>
+<li><a href="https://pypi.org/project/assemblyai/">assemblyai</a></li>
+<li><a href="https://pypi.org/project/google-cloud-speech/">google-cloud-speech</a></li>
+<li><a href="https://pypi.org/project/pocketsphinx/">pocketsphinx</a></li>
+<li><a href="https://pypi.org/project/SpeechRecognition/">SpeechRecognition</a></li>
+<li><a href="https://pypi.org/project/watson-developer-cloud/">watson-developer-cloud</a></li>
+<li><a href="https://pypi.org/project/wit/">wit</a></li>
+</ul>
+<p>Some of these packages—such as wit and apiai—offer built-in features, like natural language processing for identifying a speaker’s intent, which go beyond basic speech recognition. Others, like google-cloud-speech, focus solely on speech-to-text conversion. </p>
+<p>There is one package that stands out in terms of ease-of-use: SpeechRecognition.</p>
+<p>Recognizing speech requires audio input, and SpeechRecognition makes retrieving this input really easy. Instead of having to build scripts for accessing microphones and processing audio files from scratch, SpeechRecognition will have you up and running in just a few minutes.</p>
+<p>The SpeechRecognition library acts as a wrapper for several popular speech APIs and is thus extremely flexible. One of these—the Google Web Speech API—supports a default API key that is hard-coded into the SpeechRecognition library. That means you can get off your feet without having to sign up for a service.</p>
+<p>The flexibility and ease-of-use of the SpeechRecognition package make it an excellent choice for any Python project. However, support for every feature of each API it wraps is not guaranteed. You will need to spend some time researching the available options to find out if SpeechRecognition will work in your particular case.</p>
+<p>So, now that you’re convinced you should try out SpeechRecognition, the next step is getting it installed in your environment.</p>
+</section><section class="section2" id="installing-speechrecognition"><h2>Installing SpeechRecognition<a class="headerlink" href="https://realpython.com/python-speech-recognition/#installing-speechrecognition" title="Permanent link"></a></h2>
+<p>SpeechRecognition is compatible with Python 2.6, 2.7 and 3.3+, but requires some <a href="https://github.com/Uberi/speech_recognition#requirements">additional installation steps for Python 2</a>. For this tutorial, I’ll assume you are using Python 3.3+.</p>
+<p>You can install SpeechRecognition from a terminal with pip:</p>
+<div class="highlight sh"><pre><span></span><code><span class="gp">$ </span>pip install SpeechRecognition
+</code></pre></div>
+<p>Once installed, you should verify the installation by opening an interpreter session and typing:</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">speech_recognition</span> <span class="k">as</span> <span class="nn">sr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sr</span><span class="o">.</span><span class="n">__version__</span>
+<span class="go">'3.8.1'</span>
+</code></pre></div>
+<div class="alert alert-primary" role="alert">
+<p><strong>Note:</strong> The version number you get might vary. Version 3.8.1 was the latest at the time of writing.</p>
+</div>
+<p>Go ahead and keep this session open. You’ll start to work with it in just a bit.</p>
+<p>SpeechRecognition <em>will</em> work out of the box if all you need to do is work with existing audio files. Specific use cases, however, require a few dependencies. Notably, the PyAudio package is needed for capturing microphone input.</p>
+<p>You’ll see which dependencies you need as you read further. For now, let’s dive in and explore the basics of the package.</p>
+<div><div class="rounded border border-light" style="display:block;position:relative;"><div style="display:block;width:100%;padding-top:12.5%;"></div><div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/27944979224/?c=48874902176&amp;p=58946116052&amp;r=21966" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/eb1fdbdd9dab50bc687468a6fffd3d0b" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div></div><a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"><i aria-hidden="true" class="fa fa-info-circle"> </i> Remove ads</a></div></section><section class="section2" id="the-recognizer-class"><h2>The <code>Recognizer</code> Class<a class="headerlink" href="https://realpython.com/python-speech-recognition/#the-recognizer-class" title="Permanent link"></a></h2>
+<p>All of the magic in SpeechRecognition happens with the <code>Recognizer</code> class.</p>
+<p>The primary purpose of a <code>Recognizer</code> instance is, of course, to recognize speech. Each instance comes with a variety of settings and functionality for recognizing speech from an audio source.</p>
+<p>Creating a <code>Recognizer</code> instance is easy. In your current interpreter session, just type:</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Recognizer</span><span class="p">()</span>
+</code></pre></div>
+<p>Each <code>Recognizer</code> instance has seven methods for recognizing speech from an audio source using various APIs. These are:</p>
+<ul>
+<li><code>recognize_bing()</code>: <a href="https://azure.microsoft.com/en-us/services/cognitive-services/speech/">Microsoft Bing Speech</a></li>
+<li><code>recognize_google()</code>: <a href="https://w3c.github.io/speech-api/speechapi.html">Google Web Speech API</a></li>
+<li><code>recognize_google_cloud()</code>: <a href="https://cloud.google.com/speech/">Google Cloud Speech</a> - requires installation of the google-cloud-speech package</li>
+<li><code>recognize_houndify()</code>: <a href="https://www.houndify.com/">Houndify</a> by SoundHound</li>
+<li><code>recognize_ibm()</code>: <a href="https://www.ibm.com/watson/services/speech-to-text/">IBM Speech to Text</a></li>
+<li><code>recognize_sphinx()</code>: <a href="https://cmusphinx.github.io/">CMU Sphinx</a> - requires installing PocketSphinx</li>
+<li><code>recognize_wit()</code>: <a href="https://wit.ai/">Wit.ai</a></li>
+</ul>
+<p>Of the seven, only <code>recognize_sphinx()</code> works offline with the CMU Sphinx engine. The other six all require an internet connection.</p>
+<p>A full discussion of the features and benefits of each API is beyond the scope of this tutorial. Since SpeechRecognition ships with a default API key for the Google Web Speech API, you can get started with it right away. For this reason, we’ll use the Web Speech API in this guide. The other six APIs all require authentication with either an API key or a username/password combination. For more information, consult the SpeechRecognition <a href="https://github.com/Uberi/speech_recognition/blob/master/reference/library-reference.rst">docs</a>.</p>
+<div class="alert alert-primary" role="alert">
+<p><strong>Caution:</strong> The default key provided by SpeechRecognition is for testing purposes only, and <strong>Google may revoke it at any time</strong>. It is <em>not</em> a good idea to use the Google Web Speech API in production. Even with a valid API key, you’ll be limited to only 50 requests per day, and <a href="http://www.chromium.org/developers/how-tos/api-keys">there is no way to raise this quota</a>. Fortunately, SpeechRecognition’s interface is nearly identical for each API, so what you learn today will be easy to translate to a real-world project.</p>
+</div>
+<p>Each <code>recognize_*()</code> method will throw a <code>speech_recognition.RequestError</code> exception if the API is unreachable. For <code>recognize_sphinx()</code>, this could happen as the result of a missing, corrupt or incompatible Sphinx installation. For the other six methods, <code>RequestError</code> may be thrown if quota limits are met, the server is unavailable, or there is no internet connection.</p>
+<p>Ok, enough chit-chat. Let’s get our hands dirty. Go ahead and try to call <code>recognize_google()</code> in your interpreter session.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">()</span>
+</code></pre></div>
+<p>What happened?</p>
+<p>You probably got something that looks like this:</p>
+<div class="highlight pytb"><pre><span></span><code><span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">"&lt;stdin&gt;"</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">TypeError</span>: <span class="n">recognize_google() missing 1 required positional argument: 'audio_data'</span>
+</code></pre></div>
+<p>You might have guessed this would happen. How could something be recognized from nothing?</p>
+<p>All seven <code>recognize_*()</code> methods of the <code>Recognizer</code> class require an <code>audio_data</code> argument. In each case, <code>audio_data</code> must be an instance of SpeechRecognition’s <code>AudioData</code> class.</p>
+<p>There are two ways to create an <code>AudioData</code> instance: from an audio file or audio recorded by a microphone. Audio files are a little easier to get started with, so let’s take a look at that first.</p>
+</section><section class="section2" id="working-with-audio-files"><h2>Working With Audio Files<a class="headerlink" href="https://realpython.com/python-speech-recognition/#working-with-audio-files" title="Permanent link"></a></h2>
+<p>Before you continue, you’ll need to download an audio file. The one I used to get started, “harvard.wav,” can be found <a href="https://github.com/realpython/python-speech-recognition">here</a>. Make sure you save it to the same directory in which your Python interpreter session is running.</p>
+<p>SpeechRecognition makes working with audio files easy thanks to its handy <code>AudioFile</code> class. This class can be initialized with the path to an audio file and provides a context manager interface for reading and working with the file’s contents.</p>
+<div><div class="rounded border border-light" style="display:block;position:relative;"><div style="display:block;width:100%;padding-top:12.5%;"></div><div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/8941932849/?c=48874902176&amp;p=58946116052&amp;r=80867" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/8dd76836b26ce79fa0afa59df2458580" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div></div><a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"><i aria-hidden="true" class="fa fa-info-circle"> </i> Remove ads</a></div><section class="section3" id="supported-file-types"><h3>Supported File Types<a class="headerlink" href="https://realpython.com/python-speech-recognition/#supported-file-types" title="Permanent link"></a></h3>
+<p>Currently, SpeechRecognition supports the following file formats:</p>
+<ul>
+<li>WAV: must be in PCM/LPCM format</li>
+<li>AIFF</li>
+<li>AIFF-C</li>
+<li>FLAC: must be native FLAC format; OGG-FLAC is not supported</li>
+</ul>
+<p>If you are working on x-86 based Linux, macOS or Windows, you should be able to work with FLAC files without a problem. On other platforms, you will need to install a FLAC encoder and ensure you have access to the <code>flac</code> command line tool. You can find more information <a href="https://xiph.org/flac/">here</a> if this applies to you.</p>
+</section><section class="section3" id="using-record-to-capture-data-from-a-file"><h3>Using <code>record()</code> to Capture Data From a File<a class="headerlink" href="https://realpython.com/python-speech-recognition/#using-record-to-capture-data-from-a-file" title="Permanent link"></a></h3>
+<p>Type the following into your interpreter session to process the contents of the “harvard.wav” file:</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">harvard</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">AudioFile</span><span class="p">(</span><span class="s1">'harvard.wav'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">harvard</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">...</span>
+</code></pre></div>
+<p>The context manager opens the file and reads its contents, storing the data in an <code>AudioFile</code> instance called <code>source.</code> Then the <code>record()</code> method records the data from the entire file into an <code>AudioData</code> instance. You can confirm this by checking the type of <code>audio</code>:</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">&lt;class 'speech_recognition.AudioData'&gt;</span>
+</code></pre></div>
+<p>You can now invoke <code>recognize_google()</code> to attempt to recognize any speech in the audio. Depending on your internet connection speed, you may have to wait several seconds before seeing the result.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">'the stale smell of old beer lingers it takes heat</span>
+<span class="go">to bring out the odor a cold dip restores health and</span>
+<span class="go">zest a salt pickle taste fine with ham tacos al</span>
+<span class="go">Pastore are my favorite a zestful food is the hot</span>
+<span class="go">cross bun'</span>
+</code></pre></div>
+<p>Congratulations! You’ve just transcribed your first audio file!</p>
+<p>If you’re wondering where the phrases in the “harvard.wav” file come from, they are examples of Harvard Sentences. These phrases were published by the IEEE in 1965 for use in speech intelligibility testing of telephone lines. They are still used in VoIP and cellular testing today.</p>
+<p>The Harvard Sentences are comprised of 72 lists of ten phrases. You can find freely available recordings of these phrases on the <a href="http://www.voiptroubleshooter.com/open_speech/index.html">Open Speech Repository</a> website. Recordings are available in English, Mandarin Chinese, French, and Hindi. They provide an excellent source of free material for testing your code.</p>
+</section><section class="section3" id="capturing-segments-with-offset-and-duration"><h3>Capturing Segments With <code>offset</code> and <code>duration</code><a class="headerlink" href="https://realpython.com/python-speech-recognition/#capturing-segments-with-offset-and-duration" title="Permanent link"></a></h3>
+<p>What if you only want to capture a portion of the speech in a file? The <code>record()</code> method accepts a <code>duration</code> keyword argument that stops the recording after a specified number of seconds.</p>
+<p>For example, the following captures any speech in the first four seconds of the file:</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">harvard</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">'the stale smell of old beer lingers'</span>
+</code></pre></div>
+<p>The <code>record()</code> method, when used inside a <code>with</code> block, always moves ahead in the file stream. This means that if you record once for four seconds and then record again for four seconds, the second time returns the four seconds of audio <em>after</em> the first four seconds.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">harvard</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">audio1</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">audio2</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio1</span><span class="p">)</span>
+<span class="go">'the stale smell of old beer lingers'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio2</span><span class="p">)</span>
+<span class="go">'it takes heat to bring out the odor a cold dip'</span>
+</code></pre></div>
+<p>Notice that <code>audio2</code> contains a portion of the third phrase in the file. When specifying a duration, the recording might stop mid-phrase—or even mid-word—which can hurt the accuracy of the transcription. More on this in a bit.</p>
+<p>In addition to specifying a recording duration, the <code>record()</code> method can be given a specific starting point using the <code>offset</code> keyword argument. This value represents the number of seconds from the beginning of the file to ignore before starting to record.</p>
+<p>To capture only the second phrase in the file, you could start with an offset of four seconds and record for, say, three seconds.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">harvard</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">'it takes heat to bring out the odor'</span>
+</code></pre></div>
+<p>The <code>offset</code> and <code>duration</code> keyword arguments are useful for segmenting an audio file <em>if</em> you have prior knowledge of the structure of the speech in the file. However, using them hastily can result in poor transcriptions. To see this effect, try the following in your interpreter:</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">harvard</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">4.7</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">2.8</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">'Mesquite to bring out the odor Aiko'</span>
+</code></pre></div>
+<p>By starting the recording at 4.7 seconds, you miss the “it t” portion a the beginning of the phrase “it takes heat to bring out the odor,” so the API only got “akes heat,” which it matched to “Mesquite.”</p>
+<p>Similarly, at the end of the recording, you captured “a co,” which is the beginning of the third phrase “a cold dip restores health and zest.” This was matched to “Aiko” by the API.</p>
+<p>There is another reason you may get inaccurate transcriptions. Noise! The above examples worked well because the audio file is reasonably clean. In the real world, unless you have the opportunity to process audio files beforehand, you can not expect the audio to be noise-free.</p>
+<div><div class="rounded border border-light" style="display:block;position:relative;"><div style="display:block;width:100%;padding-top:12.5%;"></div><div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/32532819624/?c=48874902176&amp;p=58946116052&amp;r=21508" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/6a663e90d4c9cf96e26ca6a22741fd28" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div></div><a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"><i aria-hidden="true" class="fa fa-info-circle"> </i> Remove ads</a></div></section><section class="section3" id="the-effect-of-noise-on-speech-recognition"><h3>The Effect of Noise on Speech Recognition<a class="headerlink" href="https://realpython.com/python-speech-recognition/#the-effect-of-noise-on-speech-recognition" title="Permanent link"></a></h3>
+<p>Noise is a fact of life. <em>All</em> audio recordings have some degree of noise in them, and un-handled noise can wreck the accuracy of speech recognition apps.</p>
+<p>To get a feel for how noise can affect speech recognition, download the “jackhammer.wav” file <a href="https://github.com/realpython/python-speech-recognition">here</a>. As always, make sure you save this to your interpreter session’s working directory.</p>
+<p>This file has the phrase “the stale smell of old beer lingers” spoken with a loud jackhammer in the background.</p>
+<p>What happens when you try to transcribe this file?</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">jackhammer</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">AudioFile</span><span class="p">(</span><span class="s1">'jackhammer.wav'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">jackhammer</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">'the snail smell of old gear vendors'</span>
+</code></pre></div>
+<p>Way off!</p>
+<p>So how do you deal with this? One thing you can try is using the <code>adjust_for_ambient_noise()</code> method of the <code>Recognizer</code> class.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">jackhammer</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">r</span><span class="o">.</span><span class="n">adjust_for_ambient_noise</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">'still smell of old beer vendors'</span>
+</code></pre></div>
+<p>That got you a little closer to the actual phrase, but it still isn’t perfect. Also, “the” is missing from the beginning of the phrase. Why is that?</p>
+<p>The <code>adjust_for_ambient_noise()</code> method reads the first second of the file stream and calibrates the recognizer to the noise level of the audio. Hence, that portion of the stream is consumed before you call <code>record()</code> to capture the data.</p>
+<p>You can adjust the time-frame that <code>adjust_for_ambient_noise()</code> uses for analysis with the <code>duration</code> keyword argument. This argument takes a numerical value in seconds and is set to 1 by default. Try lowering this value to 0.5.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">jackhammer</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">r</span><span class="o">.</span><span class="n">adjust_for_ambient_noise</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">'the snail smell like old Beer Mongers'</span>
+</code></pre></div>
+<p>Well, that got you “the” at the beginning of the phrase, but now you have some new issues! Sometimes it isn’t possible to remove the effect of the noise—the signal is just too noisy to be dealt with successfully. That’s the case with this file.</p>
+<p>If you find yourself running up against these issues frequently, you may have to resort to some pre-processing of the audio. This can be done with <a href="https://www.audacityteam.org/">audio editing software</a> or a Python package (such as <a href="https://realpython.com/python-scipy-cluster-optimize/">SciPy</a>) that can apply filters to the files. A detailed discussion of this is beyond the scope of this tutorial—check out Allen Downey’s <a href="http://greenteapress.com/wp/think-dsp/">Think DSP</a> book if you are interested. For now, just be aware that ambient noise in an audio file can cause problems and must be addressed in order to maximize the accuracy of speech recognition.</p>
+<p>When working with noisy files, it can be helpful to see the actual API response. Most APIs return a <a href="https://realpython.com/python-json/">JSON string</a> containing many possible transcriptions. The <code>recognize_google()</code> method will always return the <em>most likely</em> transcription unless you force it to give you the full response.</p>
+<p>You can do this by setting the <code>show_all</code> keyword argument of the <code>recognize_google()</code> method to <code>True.</code></p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">show_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">{'alternative': [</span>
+<span class="go">  {'transcript': 'the snail smell like old Beer Mongers'}, </span>
+<span class="go">  {'transcript': 'the still smell of old beer vendors'}, </span>
+<span class="go">  {'transcript': 'the snail smell like old beer vendors'},</span>
+<span class="go">  {'transcript': 'the stale smell of old beer vendors'}, </span>
+<span class="go">  {'transcript': 'the snail smell like old beermongers'}, </span>
+<span class="go">  {'transcript': 'destihl smell of old beer vendors'}, </span>
+<span class="go">  {'transcript': 'the still smell like old beer vendors'}, </span>
+<span class="go">  {'transcript': 'bastille smell of old beer vendors'}, </span>
+<span class="go">  {'transcript': 'the still smell like old beermongers'}, </span>
+<span class="go">  {'transcript': 'the still smell of old beer venders'}, </span>
+<span class="go">  {'transcript': 'the still smelling old beer vendors'}, </span>
+<span class="go">  {'transcript': 'musty smell of old beer vendors'}, </span>
+<span class="go">  {'transcript': 'the still smell of old beer vendor'}</span>
+<span class="go">], 'final': True}</span>
+</code></pre></div>
+<p>As you can see, <code>recognize_google()</code> returns a dictionary with the key <code>'alternative'</code> that points to a list of possible transcripts. The structure of this response may vary from API to API and is mainly useful for debugging.</p>
+<p>By now, you have a pretty good idea of the basics of the SpeechRecognition package. You’ve seen how to create an <code>AudioFile</code> instance from an audio file and use the <code>record()</code> method to capture data from the file. You learned how record segments of a file using the <code>offset</code> and <code>duration</code> keyword arguments of <code>record()</code>, and you experienced the detrimental effect noise can have on transcription accuracy.</p>
+<p>Now for the fun part. Let’s transition from transcribing static audio files to making your project interactive by accepting input from a microphone.</p>
+<div><div class="rounded border border-light" style="display:block;position:relative;"><div style="display:block;width:100%;padding-top:12.5%;"></div><div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/11225539816/?c=48874902176&amp;p=58946116052&amp;r=86208" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/cae48de6b6f52aa978e17ea36747a9fc" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div></div><a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"><i aria-hidden="true" class="fa fa-info-circle"> </i> Remove ads</a></div></section></section><section class="section2" id="working-with-microphones"><h2>Working With Microphones<a class="headerlink" href="https://realpython.com/python-speech-recognition/#working-with-microphones" title="Permanent link"></a></h2>
+<p>To access your microphone with SpeechRecognizer, you’ll have to install the <a href="https://people.csail.mit.edu/hubert/pyaudio/">PyAudio package</a>. Go ahead and close your current interpreter session, and let’s do that.</p>
+<section class="section3" id="installing-pyaudio"><h3>Installing PyAudio<a class="headerlink" href="https://realpython.com/python-speech-recognition/#installing-pyaudio" title="Permanent link"></a></h3>
+<p>The process for installing PyAudio will vary depending on your operating system.</p>
+<section class="section4" id="debian-linux"><h4>Debian Linux<a class="headerlink" href="https://realpython.com/python-speech-recognition/#debian-linux" title="Permanent link"></a></h4>
+<p>If you’re on Debian-based Linux (like Ubuntu) you can install PyAudio with <code>apt</code>:</p>
+<div class="highlight sh"><pre><span></span><code><span class="gp">$ </span>sudo apt-get install python-pyaudio python3-pyaudio
+</code></pre></div>
+<p>Once installed, you may still need to run <code>pip install pyaudio</code>, especially if you are working in a virtual environment.</p>
+</section><section class="section4" id="macos"><h4>macOS<a class="headerlink" href="https://realpython.com/python-speech-recognition/#macos" title="Permanent link"></a></h4>
+<p>For macOS, first you will need to install PortAudio with Homebrew, and then install PyAudio with <code>pip</code>:</p>
+<div class="highlight sh"><pre><span></span><code><span class="gp">$ </span>brew install portaudio
+<span class="gp">$ </span>pip install pyaudio
+</code></pre></div>
+</section><section class="section4" id="windows"><h4>Windows<a class="headerlink" href="https://realpython.com/python-speech-recognition/#windows" title="Permanent link"></a></h4>
+<p>On Windows, you can install PyAudio with <code>pip</code>:</p>
+<div class="highlight sh"><pre><span></span><code><span class="gp">$ </span>pip install pyaudio
+</code></pre></div>
+</section><section class="section4" id="testing-the-installation"><h4>Testing the Installation<a class="headerlink" href="https://realpython.com/python-speech-recognition/#testing-the-installation" title="Permanent link"></a></h4>
+<p>Once you’ve got PyAudio installed, you can test the installation from the console.</p>
+<div class="highlight sh"><pre><span></span><code><span class="gp">$ </span>python -m speech_recognition
+</code></pre></div>
+<p>Make sure your default microphone is on and unmuted. If the installation worked, you should see something like this:</p>
+<p></p><div class="highlight sh"><pre><span></span><code><span class="go">A moment of silence, please...</span>
+<span class="go">Set minimum energy threshold to 600.4452854381937</span>
+<span class="go">Say something!</span>
+</code></pre></div>
+Go ahead and play around with it a little bit by speaking into your microphone and seeing how well SpeechRecognition transcribes your speech.<p></p>
+<div class="alert alert-primary" role="alert">
+<p><strong>Note:</strong> If you are on Ubuntu and get some funky output like ‘ALSA lib … Unknown PCM’, refer to <a href="https://github.com/Uberi/speech_recognition#on-ubuntudebian-i-get-annoying-output-in-the-terminal-saying-things-like-bt_audio_service_open--connection-refused-and-various-others">this page</a> for tips on suppressing these messages. This output comes from the ALSA package installed with Ubuntu—not SpeechRecognition or PyAudio. In all reality, these messages may indicate a problem with your ALSA configuration, but in my experience, they do not impact the functionality of your code. They are mostly a nuisance.</p>
+</div>
+<div><div class="rounded border border-light" style="display:block;position:relative;"><div style="display:block;width:100%;padding-top:12.5%;"></div><div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/28266526380/?c=30337084727&amp;p=58946116052&amp;r=63312" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/e8b8e877da2a454b3a6930fecd28c95c" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div></div><a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"><i aria-hidden="true" class="fa fa-info-circle"> </i> Remove ads</a></div></section></section><section class="section3" id="the-microphone-class"><h3>The <code>Microphone</code> Class<a class="headerlink" href="https://realpython.com/python-speech-recognition/#the-microphone-class" title="Permanent link"></a></h3>
+<p>Open up another interpreter session and create an instance of the recognizer class.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">speech_recognition</span> <span class="k">as</span> <span class="nn">sr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Recognizer</span><span class="p">()</span>
+</code></pre></div>
+<p>Now, instead of using an audio file as the source, you will use the default system microphone. You can access this by creating an instance of the <code>Microphone</code> class.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">mic</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Microphone</span><span class="p">()</span>
+</code></pre></div>
+<p>If your system has no default microphone (such as on a <a href="https://realpython.com/python-raspberry-pi/">Raspberry Pi</a>), or you want to use a microphone other than the default, you will need to specify which one to use by supplying a device index. You can get a list of microphone names by calling the <code>list_microphone_names()</code> static method of the <code>Microphone</code> class.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sr</span><span class="o">.</span><span class="n">Microphone</span><span class="o">.</span><span class="n">list_microphone_names</span><span class="p">()</span>
+<span class="go">['HDA Intel PCH: ALC272 Analog (hw:0,0)',</span>
+<span class="go"> 'HDA Intel PCH: HDMI 0 (hw:0,3)',</span>
+<span class="go"> 'sysdefault',</span>
+<span class="go"> 'front',</span>
+<span class="go"> 'surround40',</span>
+<span class="go"> 'surround51',</span>
+<span class="go"> 'surround71',</span>
+<span class="go"> 'hdmi',</span>
+<span class="go"> 'pulse',</span>
+<span class="go"> 'dmix', </span>
+<span class="go"> 'default']</span>
+</code></pre></div>
+<p>Note that your output may differ from the above example.</p>
+<p>The device index of the microphone is the index of its name in the list returned by <code>list_microphone_names().</code> For example, given the above output, if you want to use the microphone called “front,” which has index 3 in the list, you would create a microphone instance like this:</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># This is just an example; do not run</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mic</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Microphone</span><span class="p">(</span><span class="n">device_index</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<p>For most projects, though, you’ll probably want to use the default system microphone.</p>
+</section><section class="section3" id="using-listen-to-capture-microphone-input"><h3>Using <code>listen()</code> to Capture Microphone Input<a class="headerlink" href="https://realpython.com/python-speech-recognition/#using-listen-to-capture-microphone-input" title="Permanent link"></a></h3>
+<p>Now that you’ve got a <code>Microphone</code> instance ready to go, it’s time to capture some input.</p>
+<p>Just like the <code>AudioFile</code> class, <code>Microphone</code> is a context manager. You can capture input from the microphone using the <code>listen()</code> method of the <code>Recognizer</code> class inside of the <code>with</code> block. This method takes an audio source as its first argument and records input from the source until silence is detected.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">mic</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">...</span>
+</code></pre></div>
+<p>Once you execute the <code>with</code> block, try speaking “hello” into your microphone. Wait a moment for the interpreter prompt to display again. Once the “&gt;&gt;&gt;” prompt returns, you’re ready to recognize the speech.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="go">'hello'</span>
+</code></pre></div>
+<p>If the prompt never returns, your microphone is most likely picking up too much ambient noise. You can interrupt the process with +ctrl+c++ to get your prompt back.</p>
+<p>To handle ambient noise, you’ll need to use the <code>adjust_for_ambient_noise()</code> method of the <code>Recognizer</code> class, just like you did when trying to make sense of the noisy audio file. Since input from a microphone is far less predictable than input from an audio file, it is a good idea to do this anytime you listen for microphone input.</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">mic</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">r</span><span class="o">.</span><span class="n">adjust_for_ambient_noise</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">...</span>
+</code></pre></div>
+<p>After running the above code, wait a second for <code>adjust_for_ambient_noise()</code> to do its thing, then try speaking “hello” into the microphone. Again, you will have to wait a moment for the interpreter prompt to return before trying to recognize the speech.</p>
+<p>Recall that <code>adjust_for_ambient_noise()</code> analyzes the audio source for one second. If this seems too long to you, feel free to adjust this with the <code>duration</code> keyword argument.</p>
+<p>The SpeechRecognition documentation recommends using a duration no less than 0.5 seconds. In some cases, you may find that durations longer than the default of one second generate better results. The minimum value you need depends on the microphone’s ambient environment. Unfortunately, this information is typically unknown during development. In my experience, the default duration of one second is adequate for most applications.</p>
+<div><div class="rounded border border-light" style="display:block;position:relative;"><div style="display:block;width:100%;padding-top:12.5%;"></div><div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/54948072182/?c=30337084727&amp;p=58946116052&amp;r=31783" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/913fd28f526ec8aca047551bce4892b6" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div></div><a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"><i aria-hidden="true" class="fa fa-info-circle"> </i> Remove ads</a></div></section><section class="section3" id="handling-unrecognizable-speech"><h3>Handling Unrecognizable Speech<a class="headerlink" href="https://realpython.com/python-speech-recognition/#handling-unrecognizable-speech" title="Permanent link"></a></h3>
+<p>Try typing the previous code example in to the interpeter and making some unintelligible noises into the microphone. You should get something like this in response:</p>
+<div class="highlight pytb"><pre><span></span><code><span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">"&lt;stdin&gt;"</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">"/home/david/real_python/speech_recognition_primer/venv/lib/python3.5/site-packages/speech_recognition/__init__.py"</span>, line <span class="m">858</span>, in <span class="n">recognize_google</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actual_result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">actual_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"alternative"</span><span class="p">,</span> <span class="p">[]))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">raise</span> <span class="n">UnknownValueError</span><span class="p">()</span>
+<span class="gr">speech_recognition.UnknownValueError</span>
+</code></pre></div>
+<p>Audio that cannot be matched to text by the API raises an <code>UnknownValueError</code> exception. You should always wrap calls to the API with <a href="https://realpython.com/python-exceptions/"><code>try</code> and <code>except</code> blocks to handle this exception</a>.</p>
+<div class="alert alert-primary" role="alert">
+<p><strong>Note</strong>: You may have to try harder than you expect to get the exception thrown. The API works very hard to transcribe any vocal sounds. Even short grunts were transcribed as words like “how” for me. Coughing, hand claps, and tongue clicks would consistently raise the exception.</p>
+</div>
+</section></section><section class="section2" id="putting-it-all-together-a-guess-the-word-game"><h2>Putting It All Together: A “Guess the Word” Game<a class="headerlink" href="https://realpython.com/python-speech-recognition/#putting-it-all-together-a-guess-the-word-game" title="Permanent link"></a></h2>
+<p>Now that you’ve seen the basics of recognizing speech with the SpeechRecognition package let’s put your newfound knowledge to use and write a small game that picks a random word from a list and gives the user three attempts to guess the word.</p>
+<p>Here is the full script:</p>
+<div class="highlight python"><pre><span></span><code><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">speech_recognition</span> <span class="k">as</span> <span class="nn">sr</span>
+
+
+<span class="k">def</span> <span class="nf">recognize_speech_from_mic</span><span class="p">(</span><span class="n">recognizer</span><span class="p">,</span> <span class="n">microphone</span><span class="p">):</span>
+    <span class="sd">"""Transcribe speech from recorded from `microphone`.</span>
+
+<span class="sd">    Returns a dictionary with three keys:</span>
+<span class="sd">    "success": a boolean indicating whether or not the API request was</span>
+<span class="sd">               successful</span>
+<span class="sd">    "error":   `None` if no error occured, otherwise a string containing</span>
+<span class="sd">               an error message if the API could not be reached or</span>
+<span class="sd">               speech was unrecognizable</span>
+<span class="sd">    "transcription": `None` if speech could not be transcribed,</span>
+<span class="sd">               otherwise a string containing the transcribed text</span>
+<span class="sd">    """</span>
+    <span class="c1"># check that recognizer and microphone arguments are appropriate type</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recognizer</span><span class="p">,</span> <span class="n">sr</span><span class="o">.</span><span class="n">Recognizer</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"`recognizer` must be `Recognizer` instance"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">microphone</span><span class="p">,</span> <span class="n">sr</span><span class="o">.</span><span class="n">Microphone</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"`microphone` must be `Microphone` instance"</span><span class="p">)</span>
+
+    <span class="c1"># adjust the recognizer sensitivity to ambient noise and record audio</span>
+    <span class="c1"># from the microphone</span>
+    <span class="k">with</span> <span class="n">microphone</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+        <span class="n">recognizer</span><span class="o">.</span><span class="n">adjust_for_ambient_noise</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">audio</span> <span class="o">=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="c1"># set up the response object</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"error"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"transcription"</span><span class="p">:</span> <span class="kc">None</span>
+    <span class="p">}</span>
+
+    <span class="c1"># try recognizing the speech in the recording</span>
+    <span class="c1"># if a RequestError or UnknownValueError exception is caught,</span>
+    <span class="c1">#     update the response object accordingly</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span><span class="p">[</span><span class="s2">"transcription"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">sr</span><span class="o">.</span><span class="n">RequestError</span><span class="p">:</span>
+        <span class="c1"># API was unreachable or unresponsive</span>
+        <span class="n">response</span><span class="p">[</span><span class="s2">"success"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">response</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"API unavailable"</span>
+    <span class="k">except</span> <span class="n">sr</span><span class="o">.</span><span class="n">UnknownValueError</span><span class="p">:</span>
+        <span class="c1"># speech was unintelligible</span>
+        <span class="n">response</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Unable to recognize speech"</span>
+
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="c1"># set the list of words, maxnumber of guesses, and prompt limit</span>
+    <span class="n">WORDS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"apple"</span><span class="p">,</span> <span class="s2">"banana"</span><span class="p">,</span> <span class="s2">"grape"</span><span class="p">,</span> <span class="s2">"orange"</span><span class="p">,</span> <span class="s2">"mango"</span><span class="p">,</span> <span class="s2">"lemon"</span><span class="p">]</span>
+    <span class="n">NUM_GUESSES</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">PROMPT_LIMIT</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="c1"># create recognizer and mic instances</span>
+    <span class="n">recognizer</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Recognizer</span><span class="p">()</span>
+    <span class="n">microphone</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Microphone</span><span class="p">()</span>
+
+    <span class="c1"># get a random word from the list</span>
+    <span class="n">word</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">WORDS</span><span class="p">)</span>
+
+    <span class="c1"># format the instructions string</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">"I'm thinking of one of these words:</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"</span><span class="si">{words}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"You have </span><span class="si">{n}</span><span class="s2"> tries to guess which one.</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">words</span><span class="o">=</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">WORDS</span><span class="p">),</span> <span class="n">n</span><span class="o">=</span><span class="n">NUM_GUESSES</span><span class="p">)</span>
+
+    <span class="c1"># show instructions and wait 3 seconds before starting the game</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">instructions</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_GUESSES</span><span class="p">):</span>
+        <span class="c1"># get the guess from the user</span>
+        <span class="c1"># if a transcription is returned, break out of the loop and</span>
+        <span class="c1">#     continue</span>
+        <span class="c1"># if no transcription returned and API request failed, break</span>
+        <span class="c1">#     loop and continue</span>
+        <span class="c1"># if API request succeeded but no transcription was returned,</span>
+        <span class="c1">#     re-prompt the user to say their guess again. Do this up</span>
+        <span class="c1">#     to PROMPT_LIMIT times</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">PROMPT_LIMIT</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'Guess </span><span class="si">{}</span><span class="s1">. Speak!'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="n">recognize_speech_from_mic</span><span class="p">(</span><span class="n">recognizer</span><span class="p">,</span> <span class="n">microphone</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">guess</span><span class="p">[</span><span class="s2">"transcription"</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">guess</span><span class="p">[</span><span class="s2">"success"</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"I didn't catch that. What did you say?</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="c1"># if there was an error, stop the game</span>
+        <span class="k">if</span> <span class="n">guess</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"ERROR: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">guess</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]))</span>
+            <span class="k">break</span>
+
+        <span class="c1"># show the user the transcription</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"You said: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">guess</span><span class="p">[</span><span class="s2">"transcription"</span><span class="p">]))</span>
+
+        <span class="c1"># determine if guess is correct and if any attempts remain</span>
+        <span class="n">guess_is_correct</span> <span class="o">=</span> <span class="n">guess</span><span class="p">[</span><span class="s2">"transcription"</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">user_has_more_attempts</span> <span class="o">=</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">NUM_GUESSES</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c1"># determine if the user has won the game</span>
+        <span class="c1"># if not, repeat the loop if user has more attempts</span>
+        <span class="c1"># if no attempts left, the user loses the game</span>
+        <span class="k">if</span> <span class="n">guess_is_correct</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Correct! You win!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">user_has_more_attempts</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Incorrect. Try again.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Sorry, you lose!</span><span class="se">\n</span><span class="s2">I was thinking of '</span><span class="si">{}</span><span class="s2">'."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+            <span class="k">break</span>
+</code></pre></div>
+<p>Let’s break that down a little bit.</p>
+<p>The <code>recognize_speech_from_mic()</code> function takes a <code>Recognizer</code> and <code>Microphone</code> instance as arguments and returns a dictionary with three keys. The first key, <code>"success"</code>, is a boolean that indicates whether or not the API request was successful. The second key, <code>"error"</code>, is either <a href="https://realpython.com/null-in-python/"><code>None</code></a> or an error message indicating that the API is unavailable or the speech was unintelligible. Finally, the <code>"transcription"</code> key contains the transcription of the audio recorded by the microphone.</p>
+<p>The function first checks that the <code>recognizer</code> and <code>microphone</code> arguments are of the correct type, and raises a <code>TypeError</code> if either is invalid:</p>
+<div class="highlight python"><pre><span></span><code><span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recognizer</span><span class="p">,</span> <span class="n">sr</span><span class="o">.</span><span class="n">Recognizer</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'`recognizer` must be `Recognizer` instance'</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">microphone</span><span class="p">,</span> <span class="n">sr</span><span class="o">.</span><span class="n">Microphone</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'`microphone` must be a `Microphone` instance'</span><span class="p">)</span>
+</code></pre></div>
+<p>The <code>listen()</code> method is then used to record microphone input:</p>
+<div class="highlight python"><pre><span></span><code><span class="k">with</span> <span class="n">microphone</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+    <span class="n">recognizer</span><span class="o">.</span><span class="n">adjust_for_ambient_noise</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">audio</span> <span class="o">=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+</code></pre></div>
+<p>The <code>adjust_for_ambient_noise()</code> method is used to calibrate the recognizer for changing noise conditions each time the <code>recognize_speech_from_mic()</code> function is called.</p>
+<p>Next, <code>recognize_google()</code> is called to transcribe any speech in the recording. A <code>try...except</code> block is used to catch the <code>RequestError</code> and <code>UnknownValueError</code> exceptions and handle them accordingly. The success of the API request, any error messages, and the transcribed speech are stored in the <code>success</code>, <code>error</code> and <code>transcription</code> keys of the <code>response</code> dictionary, which is returned by the <code>recognize_speech_from_mic()</code> function.</p>
+<div class="highlight python"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"error"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s2">"transcription"</span><span class="p">:</span> <span class="kc">None</span>
+<span class="p">}</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">response</span><span class="p">[</span><span class="s2">"transcription"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">sr</span><span class="o">.</span><span class="n">RequestError</span><span class="p">:</span>
+    <span class="c1"># API was unreachable or unresponsive</span>
+    <span class="n">response</span><span class="p">[</span><span class="s2">"success"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">response</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"API unavailable"</span>
+<span class="k">except</span> <span class="n">sr</span><span class="o">.</span><span class="n">UnknownValueError</span><span class="p">:</span>
+    <span class="c1"># speech was unintelligible</span>
+    <span class="n">response</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Unable to recognize speech"</span>
+
+<span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+<p>You can test the <code>recognize_speech_from_mic()</code> function by saving the above script to a file called “guessing_game.py” and running the following in an interpreter session:</p>
+<div class="highlight python repl"><span class="repl-toggle" title="Toggle REPL prompts and output">&gt;&gt;&gt;</span><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">speech_recognition</span> <span class="k">as</span> <span class="nn">sr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">guessing_game</span> <span class="kn">import</span> <span class="n">recognize_speech_from_mic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Recognizer</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Microphone</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recognize_speech_from_mic</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="go">{'success': True, 'error': None, 'transcription': 'hello'}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Your output will vary depending on what you say</span>
+</code></pre></div>
+<p>The game itself is pretty simple. First, a list of words, a maximum number of allowed guesses and a prompt limit are declared:</p>
+<div class="highlight python"><pre><span></span><code><span class="n">WORDS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'apple'</span><span class="p">,</span> <span class="s1">'banana'</span><span class="p">,</span> <span class="s1">'grape'</span><span class="p">,</span> <span class="s1">'orange'</span><span class="p">,</span> <span class="s1">'mango'</span><span class="p">,</span> <span class="s1">'lemon'</span><span class="p">]</span>
+<span class="n">NUM_GUESSES</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">PROMPT_LIMIT</span> <span class="o">=</span> <span class="mi">5</span>
+</code></pre></div>
+<p>Next, a <code>Recognizer</code> and <code>Microphone</code> instance is created and a random word is chosen from <code>WORDS</code>:</p>
+<div class="highlight python"><pre><span></span><code><span class="n">recognizer</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Recognizer</span><span class="p">()</span>
+<span class="n">microphone</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Microphone</span><span class="p">()</span>
+<span class="n">word</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">WORDS</span><span class="p">)</span>
+</code></pre></div>
+<p>After printing some instructions and waiting for 3 three seconds, a <code>for</code> loop is used to manage each user attempt at guessing the chosen word. The first thing inside the <code>for</code> loop is another <code>for</code> loop that prompts the user at most <code>PROMPT_LIMIT</code> times for a guess, attempting to recognize the input each time with the <code>recognize_speech_from_mic()</code> function and storing the dictionary returned to the local variable <code>guess</code>.</p>
+<p>If the <code>"transcription"</code> key of <code>guess</code> is not <code>None</code>, then the user’s speech was transcribed and the inner loop is terminated with <code>break</code>. If the speech was not transcribed and the <code>"success"</code> key is set to <code>False</code>, then an API error occurred and the loop is again terminated with <code>break</code>. Otherwise, the API request was successful but the speech was unrecognizable. The user is warned and the <code>for</code> loop repeats, giving the user another chance at the current attempt.</p>
+<div class="highlight python"><pre><span></span><code><span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">PROMPT_LIMIT</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Guess </span><span class="si">{}</span><span class="s1">. Speak!'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">guess</span> <span class="o">=</span> <span class="n">recognize_speech_from_mic</span><span class="p">(</span><span class="n">recognizer</span><span class="p">,</span> <span class="n">microphone</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">guess</span><span class="p">[</span><span class="s2">"transcription"</span><span class="p">]:</span>
+        <span class="k">break</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">guess</span><span class="p">[</span><span class="s2">"success"</span><span class="p">]:</span>
+        <span class="k">break</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"I didn't catch that. What did you say?</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>Once the inner <code>for</code> loop terminates, the <code>guess</code> dictionary is checked for errors. If any occurred, the error message is displayed and the outer <code>for</code> loop is terminated with <code>break</code>, which will end the program execution.</p>
+<div class="highlight python"><pre><span></span><code><span class="k">if</span> <span class="n">guess</span><span class="p">[</span><span class="s1">'error'</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"ERROR: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">guess</span><span class="p">[</span><span class="s2">"error"</span><span class="p">]))</span>
+    <span class="k">break</span>
+</code></pre></div>
+<p>If there weren’t any errors, the transcription is compared to the randomly selected word. The <code>lower()</code> method for string objects is used to ensure better matching of the guess to the chosen word. The API may return speech matched to the word “apple” as “Apple” <em>or</em> “apple,” and either response should count as a correct answer.</p>
+<p>If the guess was correct, the user wins and the game is terminated. If the user was incorrect and has any remaining attempts, the outer <code>for</code> loop repeats and a new guess is retrieved. Otherwise, the user loses the game.</p>
+<div class="highlight python"><pre><span></span><code><span class="n">guess_is_correct</span> <span class="o">=</span> <span class="n">guess</span><span class="p">[</span><span class="s2">"transcription"</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="n">user_has_more_attempts</span> <span class="o">=</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">NUM_GUESSES</span> <span class="o">-</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="n">guess_is_correct</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Correct! You win!'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+    <span class="k">break</span>
+<span class="k">elif</span> <span class="n">user_has_more_attempts</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Incorrect. Try again.</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Sorry, you lose!</span><span class="se">\n</span><span class="s2">I was thinking of '</span><span class="si">{}</span><span class="s2">'."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+    <span class="k">break</span>
+</code></pre></div>
+<p>When run, the output will look something like this:</p>
+<div class="highlight sh"><pre><span></span><code><span class="go">I'm thinking of one of these words:</span>
+<span class="go">apple, banana, grape, orange, mango, lemon</span>
+<span class="go">You have 3 tries to guess which one.</span>
+
+<span class="go">Guess 1. Speak!</span>
+<span class="go">You said: banana</span>
+<span class="go">Incorrect. Try again.</span>
+
+<span class="go">Guess 2. Speak!</span>
+<span class="go">You said: lemon</span>
+<span class="go">Incorrect. Try again.</span>
+
+<span class="go">Guess 3. Speak!</span>
+<span class="go">You said: Orange</span>
+<span class="go">Correct! You win!</span>
+</code></pre></div>
+<div><div class="rounded border border-light" style="display:block;position:relative;"><div style="display:block;width:100%;padding-top:12.5%;"></div><div class="rpad rounded border" data-unit="8x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/36075076065/?c=30337084727&amp;p=58946116052&amp;r=73856" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/fc3dcce3b30783158d89077cf5a8810e" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div></div><a class="small text-muted" href="https://realpython.com/account/join/" rel="nofollow"><i aria-hidden="true" class="fa fa-info-circle"> </i> Remove ads</a></div></section><section class="section2" id="recap-and-additional-resources"><h2>Recap and Additional Resources<a class="headerlink" href="https://realpython.com/python-speech-recognition/#recap-and-additional-resources" title="Permanent link"></a></h2>
+<p>In this tutorial, you’ve seen how to install the SpeechRecognition package and use its <code>Recognizer</code> class to easily recognize speech from both a file—using <code>record()</code>—and microphone input—using <code>listen().</code> You also saw how to process segments of an audio file using the <code>offset</code> and <code>duration</code> keyword arguments of the <code>record()</code> method.</p>
+<p>You’ve seen the effect noise can have on the accuracy of transcriptions, and have learned how to adjust a <code>Recognizer</code> instance’s sensitivity to ambient noise with <code>adjust_for_ambient_noise().</code> You have also learned which exceptions a <code>Recognizer</code> instance may throw—<code>RequestError</code> for bad API requests and <code>UnkownValueError</code> for unintelligible speech—and how to handle these with <code>try...except</code> blocks.</p>
+<p>Speech recognition is a deep subject, and what you have learned here barely scratches the surface. If you’re interested in learning more, here are some additional resources.</p>
+<div class="alert alert-warning" role="alert"><p><strong>Free Bonus:</strong> <a href="https://realpython.com/python-speech-recognition/#" class="alert-link" data-toggle="modal" data-target="#modal-python-speech-recognition-code" data-focus="false">Click here to download a Python speech recognition sample project with full source code </a> that you can use as a basis for your own speech recognition apps.</p></div>
+<p>For more information on the SpeechRecognition package:</p>
+<ul>
+<li><a href="https://github.com/Uberi/speech_recognition/blob/master/reference/library-reference.rst">Library reference</a></li>
+<li><a href="https://github.com/Uberi/speech_recognition/tree/master/examples">Examples</a></li>
+<li><a href="https://github.com/Uberi/speech_recognition#troubleshooting">Troubleshooting page</a></li>
+</ul>
+<p>A few interesting internet resources:</p>
+<ul>
+<li><a href="https://youtu.be/yxxRAHVtafI">Behind the Mic: The Science of Talking with Computers</a>. A short film about speech processing by Google.</li>
+<li><a href="https://cacm.acm.org/magazines/2014/1/170863-a-historical-perspective-of-speech-recognition/fulltext">A Historical Perspective of Speech Recognition</a> by Huang, Baker and Reddy. Communications of the ACM (2014). This article provides an in-depth and scholarly look at the evolution of speech recognition technology.</li>
+<li><a href="https://medium.com/swlh/the-past-present-and-future-of-speech-recognition-technology-cf13c179aaf">The Past, Present and Future of Speech Recognition Technology</a> by Clark Boyd at The Startup. This blog post presents an overview of speech recognition technology, with some thoughts about the future.</li>
+</ul>
+<p>Some good books about speech recognition:</p>
+<ul>
+<li><a href="https://realpython.com/asins/0262533294/">The Voice in the Machine: Building Computers That Understand Speech</a>, Pieraccini, MIT Press (2012). An accessible general-audience book covering the history of, as well as modern advances in, speech processing.</li>
+<li><a href="https://realpython.com/asins/0130151572/">Fundamentals of Speech Recognition</a>, Rabiner and Juang, Prentice Hall (1993). Rabiner, a researcher at Bell Labs, was instrumental in designing some of the first commercially viable speech recognizers. This book is now over 20 years old, but a lot of the fundamentals remain the same.</li>
+<li><a href="https://realpython.com/asins/1447157788/">Automatic Speech Recognition: A Deep Learning Approach</a>, Yu and Deng, Springer (2014). Yu and Deng are researchers at Microsoft and both very active in the field of speech processing. This book covers a lot of modern approaches and cutting-edge research but is not for the mathematically faint-of-heart.</li>
+</ul>
+</section><section class="section2" id="appendix-recognizing-speech-in-languages-other-than-english"><h2>Appendix: Recognizing Speech in Languages Other Than English<a class="headerlink" href="https://realpython.com/python-speech-recognition/#appendix-recognizing-speech-in-languages-other-than-english" title="Permanent link"></a></h2>
+<p>Throughout this tutorial, we’ve been recognizing speech in English, which is the default language for each <code>recognize_*()</code> method of the SpeechRecognition package. However, it is absolutely possible to recognize speech in other languages, and is quite simple to accomplish.</p>
+<p>To recognize speech in a different language, set the <code>language</code> keyword argument of the <code>recognize_*()</code> method to a string corresponding to the desired language. Most of the methods accept a BCP-47 language tag, such as <code>'en-US'</code> for American English, or <code>'fr-FR'</code> for French. For example, the following recognizes French speech in an audio file:</p>
+<div class="highlight python"><pre><span></span><code><span class="kn">import</span> <span class="nn">speech_recognition</span> <span class="k">as</span> <span class="nn">sr</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">Recognizer</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="n">sr</span><span class="o">.</span><span class="n">AudioFile</span><span class="p">(</span><span class="s1">'path/to/audiofile.wav'</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+    <span class="n">audio</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+<span class="n">r</span><span class="o">.</span><span class="n">recognize_google</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s1">'fr-FR'</span><span class="p">)</span>
+</code></pre></div>
+<p>Only the following methods accept a <code>language</code> keyword argument:</p>
+<ul>
+<li><code>recognize_bing()</code></li>
+<li><code>recognize_google()</code></li>
+<li><code>recognize_google_cloud()</code></li>
+<li><code>recognize_ibm()</code></li>
+<li><code>recognize_sphinx()</code></li>
+</ul>
+<p>To find out which language tags are supported by the API you are using, you’ll have to consult the corresponding <a href="https://github.com/Uberi/speech_recognition/blob/master/reference/library-reference.rst">documentation</a>. A list of tags accepted by <code>recognize_google()</code> can be found in <a href="https://stackoverflow.com/questions/14257598/what-are-language-codes-in-chromes-implementation-of-the-html5-speech-recogniti">this Stack Overflow answer</a>.</p>
+</section>
+<div class="text-center my-3">
+<div class="jsCompletionStatusWidget btn-group mb-0">
+<button title="Click to mark as completed" class="jsBtnCompletion btn btn-secondary border-right" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Mark as Completed</button>
+<button title="Add bookmark" class="jsBtnBookmark btn btn-secondary border-left"><i class="fa fa-fw fa-bookmark-o"></i></button>
+</div>
+</div>
+</div>
+<div class="card mt-4 mb-4 bg-secondary">
+<p class="card-header h3 text-center bg-light">🐍 Python Tricks 💌</p>
+<div class="card-body">
+<div class="container">
+ <div class="row">
+<div class="col-xs-12 col-sm-7">
+<p>Get a short &amp; sweet <strong>Python Trick</strong> delivered to your inbox every couple of days. No spam ever. Unsubscribe any time. Curated by the Real Python team.</p>
+</div>
+<div class="col-xs-12 col-sm-5">
+<img class="img-fluid rounded mb-3" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/pytrick-dict-merge.webp" width="738" height="490" alt="Python Tricks Dictionary Merge">
+</div>
+</div>
+<div class="row mb-3">
+<form class="col-12" action="https://realpython.com/optins/process/" method="post">
+<input type="hidden" name="csrfmiddlewaretoken" value="ckKMjGFBLDshXnLWD0LKrjwEIOrwR8Bjfhni4XgTf9hgReDiWWHZeNNpBeXnfA2T">
+<input type="hidden" name="slug" value="static-python-tricks-footer">
+<div class="form-group">
+<input name="email" type="email" class="form-control form-control-lg" placeholder="Email Address" required="">
+</div>
+<button name="submit" type="submit" class="btn btn-primary btn-lg btn-block">Send Me Python Tricks »</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<div class="card mt-3" id="author">
+<p class="card-header h3">About <strong>David Amos</strong></p>
+<div class="card-body">
+<div class="container p-0">
+<div class="row">
+<div class="col-12 col-md-3 align-self-center">
+<a href="https://realpython.com/team/damos/"><img loading="lazy" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/saved_resource" srcset="https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/me-small.f5f49f1c48e1.jpg&amp;w=100&amp;h=100&amp;mode=crop&amp;sig=4e832705873c990ccc3fe2459dcd2b081613ecb1 100w, https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/me-small.f5f49f1c48e1.jpg&amp;w=200&amp;h=200&amp;mode=crop&amp;sig=ecc773a7a56114ed2831d281156669f0d7f1ab68 200w, https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/me-small.f5f49f1c48e1.jpg&amp;w=400&amp;h=400&amp;mode=crop&amp;sig=522ebc378492fd2228f8a9980bf89544b51aba2c 400w" sizes="25vw" width="400" height="400" class="d-block d-md-none rounded-circle img-fluid w-33 mb-0 mx-auto" alt="David Amos"></a>
+<a href="https://realpython.com/team/damos/"><img loading="lazy" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/saved_resource" srcset="https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/me-small.f5f49f1c48e1.jpg&amp;w=100&amp;h=100&amp;mode=crop&amp;sig=4e832705873c990ccc3fe2459dcd2b081613ecb1 100w, https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/me-small.f5f49f1c48e1.jpg&amp;w=200&amp;h=200&amp;mode=crop&amp;sig=ecc773a7a56114ed2831d281156669f0d7f1ab68 200w, https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/me-small.f5f49f1c48e1.jpg&amp;w=400&amp;h=400&amp;mode=crop&amp;sig=522ebc378492fd2228f8a9980bf89544b51aba2c 400w" sizes="25vw" width="400" height="400" class="d-none d-md-block rounded-circle img-fluid w-100 mb-0" alt="David Amos"></a>
+</div>
+<div class="col mt-3">
+<p>David is a mathematician by training, a data scientist/Python developer by profession, and a coffee junkie by choice.</p>
+<a href="https://realpython.com/team/damos/" class="card-link">» More about David</a>
+</div>
+</div>
+</div>
+</div>
+<hr class="my-0">
+<div class="card-body pb-0">
+<div class="container">
+<div class="row">
+<p><em>Each tutorial at Real Python is created by a team of developers so that it meets our high quality standards. The team members who worked on this tutorial are:</em></p>
+</div>
+<div class="row align-items-center w-100 mx-auto">
+<div class="col-4 col-sm-2 align-self-center">
+<a href="https://realpython.com/team/dbader/"><img loading="lazy" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/saved_resource(1)" srcset="https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/daniel-square.d58bf4388750.jpg&amp;w=250&amp;h=250&amp;mode=crop&amp;sig=981634b4528584f2e9c7ee663477173599e1781a 250w, https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/daniel-square.d58bf4388750.jpg&amp;w=500&amp;h=500&amp;mode=crop&amp;sig=841025b97d25f05c1b90802032e477020462fe01 500w, https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/daniel-square.d58bf4388750.jpg&amp;w=1000&amp;h=1000&amp;mode=crop&amp;sig=304f5f568993310d5e87b2ca3c504260c018effa 1000w" sizes="10vw" width="400" height="400" class="rounded-circle img-fluid w-100" alt="Dan Bader"></a>
+</div>
+<div class="col pl-0 d-none d-sm-block">
+<a href="https://realpython.com/team/dbader/" class="card-link small"><p>Dan</p></a>
+</div>
+<div class="col-4 col-sm-2 align-self-center"></div>
+<div class="col pl-0 d-none d-sm-block"></div>
+<div class="col-4 col-sm-2 align-self-center"></div>
+<div class="col pl-0 d-none d-sm-block"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-light rounded py-4 my-4 shadow shadow-sm mx-n2">
+<div class="col-12 text-center d-block d-md-none">
+<p class="h2 mb-3">Master <u><span class="marker-highlight">Real-World Python Skills</span></u> With Unlimited Access to Real&nbsp;Python</p>
+<p class="mb-1"><img class="w-75" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/lesson-locked.f5105cfd26db.svg"></p>
+<p class="mx-auto w-75 mb-3 small"><strong>Join us and get access to hundreds of tutorials, hands-on video courses, and a community of expert&nbsp;Pythonistas:</strong></p>
+<p class="mb-0"><a href="https://realpython.com/account/join/?utm_source=rp_article_footer&amp;utm_content=python-speech-recognition" class="btn btn-primary btn-sm px-4 mb-0">Level Up Your Python Skills »</a>
+</p></div>
+<div class="col-12 text-center d-none d-md-block">
+<p class="h2 mb-2">Master <u><span class="marker-highlight">Real-World Python Skills</span></u><br>With Unlimited Access to Real&nbsp;Python</p>
+<p class="mb-2"><img class="w-50 mb-2" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/lesson-locked.f5105cfd26db.svg"></p>
+<p class="mx-auto w-50 mb-3"><strong>Join us and get access to hundreds of tutorials, hands-on video courses, and a community of expert Pythonistas:</strong></p>
+<p><a href="https://realpython.com/account/join/?utm_source=rp_article_footer&amp;utm_content=python-speech-recognition" class="btn btn-primary btn-lg px-4">Level Up Your Python Skills »</a>
+</p></div>
+</div>
+<div class="card mt-4" id="reader-comments">
+<p class="card-header h3">What Do You Think?</p>
+<div class="text-center mt-3 mb-0 p-0">
+<span>
+<a target="_blank" rel="nofollow" href="https://twitter.com/intent/tweet/?text=Check%20out%20this%20%23Python%20tutorial:%20The%20Ultimate%20Guide%20To%20Speech%20Recognition%20With%20Python%20by%20@realpython&amp;url=https%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-twitter text-light mb-1"><i class="mr-1 fa fa-twitter text-light"></i>Tweet</a>
+<a target="_blank" rel="nofollow" href="https://facebook.com/sharer/sharer.php?u=https%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-facebook text-light mb-1"><i class="mr-1 fa fa-facebook text-light"></i>Share</a>
+<a target="_blank" rel="nofollow" href="mailto:?subject=Python%20article%20for%20you&amp;body=Check%20out%20this%20Python%20tutorial:%0A%0AThe%20Ultimate%20Guide%20To%20Speech%20Recognition%20With%20Python%0A%0Ahttps%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-red text-light mb-1"><i class="mr-1 fa fa-envelope text-light"></i>Email</a>
+</span>
+</div>
+<div class="card-body">
+<div class="alert alert-dark">
+<p class="mb-0"><strong>Real Python Comment Policy:</strong> The most useful comments are those written with the goal of learning from or helping out other readers—after reading the whole article and all the earlier comments. Complaints and insults generally won’t make the cut here.</p>
+</div>
+<p>What’s your #1 takeaway or favorite thing you learned? How are you going to put your newfound skills to use? Leave a comment below and let us know.</p>
+<div class="mb-4" id="disqus_thread">
+</div>
+</div>
+</div>
+<div class="card mt-4 mb-4">
+<p class="card-header h3">Keep Learning</p>
+<div class="card-body">
+<p class="mb-0">Related Tutorial Categories:
+<a href="https://realpython.com/tutorials/advanced/" class="badge badge-light text-muted">advanced</a>
+<a href="https://realpython.com/tutorials/data-science/" class="badge badge-light text-muted">data-science</a>
+<a href="https://realpython.com/tutorials/machine-learning/" class="badge badge-light text-muted">machine-learning</a>
+</p>
+</div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="rpvc">
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+<div class="modal-content">
+<div class="modal-header border-0 mt-3">
+<div class="col-12 modal-title text-center">
+<h2 class="my-0 mx-5">Master <u>Real-World Python Skills</u> With Unlimited Access to Real Python</h2>
+<p class="text-center text-muted mt-2 mb-1">Already a member? <a href="https://realpython.com/account/login/">Sign-In</a></p>
+</div>
+</div>
+<div class="modal-body bg-light">
+<div class="col-12 text-center">
+<p class="mb-2 mt-3"><a href="https://realpython.com/account/join/?utm_source=rp&amp;utm_medium=web&amp;utm_campaign=pwn&amp;utm_content=v2"><img class="w-50 mb-2" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/lesson-locked.f5105cfd26db.svg"></a></p>
+<p class="mx-auto w-66 mb-3"><strong>Join us and get access to hundreds of tutorials, hands-on video courses, and a community of expert Pythonistas:</strong></p>
+<p><a href="https://realpython.com/account/join/?utm_source=rp&amp;utm_medium=web&amp;utm_campaign=pwn&amp;utm_content=v2" class="btn btn-primary btn-lg px-4"><i class="fa fa-unlock mr-2"></i>Unlock All Content »</a>
+</p></div>
+</div>
+<div class="modal-footer border-0">
+<button class="text-muted btn" data-dismiss="modal">Close</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<aside class="col-md-7 col-lg-4">
+<div class="card mb-3 bg-secondary">
+<form class="card-body" action="https://realpython.com/optins/process/" method="post">
+<div class="form-group">
+<p class="h5 text-muted text-center">— FREE Email Series —</p>
+<p class="h3 text-center">🐍 Python Tricks 💌</p>
+<p><img class="img-fluid rounded" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/pytrick-dict-merge.webp" width="738" height="490" alt="Python Tricks Dictionary Merge"></p>
+</div>
+<div class="form-group">
+<input type="hidden" name="csrfmiddlewaretoken" value="ckKMjGFBLDshXnLWD0LKrjwEIOrwR8Bjfhni4XgTf9hgReDiWWHZeNNpBeXnfA2T">
+<input type="hidden" name="slug" value="static-python-tricks-sidebar">
+<input type="email" class="form-control form-control-md" name="email" placeholder="Email…" required="">
+</div>
+<button type="submit" name="submit" class="btn btn-primary btn-md btn-block">Get Python Tricks »</button>
+<p class="mb-0 mt-2 text-muted text-center">🔒 No spam. Unsubscribe any time.</p>
+</form>
+</div>
+<div class="sidebar-module sidebar-module-inset border">
+<p class="h4"><a class="link-unstyled" href="https://realpython.com/tutorials/all/">All Tutorial Topics</a></p>
+<a href="https://realpython.com/tutorials/advanced/" class="badge badge-light text-muted">advanced</a>
+<a href="https://realpython.com/tutorials/api/" class="badge badge-light text-muted">api</a>
+<a href="https://realpython.com/tutorials/basics/" class="badge badge-light text-muted">basics</a>
+<a href="https://realpython.com/tutorials/best-practices/" class="badge badge-light text-muted">best-practices</a>
+<a href="https://realpython.com/tutorials/community/" class="badge badge-light text-muted">community</a>
+<a href="https://realpython.com/tutorials/databases/" class="badge badge-light text-muted">databases</a>
+<a href="https://realpython.com/tutorials/data-science/" class="badge badge-light text-muted">data-science</a>
+<a href="https://realpython.com/tutorials/devops/" class="badge badge-light text-muted">devops</a>
+<a href="https://realpython.com/tutorials/django/" class="badge badge-light text-muted">django</a>
+<a href="https://realpython.com/tutorials/docker/" class="badge badge-light text-muted">docker</a>
+<a href="https://realpython.com/tutorials/flask/" class="badge badge-light text-muted">flask</a>
+<a href="https://realpython.com/tutorials/front-end/" class="badge badge-light text-muted">front-end</a>
+<a href="https://realpython.com/tutorials/gui/" class="badge badge-light text-muted">gui</a>
+<a href="https://realpython.com/tutorials/intermediate/" class="badge badge-light text-muted">intermediate</a>
+<a href="https://realpython.com/tutorials/machine-learning/" class="badge badge-light text-muted">machine-learning</a>
+<a href="https://realpython.com/tutorials/projects/" class="badge badge-light text-muted">projects</a>
+<a href="https://realpython.com/tutorials/python/" class="badge badge-light text-muted">python</a>
+<a href="https://realpython.com/tutorials/testing/" class="badge badge-light text-muted">testing</a>
+<a href="https://realpython.com/tutorials/tools/" class="badge badge-light text-muted">tools</a>
+<a href="https://realpython.com/tutorials/web-dev/" class="badge badge-light text-muted">web-dev</a>
+<a href="https://realpython.com/tutorials/web-scraping/" class="badge badge-light text-muted">web-scraping</a>
+</div>
+<div class="sidebar-module sidebar-module-inset p-0" style="overflow:hidden;">
+<div style="display:block;position:relative;">
+<div style="display:block;width:100%;padding-top:100%;"></div>
+<div class="rpad" data-unit="1x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/67353975905/?c=48874902176&amp;p=58946116052&amp;r=34906" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/437b760e57e1b41a36382d4adf87f68d" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div>
+</div>
+</div>
+<div class="sidebar-sticky sidebar-nav-message">
+<div class="bg-light sidebar-module sidebar-module-inset" id="sidebar-toc">
+<p class="h4 text-muted"><a class="link-unstyled" href="https://realpython.com/python-speech-recognition/#toc">Table of Contents</a></p>
+<div class="toc">
+<ul>
+<li class=""><a href="https://realpython.com/python-speech-recognition/#how-speech-recognition-works-an-overview">How Speech Recognition Works – An Overview</a></li>
+<li class=""><a href="https://realpython.com/python-speech-recognition/#picking-a-python-speech-recognition-package">Picking a Python Speech Recognition Package</a></li>
+<li class=""><a href="https://realpython.com/python-speech-recognition/#installing-speechrecognition">Installing SpeechRecognition</a></li>
+<li class=""><a href="https://realpython.com/python-speech-recognition/#the-recognizer-class">The Recognizer Class</a></li>
+<li class=""><a href="https://realpython.com/python-speech-recognition/#working-with-audio-files">Working With Audio Files</a><ul>
+<li><a href="https://realpython.com/python-speech-recognition/#supported-file-types">Supported File Types</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#using-record-to-capture-data-from-a-file">Using record() to Capture Data From a File</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#capturing-segments-with-offset-and-duration">Capturing Segments With offset and duration</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#the-effect-of-noise-on-speech-recognition">The Effect of Noise on Speech Recognition</a></li>
+</ul>
+</li>
+<li class=""><a href="https://realpython.com/python-speech-recognition/#working-with-microphones">Working With Microphones</a><ul>
+<li><a href="https://realpython.com/python-speech-recognition/#installing-pyaudio">Installing PyAudio</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#the-microphone-class">The Microphone Class</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#using-listen-to-capture-microphone-input">Using listen() to Capture Microphone Input</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#handling-unrecognizable-speech">Handling Unrecognizable Speech</a></li>
+</ul>
+</li>
+<li><a href="https://realpython.com/python-speech-recognition/#putting-it-all-together-a-guess-the-word-game">Putting It All Together: A “Guess the Word” Game</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#recap-and-additional-resources">Recap and Additional Resources</a></li>
+<li><a href="https://realpython.com/python-speech-recognition/#appendix-recognizing-speech-in-languages-other-than-english">Appendix: Recognizing Speech in Languages Other Than English</a></li>
+</ul>
+</div>
+</div>
+<div class="sidebar-module sidebar-module-inset text-center my-3 py-0">
+<div class="jsCompletionStatusWidget btn-group mb-0">
+<button title="Click to mark as completed" class="jsBtnCompletion btn btn-secondary border-right" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Mark as Completed</button>
+<button title="Add bookmark" class="jsBtnBookmark btn btn-secondary border-left"><i class="fa fa-fw fa-bookmark-o"></i></button>
+</div>
+</div>
+<div class="sidebar-module sidebar-module-inset text-center my-3 py-0">
+<span>
+<a target="_blank" rel="nofollow" href="https://twitter.com/intent/tweet/?text=Check%20out%20this%20%23Python%20tutorial:%20The%20Ultimate%20Guide%20To%20Speech%20Recognition%20With%20Python%20by%20@realpython&amp;url=https%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-twitter text-light mb-1"><i class="mr-1 fa fa-twitter text-light"></i>Tweet</a>
+<a target="_blank" rel="nofollow" href="https://facebook.com/sharer/sharer.php?u=https%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-facebook text-light mb-1"><i class="mr-1 fa fa-facebook text-light"></i>Share</a>
+<a target="_blank" rel="nofollow" href="mailto:?subject=Python%20article%20for%20you&amp;body=Check%20out%20this%20Python%20tutorial:%0A%0AThe%20Ultimate%20Guide%20To%20Speech%20Recognition%20With%20Python%0A%0Ahttps%3A//realpython.com/python-speech-recognition/" class="mr-1 badge badge-red text-light mb-1"><i class="mr-1 fa fa-envelope text-light"></i>Email</a>
+</span>
+</div>
+<div class="sidebar-module sidebar-module-inset p-0" style="overflow:hidden;">
+<div style="display:block;position:relative;">
+<div style="display:block;width:100%;padding-top:25%;"></div>
+<div class="rpad" data-unit="4x1" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;"><a href="https://srv.realpython.net/click/2933810937/?c=37384875857&amp;p=58946116052&amp;r=46018" rel="nofollow" target="_blank"><img src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/6346943f3628398cb60e28a63f9de9c0" style="max-width: 100%; max-height: 100%; width: 100%;"></a></div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<div class="modal fade" id="modal-python-speech-recognition-code" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header bg-light pt-3 pb-2">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12">
+<div class="progress" style="height: .5rem;">
+<div class="progress-bar progress-bar-striped progress-bar-animated w-50" role="progressbar"></div>
+</div>
+</div>
+<div class="col-12">
+<p class="text-muted text-center mb-0 mt-2">Almost there! Complete this form and click the button below to gain instant access:</p>
+</div>
+</div>
+</div>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body m-4">
+<div class="container-fluid">
+<div class="row align-items-center">
+<div class="col-12 col-lg-4 mb-4">
+<img class="img-fluid rounded" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/download-cloud-icon-512x512.webp" width="512" height="512" srcset="https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/download-cloud-icon-512x512.482925a6d1ae.png&amp;w=128&amp;sig=df7f2cc4e963f5849647461916229cb304a4d754 128w, https://robocrop.realpython.net/?url=https%3A//files.realpython.com/media/download-cloud-icon-512x512.482925a6d1ae.png&amp;w=256&amp;sig=a5227cba90c9ac1b4bbb792da289cc13f3230ab5 256w, https://files.realpython.com/media/download-cloud-icon-512x512.482925a6d1ae.png 512w" sizes="50vw" alt="Download Now">
+</div>
+<div class="col">
+<p class="text-center h3 mb-4">Get a Full Python Speech Recognition Sample Project (Source Code / .zip)</p>
+<form class="col-12" action="https://realpython.com/optins/process/" method="post">
+<input type="hidden" name="csrfmiddlewaretoken" value="ckKMjGFBLDshXnLWD0LKrjwEIOrwR8Bjfhni4XgTf9hgReDiWWHZeNNpBeXnfA2T">
+<input type="hidden" name="slug" value="python-speech-recognition-code">
+<div class="form-group">
+<input type="email" name="email" class="form-control" placeholder="Email Address" required="" autofocus="">
+</div>
+<button name="submit" type="submit" class="btn btn-primary btn-block text-wrap">Send Speech Recognition Sample Code »</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="footer">
+<div class="container">
+<p class="text-center text-muted w-75 mx-auto">© 2012–2021 Real Python&nbsp;⋅ <a href="https://realpython.com/newsletter/">Newsletter</a>&nbsp;⋅ <a href="https://realpython.com/podcasts/rpp/">Podcast</a>&nbsp;⋅ <a href="https://www.youtube.com/realpython">YouTube</a>&nbsp;⋅ <a href="https://twitter.com/realpython">Twitter</a>&nbsp;⋅ <a href="https://facebook.com/LearnRealPython">Facebook</a>&nbsp;⋅ <a href="https://www.instagram.com/realpython/">Instagram</a>&nbsp;⋅ <a href="https://realpython.com/">Python&nbsp;Tutorials</a>&nbsp;⋅ <a href="https://realpython.com/search">Search</a>&nbsp;⋅ <a href="https://realpython.com/privacy-policy/">Privacy Policy</a>&nbsp;⋅ <a href="https://realpython.com/energy-policy/" class="text-success active">Energy Policy</a>&nbsp;⋅ <a href="https://realpython.com/sponsorships/">Advertise</a>&nbsp;⋅ <a href="https://realpython.com/contact/">Contact</a><br>❤️ Happy Pythoning!</p>
+</div>
+</footer>
+<script>
+      (function(document, history, location) {
+        var HISTORY_SUPPORT = !!(history && history.pushState);
+
+        var anchorScrolls = {
+          ANCHOR_REGEX: /^#[^ ]+$/,
+          OFFSET_HEIGHT_PX: 120,
+
+          /**
+           * Establish events, and fix initial scroll position if a hash is provided.
+           */
+          init: function() {
+            this.scrollToCurrent();
+            window.addEventListener('hashchange', this.scrollToCurrent.bind(this));
+            document.body.addEventListener('click', this.delegateAnchors.bind(this));
+          },
+
+          /**
+           * Return the offset amount to deduct from the normal scroll position.
+           * Modify as appropriate to allow for dynamic calculations
+           */
+          getFixedOffset: function() {
+            return this.OFFSET_HEIGHT_PX;
+          },
+
+          /**
+           * If the provided href is an anchor which resolves to an element on the
+           * page, scroll to it.
+           * @param  {String} href
+           * @return {Boolean} - Was the href an anchor.
+           */
+          scrollIfAnchor: function(href, pushToHistory) {
+            var match, rect, anchorOffset;
+
+            if(!this.ANCHOR_REGEX.test(href)) {
+              return false;
+            }
+
+            match = document.getElementById(href.slice(1));
+
+            if(match) {
+              rect = match.getBoundingClientRect();
+              anchorOffset = window.pageYOffset + rect.top - this.getFixedOffset();
+              window.scrollTo(window.pageXOffset, anchorOffset);
+
+              // Add the state to history as-per normal anchor links
+              if(HISTORY_SUPPORT && pushToHistory) {
+                history.pushState({}, document.title, location.pathname + href);
+              }
+            }
+
+            return !!match;
+          },
+
+          /**
+           * Attempt to scroll to the current location's hash.
+           */
+          scrollToCurrent: function() {
+            this.scrollIfAnchor(window.location.hash);
+          },
+
+          /**
+           * If the click event's target was an anchor, fix the scroll position.
+           */
+          delegateAnchors: function(e) {
+            var elem = e.target;
+
+            if(
+              elem.nodeName === 'A' &&
+              this.scrollIfAnchor(elem.getAttribute('href'), true)
+            ) {
+              e.preventDefault();
+            }
+          }
+        };
+
+        window.addEventListener(
+          'DOMContentLoaded', anchorScrolls.init.bind(anchorScrolls)
+        );
+      })(window.document, window.history, window.location);
+    </script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/jquery.min.dc5e7f18c8d3.js.download"></script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/popper.min.1022eaf388cc.js.download"></script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/bootstrap.min.f0c2bcf5ef0c.js.download"></script>
+<script>
+    (function() {
+      document.querySelectorAll(".js-search-form-submit").forEach(function(el) {
+        el.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.currentTarget.parentElement.submit();
+        })
+      });
+    })();
+    </script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/repl-toggle.71b73a938a7f.js.download"></script>
+<script>window.rp_prop_id = '58946116052';</script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/tag.js.download" async=""></script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/toc-refresh.76a102c7d921.js.download" async=""></script>
+<script id="js-context" type="application/json">{"is_completed": false, "is_bookmarked": false, "api_article_bookmark_url": "/api/v1/articles/python-speech-recognition/bookmark/", "api_article_completion_status_url": "/api/v1/articles/python-speech-recognition/completion_status/"}</script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/completion-status.87b7c1b631d9.js.download" async=""></script>
+<script id="dsq-count-scr" src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/count.js.download" async=""></script>
+<script>
+      var disqus_config = function () {
+        this.page.url = 'https://realpython.com/python-speech-recognition/';
+        this.page.identifier = 'https://realpython.com/python-speech-recognition/';
+        this.callbacks.onReady = [function() {
+          if (window.onDisqusReady) {
+            window.onDisqusReady();
+          }
+        }];
+      };
+      var disqus_script_url = 'https://realpython.disqus.com/embed.js';
+    </script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/lazy-disqus.07ee9079f4a3.js.download" defer=""></script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/OneSignalSDK.js.download" async=""></script>
+<script>
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "c0081e20-a523-42bb-b0ac-04c5a9e8bf40"
+      });
+    });
+  </script>
+<script src="./The Ultimate Guide To Speech Recognition With Python – Real Python_files/articlevc.2fbd5158a355.js.download" defer=""></script>
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "headline": "The Ultimate Guide To Speech Recognition With Python",
+    
+    "image": {
+      "@type": "ImageObject",
+      "url": "https://files.realpython.com/media/The-Ultimate-Guide-To-Speech-Recognition-With-Python_Watermarked.c0511baf27ba.jpg",
+      "width": 1920,
+      "height": 1080
+    },
+    
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://realpython.com/python-speech-recognition/"
+    },
+    "datePublished": "2018-03-21T14:00:00+00:00",
+    "dateModified": "2020-09-26T01:11:50.248769+00:00",
+     "publisher": {
+      "@type": "Organization",
+      "name": "Real Python",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://realpython.com/static/real-python-logo-square-tiny.b2452b6d3823.png",
+        "width": 60,
+        "height": 60
+      }
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Real Python",
+      "url": "https://realpython.com",
+      "logo": "https://realpython.com/static/real-python-logo-square.146e987bf77c.png"
+    },
+    "description": "An in\u002Ddepth tutorial on speech recognition with Python. Learn which speech recognition library gives the best results and build a full\u002Dfeatured \u0022Guess The Word\u0022 game with it."
+  }
+  </script>
+<script>
+  var _dcq = _dcq || [];
+  var _dcs = _dcs || {};
+  _dcs.account = '6214500';
+
+  (function() {
+    var dc = document.createElement('script');
+    dc.type = 'text/javascript'; dc.async = true;
+    dc.src = '//tag.getdrip.com/6214500.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(dc, s);
+  })();
+</script>
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '2220911568135371');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2220911568135371&ev=PageView&noscript=1"
+/></noscript>
+<script type="text/javascript">(function(){window['__CF$cv$params']={r:'63415a19aa11e6c0',m:'ec3f5b67c26e7bd66ff06cc2868cab0e48c62b01-1616436366-1800-AdJUy7lIfvhqRWD0kf+mFaYz0aqNc8lEo475uvyuVIG8HZpfMhivTq5yglMloojeFmO0+0U0k3SEipnar8rxEgLZOdqYuOvElQOBXXThr3pzviDU1JpwY5aq1rsXsOuQL/vl5mo/VOzP78Cll0LMsVc=',s:[0xc34cde6ae4,0xfa1567e1aa],}})();</script>
+
+</body></html>

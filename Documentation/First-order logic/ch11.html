@@ -1,0 +1,1673 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0044)http://nltk.sourceforge.net/doc/en/ch11.html -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<script language="javascript" type="text/javascript">
+
+function astext(node)
+{
+    return node.innerHTML.replace(/(<([^>]+)>)/ig,"")
+                         .replace(/&gt;/ig, ">")
+                         .replace(/&lt;/ig, "<")
+                         .replace(/&quot;/ig, '"')
+                         .replace(/&amp;/ig, "&");
+}
+
+function copy_notify(node, bar_color, data)
+{
+    // The outer box: relative + inline positioning.
+    var box1 = document.createElement("div");
+    box1.style.position = "relative";
+    box1.style.display = "inline";
+    box1.style.top = "2em";
+    box1.style.left = "1em";
+  
+    // A shadow for fun
+    var shadow = document.createElement("div");
+    shadow.style.position = "absolute";
+    shadow.style.left = "-1.3em";
+    shadow.style.top = "-1.3em";
+    shadow.style.background = "#404040";
+    
+    // The inner box: absolute positioning.
+    var box2 = document.createElement("div");
+    box2.style.position = "relative";
+    box2.style.border = "1px solid #a0a0a0";
+    box2.style.left = "-.2em";
+    box2.style.top = "-.2em";
+    box2.style.background = "white";
+    box2.style.padding = ".3em .4em .3em .4em";
+    box2.style.fontStyle = "normal";
+    box2.style.background = "#f0e0e0";
+
+    node.insertBefore(box1, node.childNodes.item(0));
+    box1.appendChild(shadow);
+    shadow.appendChild(box2);
+    box2.innerHTML="Copied&nbsp;to&nbsp;the&nbsp;clipboard: " +
+                   "<pre class='copy-notify'>"+
+                   data+"</pre>";
+    setTimeout(function() { node.removeChild(box1); }, 1000);
+
+    var elt = node.parentNode.firstChild;
+    elt.style.background = "#ffc0c0";
+    setTimeout(function() { elt.style.background = bar_color; }, 200);
+}
+
+function copy_codeblock_to_clipboard(node)
+{
+    var data = astext(node)+"\n";
+    if (copy_text_to_clipboard(data)) {
+        copy_notify(node, "#40a060", data);
+    }
+}
+
+function copy_doctest_to_clipboard(node)
+{
+    var s = astext(node)+"\n   ";
+    var data = "";
+
+    var start = 0;
+    var end = s.indexOf("\n");
+    while (end >= 0) {
+        if (s.substring(start, start+4) == ">>> ") {
+            data += s.substring(start+4, end+1);
+        }
+        else if (s.substring(start, start+4) == "... ") {
+            data += s.substring(start+4, end+1);
+        }
+        /*
+        else if (end-start > 1) {
+            data += "# " + s.substring(start, end+1);
+        }*/
+        // Grab the next line.
+        start = end+1;
+        end = s.indexOf("\n", start);
+    }
+    
+    if (copy_text_to_clipboard(data)) {
+        copy_notify(node, "#4060a0", data);
+    }
+}
+    
+function copy_text_to_clipboard(data)
+{
+    if (window.clipboardData) {
+        window.clipboardData.setData("Text", data);
+        return true;
+     }
+    else if (window.netscape) {
+        // w/ default firefox settings, permission will be denied for this:
+        netscape.security.PrivilegeManager
+                      .enablePrivilege("UniversalXPConnect");
+    
+        var clip = Components.classes["@mozilla.org/widget/clipboard;1"]
+                      .createInstance(Components.interfaces.nsIClipboard);
+        if (!clip) return;
+    
+        var trans = Components.classes["@mozilla.org/widget/transferable;1"]
+                       .createInstance(Components.interfaces.nsITransferable);
+        if (!trans) return;
+    
+        trans.addDataFlavor("text/unicode");
+    
+        var str = new Object();
+        var len = new Object();
+    
+        var str = Components.classes["@mozilla.org/supports-string;1"]
+                     .createInstance(Components.interfaces.nsISupportsString);
+        var datacopy=data;
+        str.data=datacopy;
+        trans.setTransferData("text/unicode",str,datacopy.length*2);
+        var clipid=Components.interfaces.nsIClipboard;
+    
+        if (!clip) return false;
+    
+        clip.setData(trans,null,clipid.kGlobalClipboard);
+        return true;
+    }
+    return false;
+}
+//-->
+</script>
+
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/">
+<title></title>
+<style type="text/css">
+
+/*
+:Author: Edward Loper, James Curran
+:Copyright: This stylesheet has been placed in the public domain.
+
+Stylesheet for use with Docutils.
+
+This stylesheet defines new css classes used by NLTK.
+
+It uses a Python syntax highlighting scheme that matches
+the colour scheme used by IDLE, which makes it easier for
+beginners to check they are typing things in correctly.
+*/
+
+/* Include the standard docutils stylesheet. */
+@import url(default.css);
+
+/* Custom inline roles */
+span.placeholder    { font-style: italic; font-family: monospace; }
+span.example        { font-style: italic; }
+span.emphasis       { font-style: italic; }
+span.termdef        { font-weight: bold; }
+/*span.term           { font-style: italic; }*/
+span.category       { font-variant: small-caps; }
+span.feature        { font-variant: small-caps; }
+span.fval           { font-style: italic; }
+span.math           { font-style: italic; }
+span.mathit         { font-style: italic; }
+span.lex            { font-variant: small-caps; }
+span.guide-linecount{ text-align: right; display: block;}
+
+/* Python souce code listings */
+span.pysrc-prompt   { color: #9b0000; }
+span.pysrc-more     { color: #9b00ff; }
+span.pysrc-keyword  { color: #e06000; }
+span.pysrc-builtin  { color: #940094; }
+span.pysrc-string   { color: #00aa00; }
+span.pysrc-comment  { color: #ff0000; }
+span.pysrc-output   { color: #0000ff; }
+span.pysrc-except   { color: #ff0000; }
+span.pysrc-defname  { color: #008080; }
+
+
+/* Doctest blocks */
+pre.doctest         { margin: 0; padding: 0; font-weight: bold; }
+div.doctest         { margin: 0 1em 1em 1em; padding: 0; }
+table.doctest       { margin: 0; padding: 0;
+                      border-top: 1px solid gray;
+                      border-bottom: 1px solid gray; }
+pre.copy-notify     { margin: 0; padding: 0.2em; font-weight: bold;
+                      background-color: #ffffff; }
+
+/* Python source listings */
+div.pylisting       { margin: 0 1em 1em 1em; padding: 0; }
+table.pylisting     { margin: 0; padding: 0;
+                      border-top: 1px solid gray; }
+td.caption { border-top: 1px solid black; margin: 0; padding: 0; }
+.caption-label { font-weight: bold;  }
+td.caption p { margin: 0; padding: 0; font-style: normal;}
+
+table tr td.codeblock { 
+  padding: 0.2em ! important; margin: 0;
+  border-left: 1px solid gray;
+  border-right: 2px solid gray;
+  border-top: 0px solid gray;
+  border-bottom: 1px solid gray;
+  font-weight: bold; background-color: #eeffee;
+}
+
+table tr td.doctest  { 
+  padding: 0.2em; margin: 0;
+  border-left: 1px solid gray;
+  border-right: 2px solid gray;
+  border-top: 0px solid gray;
+  border-bottom: 1px solid gray;
+  font-weight: bold; background-color: #eeeeff;
+}
+
+td.codeblock table tr td.copybar {
+    background: #40a060; border: 1px solid gray;
+    font-family: monospace; padding: 0; margin: 0; }
+td.doctest table tr td.copybar {
+    background: #4060a0; border: 1px solid gray;
+    font-family: monospace; padding: 0; margin: 0; }
+
+td.pysrc { padding-left: 0.5em; }
+
+img.callout { border-width: 0px; }
+
+table.docutils {
+    border-style: solid;
+    border-width: 1px;
+    margin-top: 6px;
+    border-color: grey;
+    border-collapse: collapse; }
+
+table.docutils th {
+    border-style: none;
+    border-width: 1px;
+    border-color: grey;
+    padding: 0 .5em 0 .5em; }
+
+table.docutils td {
+    border-style: none;
+    border-width: 1px;
+    border-color: grey; 
+    padding: 0 .5em 0 .5em; }
+
+table.footnote td { padding: 0; }
+table.footnote { border-width: 0; }
+table.footnote td { border-width: 0; }
+table.footnote th { border-width: 0; }
+
+table.noborder { border-width: 0; }
+
+table.example pre { margin-top: 4px; margin-bottom: 0; }
+
+/* For figures & tables */
+p.caption { margin-bottom: 0; }
+div.figure { text-align: center; }
+
+/* The index */
+div.index { border: 1px solid black;
+            background-color: #eeeeee; }
+div.index h1 { padding-left: 0.5em; margin-top: 0.5ex;
+               border-bottom: 1px solid black; }
+ul.index { margin-left: 0.5em; padding-left: 0; }
+li.index { list-style-type: none; }
+p.index-heading { font-size: 120%; font-style: italic; margin: 0; }
+li.index ul { margin-left: 2em; padding-left: 0; }
+
+/* 'Note' callouts */
+div.note
+{
+  border-right:   #87ceeb 1px solid;
+  padding-right: 4px;
+  border-top: #87ceeb 1px solid;
+  padding-left: 4px;
+  padding-bottom: 4px;
+  margin: 2px 5% 10px;
+  border-left: #87ceeb 1px solid;
+  padding-top: 4px;
+  border-bottom: #87ceeb 1px solid;
+  font-style: normal;
+  font-family: verdana, arial;
+  background-color: #b0c4de;
+}
+
+table.avm { border: 0px solid black; width: 0; }
+table.avm tbody tr {border: 0px solid black; }
+table.avm tbody tr td { padding: 2px; }
+table.avm tbody tr td.avm-key { padding: 5px; font-variant: small-caps; }
+table.avm tbody tr td.avm-eq { padding: 5px; }
+table.avm tbody tr td.avm-val { padding: 5px; font-style: italic; }
+p.avm-empty { font-style: normal; }
+table.avm colgroup col { border: 0px solid black; }
+table.avm tbody tr td.avm-topleft 
+    { border-left: 2px solid #000080; border-top: 2px solid #000080; }
+table.avm tbody tr td.avm-botleft 
+    { border-left: 2px solid #000080; border-bottom: 2px solid #000080; }
+table.avm tbody tr td.avm-topright
+    { border-right: 2px solid #000080; border-top: 2px solid #000080; }
+table.avm tbody tr td.avm-botright
+    { border-right: 2px solid #000080; border-bottom: 2px solid #000080; }
+table.avm tbody tr td.avm-left
+    { border-left: 2px solid #000080; }
+table.avm tbody tr td.avm-right
+    { border-right: 2px solid #000080; }
+table.avm tbody tr td.avm-topbotleft
+    { border: 2px solid #000080; border-right: 0px solid black; }
+table.avm tbody tr td.avm-topbotright
+    { border: 2px solid #000080; border-left: 0px solid black; }
+table.avm tbody tr td.avm-ident
+    { font-size: 80%; padding: 0; padding-left: 2px; vertical-align: top; }
+.avm-pointer
+{ border: 1px solid #008000; padding: 1px; color: #008000; 
+  background: #c0ffc0; font-style: normal; }
+
+table.gloss { border: 0px solid black; width: 0; }
+table.gloss tbody tr { border: 0px solid black; }
+table.gloss tbody tr td { border: 0px solid black; }
+table.gloss colgroup col { border: 0px solid black; }
+table.gloss p { margin: 0; padding: 0; }
+
+table.rst-example { border: 1px solid black; }
+table.rst-example tbody tr td { background: #eeeeee; }
+table.rst-example thead tr th { background: #c0ffff; }
+td.rst-raw { width: 0; }
+
+/* Used by nltk.org/doc/test: */
+div.doctest-list { text-align: center; }
+table.doctest-list { border: 1px solid black;
+  margin-left: auto; margin-right: auto;
+}
+table.doctest-list tbody tr td { background: #eeeeee;
+  border: 1px solid #cccccc; text-align: left; }
+table.doctest-list thead tr th { background: #304050; color: #ffffff;
+  border: 1px solid #000000;}
+table.doctest-list thead tr a { color: #ffffff; }
+span.doctest-passed { color: #008000; }
+span.doctest-failed { color: #800000; }
+
+</style>
+</head>
+<body>
+<div class="document">
+
+
+<!-- -*- mode: rst -*- -->
+<!-- -*- mode: rst -*- -->
+<div class="compound">
+<!-- CAP abbreviations (map to small caps in LaTeX) -->
+<!-- Other candidates for global consistency -->
+<!-- PTB removed since it must be indexed -->
+<!-- WN removed since it must be indexed -->
+<!-- misc & punctuation -->
+<!-- cdots was unicode U+22EF but not working -->
+<!-- exercise meta-tags -->
+<!-- Unicode tests -->
+<!-- phonetic -->
+<!-- misc -->
+<!-- used in Unicode section -->
+<!-- arrows -->
+<!-- unification stuff -->
+<!-- Math & Logic -->
+<!-- sets -->
+<!-- Greek -->
+<!-- Chinese -->
+<!-- People -->
+<!-- Python example - a snippet of code in running text -->
+<!-- PlaceHolder example -  something that should be replaced by actual code -->
+<!-- Linguistic eXample - cited form in running text -->
+<!-- Emphasized (more declarative than just using *) -->
+<!-- Grammatical Category - e.g. NP and verb as technical terms -->
+<!-- Math expression - e.g. especially for variables -->
+<!-- Textual Math expression - for words 'inside' a math environment -->
+<!-- Feature (or attribute) -->
+<!-- Raw LaTeX -->
+<!-- Raw HTML -->
+<!-- Feature-value -->
+<!-- Lexemes -->
+<!-- Replacements that rely on previous definitions :-) -->
+</div>
+<!-- standard global imports
+
+>>> import nltk, re, pprint -->
+<!-- NB chapter structure isn't consistent with rest of book, re exercise subsections. -->
+<div class="section" id="logical-semantics">
+<span id="chap-semantics"></span><h1>11&nbsp;&nbsp;&nbsp;Logical Semantics</h1>
+<div class="section" id="introduction">
+<span id="ch11-introduction"></span><h2>11.1&nbsp;&nbsp;&nbsp;Introduction</h2>
+<p>There are many NLP applications where it would be useful to have some
+representation of the <span class="emphasis">meaning</span> of a natural language
+sentence. For instance, current search engine technology
+can only take us so far in giving concise and correct answers to many
+questions that we might be interested in. Admittedly, Google does a
+good job in answering <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#google1a">(1a)</a>, since its first hit is <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#google1b">(1b)</a>.</p>
+<span class="target" id="google1"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(1)</td><td width="15"></td><td><span class="target" id="google1a"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">a.</td><td width="15"></td><td>What is the population of Saudi Arabia?</td></tr></tbody></table><p></p>
+<span class="target" id="google1b"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">b.</td><td width="15"></td><td>Saudi Arabia - Population: 26,417,599</td></tr></tbody></table><p></p>
+</td></tr></tbody></table><p></p>
+<p>
+By contrast, the result of sending <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#google2">(2)</a> to Google is less helpful:</p>
+<span class="target" id="google2"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(2)</td><td width="15"></td><td>Which countries border the Mediterranean?</td></tr></tbody></table><p></p>
+<p>
+This time, the topmost hit (and the only relevant one in the top ten)
+presents the relevant information as a map of the Mediterranean
+basin. Since the map is an image file, it is not easy to
+extract the required list of countries from the returned page.</p>
+<p>Even if Google succeeds in finding documents which contain information
+relevant to our question, there is no guarantee that it will be in a
+form which can be easily converted into an appropriate answer. One
+reason for this is that the information may have to be inferred from more
+than one source. This is likely to be the case when we seek an answer
+to more complex questions like <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#google3">(3)</a>:</p>
+<span class="target" id="google3"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(3)</td><td width="15"></td><td>Which Asian countries border the Mediterranean?</td></tr></tbody></table><p></p>
+<p>
+Here, we would probably need to combine the results of two subqueries,
+namely <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#google2">(2)</a> and <span class="example">Which countries are in Asia?</span>.</p>
+<p>The example queries we have just given are based on a paper dating
+back to 1982 <a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#warren1982eea" id="id1">[Warren &amp; Pereira, 1982]</a>;
+this describes a system, <em>Chat-80</em>, which converts natural
+language questions into a semantic representation, and uses the latter
+to retrieve answers from a knowledge base. A knowledge base is usually
+taken to be a set of sentences in some formal language; in the case of
+Chat-80, it is a set of Prolog clauses. However, we can encode
+knowledge in a variety of formats, including relational databases,
+various kinds of graph, and first-order models. In NLTK, we have
+used the third of these options to re-implement a limited version of
+Chat-80:</p>
+<pre class="literal-block">Sentence: which Asian countries border the_Mediterranean
+------------------------------
+\x.((contain(asia, x) &amp; country (x)) &amp; border (x, mediterranean)
+set(['turkey', 'syria', 'israel', 'lebanon'])
+</pre>
+<p> As we will explain later in this chapter, a semantic
+representation of the form <tt class="doctest"><span class="pre">\x.P(x)</span></tt> denotes a set of entities
+<em>u</em> that meet some condition <tt class="doctest"><span class="pre">P(x)</span></tt>. We then ask our
+knowledge base to enumerate all the entities in this set.</p>
+<p>Let's assume more generally that knowledge is available in some
+structured fashion, and that it can be interrogated by a suitable
+query language. Then the challenge for NLP is to find a method for
+converting natural language questions into the target query
+language. An alternative paradigm for question answering is to take
+something like the pages returned by a Google query as our 'knowledge
+base' and then to carry out further analysis and processing of the
+textual information contained in the returned pages to see whether it does
+in fact provide an answer to the question. In either case, it is very
+useful to be able to build a semantic representation of questions.
+This NLP challenge intersects in interesting ways with one of the
+key goals of linguistic theory, namely to provide a systematic
+correspondence between form and meaning.</p>
+<p>A widely adopted approach to representing meaning — or at least,
+some aspects of meaning — involves translating expressions of
+natural language into first-order logic (FOL). From a computational point of
+view, a strong argument in favor of FOL is that it strikes a
+reasonable balance between expressiveness and logical tractability. On
+the one hand, it is flexible enough to represent many aspects of the
+logical structure of natural language. On the other hand, automated
+theorem proving for FOL has been well studied, and although
+inference in FOL is not decidable, in practice many reasoning
+problems are efficiently solvable using modern theorem provers
+(cf. <a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#blackburn2005rin" id="id2">[Blackburn &amp; Bos, 2005]</a> for discussion).</p>
+<p>While there are numerous subtle and difficult issues about how to
+translate natural language constructions into FOL, we will largely ignore
+these. The main focus of our discussion will be on a
+different issue, namely building semantic representations which
+conform to some version of the <a name="principle_of_compositionality_index_term"><span class="termdef">Principle of Compositionality</span>.
+(See </a><a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#partee1995lsc" id="id3">[Gleitman &amp; Liberman, 1995]</a> for this formulation.)</p>
+<dl class="docutils">
+<dt>Principle of Compositionality:</dt>
+<dd>The meaning of a whole is a function of the meanings of the parts
+and of the way they are syntactically combined.</dd>
+</dl>
+<p> There is an assumption here that the semantically relevant
+parts of a complex expression will be determined by a theory of
+syntax. Within this chapter, we will take it for granted that
+expressions are parsed against a context-free grammar. However, this
+is not entailed by the Principle of Compositionality.  To summarize,
+we will be concerned with the task of systematically constructing a
+semantic representation in a manner that can be smoothly integrated
+with the process of parsing.</p>
+<p>The overall framework we are assuming is illustrated in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#semint">Figure (4)</a>. Given
+a syntactic analysis of a sentence, we can build one or more semantic
+representations for the sentence. Once we have a semantic
+representation, we can also check whether it is true in a model.</p>
+<span class="target" id="semint"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(4)</td><td width="15"></td><td><img alt="../images/semint.png" src="./ch11_files/semint.png" style="width: 766.5px; height: 327.6px;"></td></tr></tbody></table><p></p>
+<p> A <a name="model_index_term"><span class="termdef">model</span> for a logical language is a set-theoretic
+construction which provides a very simplified picture of how the world
+is. For example, in this case, the model should contain individuals
+(indicated in the diagram by small dots) corresponding to Suzie and
+Fido, and it should also specify that these individuals belong to
+the <span class="math">chase</span> relation.</a></p><a name="model_index_term">
+</a><p><a name="model_index_term">The order of sections in this chapter is not what you might expect
+from looking at the diagram. We will start off in the middle of </a><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#semint">(4)</a> by
+presenting a logical language that will provide us with
+semantic representations in NLTK. Next, we will show how formulas in
+the language can be systematically evaluated in a model. At the end,
+we will bring everything together and describe a simple method for
+constructing semantic representations as part of the parse process in
+NLTK.</p>
+<!-- This chapter will only scratch the surface of how to carry out
+semantic analysis of natural language, and will be heavily slanted
+towards the approach currently implemented within
+|NLTK|. Consequently, it needs to be read in conjunction with a good
+overall introduction to formal semantics. [Eg., B&B, Gamut, Heim?] -->
+</div>
+<div class="section" id="propositional-logic">
+<h2>11.2&nbsp;&nbsp;&nbsp;Propositional  Logic</h2>
+<p>The language of propositional logic represents certain aspects of
+natural language, but at a high level of abstraction. The only
+structure that is made explicit involves <a name="logical_connectives_index_term"><span class="termdef">logical connectives</span>;
+these correspond to 'logically interesting' expressions such as
+<span class="example">and</span> and <span class="example">not</span>. The basic expressions of the language are
+</a><a name="propositional_variables_index_term"><span class="termdef">propositional variables</span>, usually written <span class="math">p</span>, <span class="math">q</span>,
+<span class="math">r</span>, etc. Let <span class="math">A</span> be a finite set of such variables. There
+is a disjoint set of logical connectives which contains the unary
+operator ¬ (<span class="example">not</span>), and binary operators &#8743; (<span class="example">and</span>),
+&#8744; (<span class="example">or</span>), &#8594; (<span class="example">implies</span>) and &#8801; (<span class="example">iff</span>).</a></p><a name="propositional_variables_index_term">
+<p>The set of formulas of <cite>L</cite><sub>prop</sub> is described inductively:</p>
+<blockquote>
+<ol class="arabic simple">
+<li>Every element of <span class="math">A</span> is a formula of <cite>L</cite><sub>prop</sub>.</li>
+<li>If &#966; is a formula of <cite>L</cite><sub>prop</sub> , then so is ¬ &#966;.</li>
+<li>If &#966; and &#968; are formulas, then so are
+(&#966; &#8743; &#968;),
+(&#966; &#8744; &#968;),
+(&#966; &#8594; &#968;) and
+(&#966; &#8801; &#968;).</li>
+<li>Nothing else is a formula of <cite>L</cite><sub>prop</sub>.</li>
+</ol>
+</blockquote>
+<p> Within <cite>L</cite><sub>prop</sub>, we can construct formulas such as</p>
+<span class="target" id="prop01"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(5)</td><td width="15"></td><td><span class="math">p</span> &#8594; <span class="math">q</span> &#8744; <span class="math">r</span></td></tr></tbody></table><p></p>
+</a><p><a name="propositional_variables_index_term">There are many sentences of English which could be taken to have the
+logical structure shown in </a><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#prop01">(5)</a>. Here's an example:</p>
+<span class="target" id="prop02"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(6)</td><td width="15"></td><td>If it is raining, then Kim will take an umbrella or Lee will
+get wet.</td></tr></tbody></table><p></p>
+<p>In order to explain the relation between <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#prop01">(5)</a> and <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#prop02">(6)</a>, we need
+to give a <span class="emphasis">key</span> which maps between propositional variables and
+English sentences:</p>
+<span class="target" id="prop03"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(7)</td><td width="15"></td><td><span class="math">p</span> stands for  <span class="example">it is raining</span>,
+<span class="math">q</span> for <span class="example">Kim will take an umbrella</span> and
+<span class="math">q</span> for <span class="example">Lee will get wet</span>.</td></tr></tbody></table><p></p>
+<p>The Boolean connectives of propositional logic are supported by the
+<tt class="doctest"><span class="pre">sem</span></tt> package, and are parsed into various kinds of
+<tt class="doctest"><span class="pre">Expression</span></tt>. We use <tt class="doctest"><span class="pre">-</span></tt>, <tt class="doctest"><span class="pre">&amp;</span></tt>, <tt class="doctest"><span class="pre">|</span></tt>, <tt class="doctest"><span class="pre">-&gt;</span></tt>, <tt class="doctest"><span class="pre">&lt;-&gt;</span></tt> to stand,
+respectively, for <span class="example">not</span>, <span class="example">and</span>, <span class="example">or</span>, <span class="example">implies</span> and
+<span class="example">iff</span>. In the following example, we start off by creating a new
+instance <tt class="doctest"><span class="pre">lp</span></tt> of the NLTK <tt class="doctest"><span class="pre">LogicParser()</span></tt>.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>lp = nltk.LogicParser()
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>lp.parse(<span class="pysrc-string">'-(p &amp; q)'</span>)
+<span class="pysrc-output">&lt;NegatedExpression -(p &amp; q)&gt;</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>lp.parse(<span class="pysrc-string">'p &amp; q'</span>)
+<span class="pysrc-output">&lt;AndExpression (p &amp; q)&gt;</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>lp.parse(<span class="pysrc-string">'p | (r -&gt; q)'</span>)
+<span class="pysrc-output">&lt;OrExpression (p | (r -&gt; q))&gt;</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>lp.parse(<span class="pysrc-string">'p &lt;-&gt; -- p'</span>)
+<span class="pysrc-output">&lt;IffExpression (p &lt;-&gt; --p)&gt;</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>As the name suggests, propositional logic only studies the logical
+structure of formulas made up of atomic propositions. We saw, for
+example, that propositional variables stood for whole clauses in
+English. In order to look at how predicates combine with arguments, we
+need to look at a more complex language for semantic representation,
+namely first-order logic. In order to show how this new language interacts with
+the &#955;-calculus, it will be useful to introduce the notion of
+types into our syntactic definition, in departure from the rather
+simple approach to defining the clauses of <cite>L</cite><sub>prop</sub>.</p>
+<p>In the general case, we interpret sentences of a logical language
+relative to a model, which is a very simplified version of the
+world. A model for propositional logic needs to assign the values
+<tt class="doctest"><span class="pre">True</span></tt> or <tt class="doctest"><span class="pre">False</span></tt> to every possible formula. We do this
+inductively: first, every propositional variable is assigned a value,
+and then we compute the value of complex formulas by consulting the
+meanings of the Boolean connectives and applying them to the values of
+the formula's components. Let's create a valuation:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>val1 = nltk.sem.Valuation([(<span class="pysrc-string">'p'</span>, True), (<span class="pysrc-string">'q'</span>, True), (<span class="pysrc-string">'r'</span>, False)])</pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>We initialize a <tt class="doctest"><span class="pre">Valuation</span></tt> with a list of pairs, each of which
+consists of a semantic symbol and a semantic value. The resulting
+object is essentially just a dictionary that maps logical expressions
+(treated as strings) to appropriate values.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>val1[<span class="pysrc-string">'p'</span>]
+<span class="pysrc-output">True</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>The keys of the dictionary (sorted alphabetically) can also be
+accessed via the property <tt class="doctest"><span class="pre">symbols</span></tt>:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>val1.symbols
+<span class="pysrc-output">['p', 'q', 'r']</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>As we will see later, our models need to be somewhat more complicated
+in order to handle the more complicated expressions discussed in the
+next section, so for the time being, just ignore the <tt class="doctest"><span class="pre">dom1</span></tt> and
+<tt class="doctest"><span class="pre">g1</span></tt> variables in the following declarations.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>dom1 = set([])
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>g = nltk.sem.Assignment(dom1)</pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>Now, let's create a model <tt class="doctest"><span class="pre">m that uses ``val1</span></tt>:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>m1 = nltk.sem.Model(dom1, val1, prop=True)</pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>The <tt class="doctest"><span class="pre">prop=True</span></tt> is just a flag to say that our models are intended
+for propositional logic.</p>
+<p>Every instance of Model defines appropriate truth functions for the
+Boolean connectives (and in fact they are implemented as functions
+named <tt class="doctest"><span class="pre">AND()</span></tt>, <tt class="doctest"><span class="pre">IMPLIES()</span></tt> and so on).</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>m1.AND
+<span class="pysrc-output">&lt;bound method Model.AND of (set([]), {'q': True, 'p': True, 'r': False})&gt;</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>We can use these functions to create truth tables:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">for</span> first <span class="pysrc-keyword">in</span> [True, False]:
+<span class="pysrc-more">... </span>    <span class="pysrc-keyword">for</span> second <span class="pysrc-keyword">in</span> [True, False]:
+<span class="pysrc-more">... </span>        <span class="pysrc-keyword">print</span> <span class="pysrc-string">"%s %s =&gt; %s"</span> % (first, second, m1.AND(first, second))
+<span class="pysrc-output">True True =&gt; True</span>
+<span class="pysrc-output">True False =&gt; False</span>
+<span class="pysrc-output">False True =&gt; False</span>
+<span class="pysrc-output">False False =&gt; False</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+</div>
+<div class="section" id="first-order-logic">
+<h2>11.3&nbsp;&nbsp;&nbsp;First-Order Logic</h2>
+<div class="section" id="predication">
+<h3>11.3.1&nbsp;&nbsp;&nbsp;Predication</h3>
+<p>In first-order logic (FOL), propositions are analyzed into predicates and
+arguments, which takes us a step closer to the structure of natural
+languages. The standard construction rules for FOL recognize
+<a name="terms_index_term"><span class="termdef">terms</span> such as individual variables and individual constants, and
+</a><a name="predicates_index_term"><span class="termdef">predicates</span> which take differing numbers of arguments. For
+example, <span class="example">Adam walks</span> might be formalized as <span class="mathit">walk(adam)</span>
+and <span class="example">Adam sees Betty</span> as <span class="mathit">see(adam, betty)</span>. We will call
+<span class="mathit">walk</span> a </a><a name="unary_predicate_index_term"><span class="termdef">unary predicate</span>, and <span class="mathit">see</span> a </a><a name="binary_predicate_index_term"><span class="termdef">binary
+predicate</span>. Semantically, <span class="mathit">see</span> is usually modeled as a
+relation, i.e., a set of pairs, and the proposition is true in a
+situation just in case the ordered pair pair &#9001;<span class="math">a, b</span>&#9002; belongs to this set.</a></p><a name="binary_predicate_index_term">
+<p>There is an alternative
+approach in which predication is treated as function application.  In
+this functional style of representation, <span class="example">Adam sees Betty</span> can be
+formalized as <span class="mathit">see(a)(b)</span>. That is, rather than being modeled as a
+relation, <span class="mathit">see</span> denotes a function which applies to one argument to
+yield a new function that is then applied to the second argument. In
+NLTK, we will in fact treat predications syntactically as function
+applications, but we use a concrete syntax that allows them to
+represented as <span class="math">n</span>-ary relations.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>parsed = lp.parse(<span class="pysrc-string">'see(a, b)'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>parsed.argument
+<span class="pysrc-output">&lt;IndividualVariableExpression b&gt;</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>parsed.function
+<span class="pysrc-output">&lt;ApplicationExpression see(a)&gt;</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>parsed.function.function
+<span class="pysrc-output">&lt;VariableExpression see&gt;</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>Relations are represented semantically in NLTK in the standard
+set-theoretic way: as sets of tuples. For example, let's suppose we
+have a domain of discourse consisting of the individuals Adam, Betty and Fido,
+where Adam is a boy, Betty is a girl and Fido is a dog. For mnemonic
+reasons, we use <tt class="doctest"><span class="pre">b1</span></tt>, <tt class="doctest"><span class="pre">g1</span></tt> and <tt class="doctest"><span class="pre">d1</span></tt> as the corresponding labels
+in the model. We can declare the domain as follows:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>dom2 = set([<span class="pysrc-string">'b1'</span>, <span class="pysrc-string">'g1'</span>, <span class="pysrc-string">'d1'</span>])</pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>As before, we are going to initialize a valuation with a list of (symbol,
+value) pairs:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>v = [(<span class="pysrc-string">'adam'</span>,<span class="pysrc-string">'b1'</span>),(<span class="pysrc-string">'betty'</span>,<span class="pysrc-string">'g1'</span>),(<span class="pysrc-string">'fido'</span>,<span class="pysrc-string">'d1'</span>),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'boy'</span>,set([<span class="pysrc-string">'b1'</span>])),(<span class="pysrc-string">'girl'</span>,set([<span class="pysrc-string">'g1'</span>])), (<span class="pysrc-string">'dog'</span>,set([<span class="pysrc-string">'d1'</span>])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'walk'</span>,set([<span class="pysrc-string">'g1'</span>, <span class="pysrc-string">'d1'</span>])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'see'</span>, set([(<span class="pysrc-string">'b1'</span>,<span class="pysrc-string">'g1'</span>),(<span class="pysrc-string">'d1'</span>,<span class="pysrc-string">'b1'</span>),(<span class="pysrc-string">'g1'</span>,<span class="pysrc-string">'d1'</span>),]))]
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>val2 = nltk.sem.Valuation(v)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">print</span> val2
+<span class="pysrc-output">{'adam': 'b1',</span>
+<span class="pysrc-output"> 'betty': 'g1',</span>
+<span class="pysrc-output"> 'boy': set([('b1',)]),</span>
+<span class="pysrc-output"> 'dog': set([('d1',)]),</span>
+<span class="pysrc-output"> 'fido': 'd1',</span>
+<span class="pysrc-output"> 'girl': set([('g1',)]),</span>
+<span class="pysrc-output"> 'see': set([('b1', 'g1'), ('d1', 'b1'), ('g1', 'd1')]),</span>
+<span class="pysrc-output"> 'walk': set([('d1',), ('g1',)])}</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>So according to this valuation, the value of <tt class="doctest"><span class="pre">see</span></tt> is a set of
+tuples such that Adam sees Betty, Fido sees Adam, and
+Betty sees Fido.</p>
+<p>You may have noticed that our unary predicates (i.e, <tt class="doctest"><span class="pre">boy</span></tt>, <tt class="doctest"><span class="pre">girl</span></tt>,
+<tt class="doctest"><span class="pre">dog</span></tt>) also come out represented as sets of singleton tuples, rather
+than just sets of individuals. This is a convenience which allows us
+to have a uniform treatment of relations of any arity. In order to
+combine a unary relation with an argument, we use the function
+<tt class="doctest"><span class="pre">app()</span></tt>. If the input relation is unary, then <tt class="doctest"><span class="pre">app()</span></tt> returns a
+Boolean value; if the input is <span class="mathit">n</span>-ary, for <span class="mathit">n</span> &gt; 1,
+then <tt class="doctest"><span class="pre">app()</span></tt> returns an <span class="mathit">n</span>-1-ary relation.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">from</span> nltk.sem <span class="pysrc-keyword">import</span> app
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>boy = val2[<span class="pysrc-string">'boy'</span>]
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>app(boy, <span class="pysrc-string">'b1'</span>)
+<span class="pysrc-output">True</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>app(boy, <span class="pysrc-string">'g1'</span>)
+<span class="pysrc-output">False</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>see = val2[<span class="pysrc-string">'see'</span>]
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>app(see, <span class="pysrc-string">'g1'</span>)
+<span class="pysrc-output">set([('d1',)])</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>app(app(see, <span class="pysrc-string">'g1'</span>), <span class="pysrc-string">'d1'</span>)
+<span class="pysrc-output">True</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+</a></div><a name="binary_predicate_index_term">
+</a><div class="section" id="individual-variables-and-assignments"><a name="binary_predicate_index_term">
+<h3>11.3.2&nbsp;&nbsp;&nbsp;Individual Variables and Assignments</h3>
+</a><p><a name="binary_predicate_index_term">In FOL, arguments of predicates can also be individual variables
+such as <tt class="doctest"><span class="pre">x</span></tt>, <tt class="doctest"><span class="pre">y</span></tt> and <tt class="doctest"><span class="pre">z</span></tt>. These can be thought of as similar to
+personal pronouns like <span class="example">he</span>, <span class="example">she</span> and <span class="example">it</span>, in that we
+need to know about the context of use in order to figure out their
+denotation. In our models, the counterpart of a context of use is a
+variable </a><a name="assignment_index_term"><span class="termdef">Assignment</span>. This is a mapping from individual variables to
+entities in the domain.
+Assignments are created using the <tt class="doctest"><span class="pre">Assignment</span></tt> constructor, which
+also takes the model's domain of discourse as a parameter. We are not
+required to actually enter any bindings, but if we do, they are in a
+(variable, value) format similar to what we say earlier for valuations.</a></p><a name="assignment_index_term">
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>g = nltk.sem.Assignment(dom2, [(<span class="pysrc-string">'x'</span>, <span class="pysrc-string">'b1'</span>), (<span class="pysrc-string">'y'</span>, <span class="pysrc-string">'d1'</span>)])
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>g
+<span class="pysrc-output">{'y': 'd1', 'x': 'b1'}</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p> In addition, there is a <tt class="doctest"><span class="pre"><span class="pysrc-keyword">print</span>()</span></tt> format for assignments which
+uses a notation closer to that in logic textbooks:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">print</span> g
+<span class="pysrc-output">g[d1/y][b1/x]</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>Let's now look at how we can evaluate an atomic formula of
+FOL. First, we create a model, then we use the <tt class="doctest"><span class="pre">evaluate()</span></tt> method
+to compute the truth value.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>m2 = nltk.sem.Model(dom2, val2)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.evaluate(<span class="pysrc-string">'see(betty, y)'</span>, g)
+<span class="pysrc-output">True</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>What's happening here? Essentially, we are making a call to
+<tt class="doctest"><span class="pre">app(app(see, <span class="pysrc-string">'g1'</span>), <span class="pysrc-string">'d1'</span>)</span></tt> just as in our earlier example.
+However, when the interpretation function encounters the variable <tt class="doctest"><span class="pre"><span class="pysrc-string">'y'</span></span></tt>,
+rather than checking for a value in <tt class="doctest"><span class="pre">val2</span></tt>, it asks the variable
+assignment <tt class="doctest"><span class="pre">g</span></tt> to come up with a value:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>g[<span class="pysrc-string">'y'</span>]
+<span class="pysrc-output">'d1'</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+</a><p><a name="assignment_index_term">Since we already know that 'b1' and 'g1' stand in the <span class="mathit">see</span>
+relation, the value <tt class="doctest"><span class="pre">True</span></tt> is what we expected. In this case, we can
+say that assignment <tt class="doctest"><span class="pre">g</span></tt> </a><a name="satisfies_index_term"><span class="termdef">satisfies</span> the formula 'see(adam, y)'.
+By contrast, the following formula evaluates to <tt class="doctest"><span class="pre">False</span></tt> relative to
+<tt class="doctest"><span class="pre">g</span></tt> — check that you see why this is.</a></p><a name="satisfies_index_term">
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.evaluate(<span class="pysrc-string">'see(x, y)'</span>, g)
+<span class="pysrc-output">False</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>In our approach (though not in standard first-order logic), variable assignments
+are <span class="emphasis">partial</span>. For example, <tt class="doctest"><span class="pre">g</span></tt> says nothing about any variables
+apart from <tt class="doctest"><span class="pre"><span class="pysrc-string">'x'</span></span></tt> and <tt class="doctest"><span class="pre"><span class="pysrc-string">'y'</span><span class="pysrc-string">''</span>. The method ``purge()</span></tt> clears all
+bindings from an assignment.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>g.purge()
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>g
+<span class="pysrc-output">{}</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>If we now try to evaluate a formula such as 'see(adam, y)' relative to
+<tt class="doctest"><span class="pre">g</span></tt>, it is like trying to interpret a sentence containing a <span class="example">she</span> when
+we don't know what <span class="example">she</span> refers to. In this case, the evaluation function
+fails to deliver a truth value.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.evaluate(<span class="pysrc-string">'see(adam, y)'</span>, g)
+<span class="pysrc-output">'Undefined'</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+</a></div><a name="satisfies_index_term">
+</a><div class="section" id="quantification-and-scope"><a name="satisfies_index_term">
+<h3>11.3.3&nbsp;&nbsp;&nbsp;Quantification and Scope</h3>
+<p>First-order logic standardly offers us two quantifiers, <span class="example">all</span> (or <span class="example">every</span>)
+and <span class="example">some</span>. These are formally written as &#8704; and &#8707;,
+respectively. At the syntactic level, quantifiers are used to bind
+individual variables like <tt class="doctest"><span class="pre"><span class="pysrc-string">'x'</span></span></tt> and <tt class="doctest"><span class="pre"><span class="pysrc-string">'y'</span></span></tt>. The following two sets
+of examples show a simple English example, a logical representation,
+and the encoding which is accepted by the NLTK <tt class="doctest"><span class="pre">logic</span></tt> module.</p>
+<span class="target" id="forall1"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(8)</td><td width="15"></td><td><span class="target" id="forall1a"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">a.</td><td width="15"></td><td>Every dog barks.</td></tr></tbody></table><p></p>
+<span class="target" id="forall1b"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">b.</td><td width="15"></td><td>&#8704;<span class="mathit">x.(dog(x)</span> &#8594; <span class="mathit">bark(x))</span></td></tr></tbody></table><p></p>
+<span class="target" id="forall1c"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">c.</td><td width="15"></td><td><tt class="doctest"><span class="pre">all x.(dog(x) -&gt; bark(x))</span></tt></td></tr></tbody></table><p></p>
+</td></tr></tbody></table><p></p>
+<span class="target" id="exists1"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(9)</td><td width="15"></td><td><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">a.</td><td width="15"></td><td>Some girl walks.</td></tr></tbody></table><p></p>
+<p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">b.</td><td width="15"></td><td>&#8707;<span class="mathit">x.(girl(x)</span> &#8743; <span class="mathit">walk(x))</span></td></tr></tbody></table><p></p>
+<span class="target" id="existsc"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">c.</td><td width="15"></td><td><tt class="doctest"><span class="pre">some x.(girl(x) &amp; walk(x))</span></tt></td></tr></tbody></table><p></p>
+</td></tr></tbody></table><p></p>
+</a><p><a name="satisfies_index_term">In the </a><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#existsc">(9c)</a>, the quantifier <tt class="doctest"><span class="pre">some</span></tt> binds both occurences of the
+variable <tt class="doctest"><span class="pre"><span class="pysrc-string">'x'</span></span></tt>. As a result, <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#existsc">(9c)</a> is said to be a <a name="closed_formula_index_term"><span class="termdef">closed
+formula</span>. By contrast, if we look at the body of </a><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#existsc">(9c)</a>,
+the variables are unbound:</p>
+<span class="target" id="exists2"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(10)</td><td width="15"></td><td>girl(x) &amp; walk(x)</td></tr></tbody></table><p></p>
+<p><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#exists2">(10)</a> is said to be an <a name="open_formula_index_term"><span class="termdef">open formula</span>. As we saw earlier, the
+interpretation of open formulas depends on the particular variable
+assignment that we are using.</a></p><a name="open_formula_index_term">
+</a><p><a name="open_formula_index_term">One of the crucial insights of modern
+logic is that the notion of variable satisfaction can be used to
+provide an interpretation to quantified formulas. Let's continue to
+use </a><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#existsc">(9c)</a> as an example. When is it true? Let's think about all the
+individuals in our domain, i.e., in <tt class="doctest"><span class="pre">dom2</span></tt>. We want to check whether
+any of these individuals have the property of being a girl and
+walking. In other words, we want to know if there is some <tt class="doctest"><span class="pre">u</span></tt> in
+<tt class="doctest"><span class="pre">dom2</span></tt> such that <tt class="doctest"><span class="pre">g[u/x]</span></tt> satisfies the open formula
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#exists2">(10)</a>. Consider the following:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.evaluate(<span class="pysrc-string">'exists x.(girl(x) &amp; walk(x))'</span>, g)
+<span class="pysrc-output">True</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p><tt class="doctest"><span class="pre">evaluate()</span></tt> returns <tt class="doctest"><span class="pre">True</span></tt> here because there is some <tt class="doctest"><span class="pre">u</span></tt> in
+<tt class="doctest"><span class="pre">dom2</span></tt> such that <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#exists2">(10)</a> is satisfied by an assigment which binds
+<tt class="doctest"><span class="pre"><span class="pysrc-string">'x'</span></span></tt> to <tt class="doctest"><span class="pre">u</span></tt>. In fact, <tt class="doctest"><span class="pre">g1</span></tt> is such a <tt class="doctest"><span class="pre">u</span></tt>:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.evaluate(<span class="pysrc-string">'girl(x) &amp; walk(x)'</span>, g.add(<span class="pysrc-string">'x'</span>, <span class="pysrc-string">'g1'</span>))
+<span class="pysrc-output">True</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>One useful tool offered by NLTK is the <tt class="doctest"><span class="pre">satisfiers()</span></tt> method. This
+lists all the individuals that satisfy an open formula. The method
+parameters are a parsed formula, a variable, and an assignment. Here
+are a few examples:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>fmla1 = lp.parse(<span class="pysrc-string">'girl(x) | boy(x)'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.satisfiers(fmla1, <span class="pysrc-string">'x'</span>, g)
+<span class="pysrc-output">set(['b1', 'g1'])</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>fmla2 = lp.parse(<span class="pysrc-string">'girl(x) -&gt; walk(x)'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.satisfiers(fmla2, <span class="pysrc-string">'x'</span>, g)
+<span class="pysrc-output">set(['b1', 'g1', 'd1'])</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>fmla3 = lp.parse(<span class="pysrc-string">'walk(x) -&gt; girl(x)'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.satisfiers(fmla3, <span class="pysrc-string">'x'</span>, g)
+<span class="pysrc-output">set(['b1', 'g1'])</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>It's useful to think about why <tt class="doctest"><span class="pre">fmla2</span></tt> and <tt class="doctest"><span class="pre">fmla3</span></tt> receive the
+values they do. In particular, recall the truth conditions for <tt class="doctest"><span class="pre">-&gt;</span></tt>
+(encoded via the function <tt class="doctest"><span class="pre">IMPLIES()</span></tt> in every model):</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">for</span> first <span class="pysrc-keyword">in</span> [True, False]:
+<span class="pysrc-more">... </span>    <span class="pysrc-keyword">for</span> second <span class="pysrc-keyword">in</span> [True, False]:
+<span class="pysrc-more">... </span>        <span class="pysrc-keyword">print</span> <span class="pysrc-string">"%s %s =&gt; %s"</span> % (first, second, m2.IMPLIES(first, second))
+<span class="pysrc-output">True True =&gt; True</span>
+<span class="pysrc-output">True False =&gt; False</span>
+<span class="pysrc-output">False True =&gt; True</span>
+<span class="pysrc-output">False False =&gt; True</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>This means that
+<tt class="doctest"><span class="pre">fmla2</span></tt> is equivalent to this:</p>
+<span class="target" id="fmla2or"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(11)</td><td width="15"></td><td><tt class="doctest"><span class="pre">- girl(x) | walk(x)</span></tt></td></tr></tbody></table><p></p>
+<p>That is, <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#fmla2or">(11)</a> is satisfied by something which either isn't a girl
+or walks. Since neither <tt class="doctest"><span class="pre">b1</span></tt> (Adam) nor <tt class="doctest"><span class="pre">d1</span></tt> (Fido)
+are girls, according to model <tt class="doctest"><span class="pre">m2</span></tt>, they both satisfy
+the whole formula. And of course <tt class="doctest"><span class="pre">g1</span></tt> satisfies the formula because <tt class="doctest"><span class="pre">g1</span></tt>
+satisfies both disjuncts. Now, since every member of the domain of
+discourse satisfies <tt class="doctest"><span class="pre">fmla2</span></tt>, the corresponding universally
+quantified formula is also true.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>m2.evaluate(<span class="pysrc-string">'all x.(girl(x) -&gt; walk(x))'</span>, g)
+<span class="pysrc-output">True</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>In other words, a universally quantified formula &#8704;<span class="mathit">x.</span>&#966; is true with respect to <tt class="doctest"><span class="pre">g</span></tt> just in case for
+every <tt class="doctest"><span class="pre">u</span></tt>, &#966; is true with respect to <tt class="doctest"><span class="pre">g[u/x]</span></tt>.</p>
+<!-- |nopar| The inclusion of first-order quantifiers motivates the final clause of
+the definition of our version of |fol|.
+
+7. If `x`:mathit: |element|  **Var**\ (**Ind**) and |phi|
+   |element|  **Term**\ (**Bool**), then |forall|\ `x.`:mathit:\
+   |phi|, |exists|\ `x.`:mathit:\ |phi|  |element|  **Term**\
+ (**Bool**).
+
+ One important property of forall1b_ often trips people up. The logical
+ rendering in effect says that *if* something is a dog, then it barks,
+ but makes no commitment to the existence of dogs. So in a situation
+ where nothing is a dog, forall1b_ will still come out true. (Remember
+ that ``'(p implies q)'`` is true when ``'p'`` is false.) Now you might
+ argue that forall1b_ does presuppose the existence of dogs,
+ and that the logic formalization is wrong.
+ But it is possible  to find other
+ examples which lack such a presupposition.  For instance, we might
+ explain that the value of the Python expression ``re.sub('ate', '8',
+ astring)`` is the result of replacing all occurrences of ``'ate'`` in
+ ``astring`` by ``'8'``, even though there may in fact be no such occurrences. -->
+</div>
+<div class="section" id="quantificatier-scope-ambiguity">
+<h3>11.3.4&nbsp;&nbsp;&nbsp;Quantificatier Scope Ambiguity</h3>
+<p>What happens when we want to give a formal representation of a
+sentence with <em>two</em> quantifiers, such as the following?</p>
+<span class="target" id="scope1"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(12)</td><td width="15"></td><td>Every girl chases a dog.</td></tr></tbody></table><p></p>
+<p>There are (at least) two ways of expressing <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope1">(12)</a> in FOL:</p>
+<span class="target" id="scope2"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(13)</td><td width="15"></td><td><span class="target" id="scope2a"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">a.</td><td width="15"></td><td>&#8704;<span class="mathit">x.(girl(x)</span> &#8594; &#8707;<span class="mathit">y.(dog(y)</span> &#8743; <span class="mathit">chase(x,y)))</span></td></tr></tbody></table><p></p>
+<span class="target" id="scope2b"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">b.</td><td width="15"></td><td>&#8707;<span class="mathit">y.(dog(y)</span> &#8743; &#8704;<span class="mathit">x.(girl(x)</span> &#8594;  <span class="mathit">chase(x,y)))</span></td></tr></tbody></table><p></p>
+</td></tr></tbody></table><p></p>
+<p>Can we use both of these? Then answer is Yes, but they have different
+meanings. <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope2b">(13b)</a> is logically stronger than <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope2a">(13a)</a>: it claims that
+there is a unique dog, say Fido, which is chased by every girl.
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope2a">(13a)</a>, on the other hand, just requires that for every girl
+<span class="mathit">g</span>, we can find some dog which <span class="mathit">d</span> chases; but this could
+be a different dog in each case. We distinguish between <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope2a">(13a)</a> and
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope2b">(13b)</a> in terms of the <a name="scope_index_term"><span class="termdef">scope</span> of the quantifiers. In the first,
+&#8704; has wider scope than &#8707;, while in </a><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope2b">(13b)</a>, the scope ordering
+is reversed. So now we have two ways of representing the meaning of
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope1">(12)</a>, and they are both quite legitimate. In other words, we are
+claiming that <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope1">(12)</a> is <em>ambiguous</em> with respect to quantifier scope,
+and the formulas in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope2">(13)</a> give us a formal means of making the two
+readings explicit. However, we are not just interested in associating
+two distinct representations with <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope1">(12)</a>. We also want to show in
+detail how the two representations lead to different conditions for
+truth in a formal model.</p>
+<p> In order to examine the ambiguity more closely, let's fix our
+valuation as follows:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>v3 = [(<span class="pysrc-string">'john'</span>, <span class="pysrc-string">'b1'</span>),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'mary'</span>, <span class="pysrc-string">'g1'</span>),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'suzie'</span>, <span class="pysrc-string">'g2'</span>),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'fido'</span>, <span class="pysrc-string">'d1'</span>),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'tess'</span>, <span class="pysrc-string">'d2'</span>),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'noosa'</span>, <span class="pysrc-string">'n'</span>),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'girl'</span>, set([<span class="pysrc-string">'g1'</span>, <span class="pysrc-string">'g2'</span>])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'boy'</span>, set([<span class="pysrc-string">'b1'</span>, <span class="pysrc-string">'b2'</span>])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'dog'</span>, set([<span class="pysrc-string">'d1'</span>, <span class="pysrc-string">'d2'</span>])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'bark'</span>, set([<span class="pysrc-string">'d1'</span>, <span class="pysrc-string">'d2'</span>])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'walk'</span>, set([<span class="pysrc-string">'b1'</span>, <span class="pysrc-string">'g2'</span>, <span class="pysrc-string">'d1'</span>])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'chase'</span>, set([(<span class="pysrc-string">'b1'</span>, <span class="pysrc-string">'g1'</span>), (<span class="pysrc-string">'b2'</span>, <span class="pysrc-string">'g1'</span>), (<span class="pysrc-string">'g1'</span>, <span class="pysrc-string">'d1'</span>), (<span class="pysrc-string">'g2'</span>, <span class="pysrc-string">'d2'</span>)])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'see'</span>, set([(<span class="pysrc-string">'b1'</span>, <span class="pysrc-string">'g1'</span>), (<span class="pysrc-string">'b2'</span>, <span class="pysrc-string">'d2'</span>), (<span class="pysrc-string">'g1'</span>, <span class="pysrc-string">'b1'</span>),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'d2'</span>, <span class="pysrc-string">'b1'</span>), (<span class="pysrc-string">'g2'</span>, <span class="pysrc-string">'n'</span>)])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'in'</span>, set([(<span class="pysrc-string">'b1'</span>, <span class="pysrc-string">'n'</span>), (<span class="pysrc-string">'b2'</span>, <span class="pysrc-string">'n'</span>), (<span class="pysrc-string">'d2'</span>, <span class="pysrc-string">'n'</span>)])),
+<span class="pysrc-more">... </span>(<span class="pysrc-string">'with'</span>, set([(<span class="pysrc-string">'b1'</span>, <span class="pysrc-string">'g1'</span>), (<span class="pysrc-string">'g1'</span>, <span class="pysrc-string">'b1'</span>), (<span class="pysrc-string">'d1'</span>, <span class="pysrc-string">'b1'</span>), (<span class="pysrc-string">'b1'</span>, <span class="pysrc-string">'d1'</span>)]))]
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>val3 = nltk.sem.Valuation(v3)</pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p> We can use the graph in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#chasegraph">(14)</a> to visualize the
+<span class="mathit">chase</span> relation.</p>
+<span class="target" id="chasegraph"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(14)</td><td width="15"></td><td><img alt="../images/models_chase.png" src="./ch11_files/models_chase.png" style="width: 160.2px; height: 234.0px;"></td></tr></tbody></table><p></p>
+<p> In <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#chasegraph">(14)</a>, an arrow between two individuals <span class="math">x</span> and
+<span class="math">y</span> indicates that <span class="math">x</span> chases
+<span class="math">y</span>. So <tt class="doctest"><span class="pre">b1</span></tt> and <tt class="doctest"><span class="pre">b2</span></tt> both chase <tt class="doctest"><span class="pre">g1</span></tt>, while <tt class="doctest"><span class="pre">g1</span></tt> chases
+<tt class="doctest"><span class="pre">d1</span></tt> and <tt class="doctest"><span class="pre">g2</span></tt> chases <tt class="doctest"><span class="pre">d2</span></tt>. In this model, formula <tt class="doctest"><span class="pre">scope2a_</span></tt> above
+is true but <tt class="doctest"><span class="pre">scope2b_</span></tt> is false. One way of exploring these results is by
+using the <tt class="doctest"><span class="pre">satisfiers()</span></tt> method of <tt class="doctest"><span class="pre">Model</span></tt> objects.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>dom3 = val3.domain
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m3 = nltk.sem.Model(dom3, val3)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>g = nltk.sem.Assignment(dom3)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>fmla1 = lp.parse(<span class="pysrc-string">'(girl(x) -&gt; exists y.(dog(y) &amp; chase(x, y)))'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m3.satisfiers(fmla1, <span class="pysrc-string">'x'</span>, g)
+<span class="pysrc-output">set(['g2', 'g1', 'n', 'b1', 'b2', 'd2', 'd1'])</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt;</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p> This gives us the set of individuals that can be assigned as the value
+of <tt class="doctest"><span class="pre">x</span></tt> in <tt class="doctest"><span class="pre">fmla1</span></tt>. In particular, every girl is included in this
+set. By contrast, consider the formula <tt class="doctest"><span class="pre">fmla2</span></tt> below; this has no
+satisfiers for the variable <tt class="doctest"><span class="pre">y</span></tt>.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>fmla2 = lp.parse(<span class="pysrc-string">'(dog(y) &amp; all x.(girl(x) -&gt; chase(x, y)))'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m3.satisfiers(fmla2, <span class="pysrc-string">'y'</span>, g)
+<span class="pysrc-output">set([])</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt;</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p> That is, there is no dog that is chased by both <tt class="doctest"><span class="pre">g1</span></tt> and
+<tt class="doctest"><span class="pre">g2</span></tt>. Taking a slightly different open formula, <tt class="doctest"><span class="pre">fmla3</span></tt>, we
+can verify that there is a girl, namely <tt class="doctest"><span class="pre">g1</span></tt>, who is chased by every boy.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>fmla3 = lp.parse(<span class="pysrc-string">'(girl(y) &amp; all x.(boy(x) -&gt; chase(x, y)))'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m3.satisfiers(fmla3, <span class="pysrc-string">'y'</span>, g)
+<span class="pysrc-output">set(['g1'])</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<!-- ADD something about the parse_valuation method -->
+</div>
+</div>
+<div class="section" id="evaluating-english-sentences">
+<h2>11.4&nbsp;&nbsp;&nbsp;Evaluating English Sentences</h2>
+<div class="section" id="using-the-sem-feature">
+<h3>11.4.1&nbsp;&nbsp;&nbsp;Using the <tt class="doctest"><span class="pre">sem</span></tt> Feature</h3>
+<p>Until now, we have taken for granted that we have some appropriate
+logical formulas to interpret. However, ideally we would like to
+derive these formulas from natural language input. One relatively easy
+way of achieving this goal is to build on the grammar framework
+developed in <a class="reference external" href="http://nltk.sourceforge.net/doc/en/ch10.html#chap-featgram">Chapter 10</a>. Our first step is to introduce a new feature,
+<tt class="doctest"><span class="pre">sem</span></tt>. Because values of <tt class="doctest"><span class="pre">sem</span></tt> generally need to be treated
+differently from other feature values, we use the convention of
+enclosing them in angle brackets. <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem1">(15)</a> illustrates a first
+approximation to the kind of analyses we would like to build.</p>
+<span class="target" id="sem1"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(15)</td><td width="15"></td><td><img align="top" alt="tree_images/ch11-tree-1.png" class="align-top" src="./ch11_files/ch11-tree-1.png" style="width: 297.0px; height: 133.0px;"></td></tr></tbody></table><p></p>
+<p> Thus, the <tt class="doctest"><span class="pre">sem</span></tt> value at the root node shows a semantic
+representation for the whole sentence, while the <tt class="doctest"><span class="pre">sem</span></tt> values at
+lower nodes show semantic representations for constituents of the
+sentence. So far, so good, but how do we write grammar rules which
+will give us this kind of result? To be more specific, suppose we have
+a <span class="category">np</span> and <span class="category">vp</span> constituents with appropriate values for their
+<tt class="doctest"><span class="pre">sem</span></tt> nodes? If you reflect on the machinery that was introduced in
+discussing the &#955; calculus, you might guess that function
+application will be central to composing semantic values. You will
+also remember that our feature-based grammar framework gives us the
+means to refer to <span class="emphasis">variable</span> values. Putting this together, we can
+postulate a rule like <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem2">(16)</a> for building the <tt class="doctest"><span class="pre">sem</span></tt> value of an
+<span class="category">s</span>.  (Observe that in the case where the value of <tt class="doctest"><span class="pre">sem</span></tt> is a
+variable, we omit the angle brackets.)</p>
+<span class="target" id="sem2"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(16)</td><td width="15"></td><td><pre class="literal-block">S[sem = &lt;app(?vp,?subj)&gt;] -&gt; NP[sem=?subj] VP[sem=?vp]
+</pre>
+</td></tr></tbody></table><p></p>
+<p><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem2">(16)</a> tells us that given some <tt class="doctest"><span class="pre">sem</span></tt> value <tt class="doctest"><span class="pre">?subj</span></tt> for the subject
+<span class="category">np</span> and some <tt class="doctest"><span class="pre">sem</span></tt> value <tt class="doctest"><span class="pre">?vp</span></tt> for the <span class="category">vp</span>, the <tt class="doctest"><span class="pre">sem</span></tt>
+value of the <span class="category">s</span> mother is constructed by applying <tt class="doctest"><span class="pre">?vp</span></tt> as a
+functor to <tt class="doctest"><span class="pre">?np</span></tt>.  From this, we can conclude that <tt class="doctest"><span class="pre">?vp</span></tt> has to
+denote a function which has the denotation of <tt class="doctest"><span class="pre">?np</span></tt> in its
+domain; in fact, we are going to assume that <tt class="doctest"><span class="pre">?vp</span></tt> denotes a
+curryed characteristic function on individuals. <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem2">(16)</a> is a nice example of
+building semantics using <a name="the_principle_of_compositionality_index_term"><span class="termdef">the principle of compositionality</span>:
+that is, the principle that the semantics of a complex expression is a
+function of the semantics of its parts.</a></p><a name="the_principle_of_compositionality_index_term">
+</a><p><a name="the_principle_of_compositionality_index_term">To complete the grammar is very straightforward; all we require are the
+rules shown in </a><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem3">(17)</a>.</p>
+<span class="target" id="sem3"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(17)</td><td width="15"></td><td><pre class="literal-block">VP[sem=?v] -&gt; IV[sem=?v]
+NP[sem=&lt;jane&gt;] -&gt; 'Jane'
+IV[sem=&lt;walk&gt;] -&gt; 'walks'
+</pre>
+</td></tr></tbody></table><p></p>
+<p>
+The <span class="category">vp</span> rule says that the mother's semantics is the same as the
+head daughter's. The two lexical rules just introduce non-logical
+constants to serve as the semantic values of <span class="example">Jane</span> and
+<span class="example">walks</span> respectively. This grammar can be parsed using the chart
+parser in <tt class="doctest"><span class="pre">parse.featurechart</span></tt>, and the trace in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem4">(18)</a>
+shows how semantic values are derived by feature unification in the
+process of building a parse tree.</p>
+<span class="target" id="sem4"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(18)</td><td width="15"></td><td><pre class="literal-block">Predictor |&gt; . .| S[sem='?vp(?subj)'] -&gt; * NP[sem=?subj] VP[sem=?vp]
+Scanner   |[-] .| [0:1] 'Jane'
+Completer |[-&gt; .| S[sem='?vp(john)'] -&gt; NP[sem='john'] * VP[sem=?vp]
+Predictor |. &gt; .| VP[sem=?v] -&gt; * IV[sem=?v]
+Scanner   |. [-]| [1:2] 'walks'
+Completer |. [-]| VP[sem='walk'] -&gt; IV[sem='walk'] *
+Completer |[===]| S[sem='walk(john)'] -&gt; NP[sem='john'] VP[sem='walk'] *
+Completer |[===]| [INIT] -&gt; S *
+</pre>
+</td></tr></tbody></table><p></p>
+</div>
+<div class="section" id="quantified-nps">
+<h3>11.4.2&nbsp;&nbsp;&nbsp;Quantified <span class="category">np</span>s</h3>
+<p>You might be thinking this is all too easy — surely there is a
+bit more to building compositional semantics. What about quantifiers,
+for instance? Right, this is a crucial issue. For example, we want
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem5a">(19a)</a> to be given a semantic representation like <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem5b">(19b)</a>. How can this
+be accomplished?</p>
+<span class="target" id="sem5"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(19)</td><td width="15"></td><td><span class="target" id="sem5a"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">a.</td><td width="15"></td><td>A dog barks.</td></tr></tbody></table><p></p>
+<span class="target" id="sem5b"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">b.</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'exists x.(dog(x) &amp; (bark(x))'</span></span></tt></td></tr></tbody></table><p></p>
+</td></tr></tbody></table><p></p>
+<p> Let's make the assumption that our <span class="emphasis">only</span> operation for building
+complex semantic representations is function
+application. Then our problem is this: how do we give a semantic
+representation to quantified <span class="category">np</span>s such as <span class="example">a dog</span> so that
+they can be combined with something like <tt class="doctest"><span class="pre"><span class="pysrc-string">'walk'</span></span></tt> to give a result
+like <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem5b">(19b)</a>? As a first step, let's make the subject's <tt class="doctest"><span class="pre">sem</span></tt> value
+act as the functor rather than the argument. Now we are
+looking for way of instantiating <tt class="doctest"><span class="pre">?np</span></tt> so that <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem6a">(20a)</a> is equivalent
+to <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem6b">(20b)</a>.</p>
+<span class="target" id="sem6"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(20)</td><td width="15"></td><td><span class="target" id="sem6a"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">a.</td><td width="15"></td><td><div class="line-block">
+<div class="line">[sem=&lt;bark(?np)&gt;]</div>
+</div>
+</td></tr></tbody></table><p></p>
+<span class="target" id="sem6b"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">b.</td><td width="15"></td><td><div class="line-block">
+<div class="line">[sem=&lt;exists x.(dog(x) &amp; bark(x))&gt;]</div>
+</div>
+</td></tr></tbody></table><p></p>
+</td></tr></tbody></table><p></p>
+<p> This is where &#955; abstraction comes to the rescue;
+doesn't <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem6">(20)</a> look a bit reminiscent of carrying out &#946;-reduction
+in the &#955;-calculus? In other words, we want a &#955; term
+<span class="mathit">M</span> to replace <tt class="doctest"><span class="pre"><span class="pysrc-string">'?np'</span></span></tt> so that applying <span class="mathit">M</span> to
+<tt class="doctest"><span class="pre"><span class="pysrc-string">'bark'</span></span></tt> yields <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem5b">(19b)</a>.  To do this, we replace the occurence of
+<tt class="doctest"><span class="pre"><span class="pysrc-string">'bark'</span></span></tt> in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem5b">(19b)</a> by a variable <tt class="doctest"><span class="pre"><span class="pysrc-string">'P'</span></span></tt>, and bind the variable with
+&#955;, as shown in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7">(21)</a>.</p>
+<span class="target" id="sem7"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(21)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'\P.exists x.(dog(x) &amp; P(x))'</span></span></tt></td></tr></tbody></table><p></p>
+<p> As a point of interest, we have used a different style of variable in
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7">(21)</a>, that is <tt class="doctest"><span class="pre"><span class="pysrc-string">'P'</span></span></tt> rather than <tt class="doctest"><span class="pre"><span class="pysrc-string">'x'</span></span></tt> or <tt class="doctest"><span class="pre"><span class="pysrc-string">'y'</span></span></tt>. This is to signal
+that we are abstracting over a different kind of thing — not an
+individual, but a function from <strong>Ind</strong> to <strong>Bool</strong>. So the type of
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7">(21)</a> as a whole is ((<strong>Ind</strong> &#8594; <strong>Bool</strong>) &#8594; <strong>Bool</strong>). We
+will take this to be the type of <span class="category">np</span>s in general. To illustrate
+further, a universally quantified <span class="category">np</span> will look like <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7univ">(22)</a>.</p>
+<span class="target" id="sem7univ"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(22)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'\P.all x.(dog(x) -&gt; P(x))'</span></span></tt></td></tr></tbody></table><p></p>
+<p>We are pretty much done now, except that we also want to carry out a
+further abstraction plus application for the process of combining the
+semantics of the determiner <span class="example">a</span> with the semantics of <span class="example">dog</span>.
+Applying <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7">(21)</a> as a functor to <tt class="doctest"><span class="pre"><span class="pysrc-string">'bark'</span></span></tt> gives us
+<tt class="doctest"><span class="pre"><span class="pysrc-string">'(\P.exists x.(dog(x) &amp; P(x)))(bark)'</span></span></tt>, and carrying out &#946;-reduction
+yields just what we wanted, namely <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem5b">(19b)</a>.</p>
+<p>NLTK provides some utilities to make it easier to derive and inspect
+semantic interpretations. <tt class="doctest"><span class="pre">text_interpret()</span></tt> is intended for batch
+interpretation of a list of input sentences. It builds a dictionary
+<tt class="doctest"><span class="pre">d</span></tt> where for each sentence <tt class="doctest"><span class="pre">sent</span></tt> in the input,
+<tt class="doctest"><span class="pre">d[sent]</span></tt> is a list of paired trees and semantic representations for
+<tt class="doctest"><span class="pre">sent</span></tt>. The value is a list, since <tt class="doctest"><span class="pre">sent</span></tt> may be syntactically
+ambiguous; in the following example, we just look at the first member
+of the list.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>grammar = nltk.data.load(<span class="pysrc-string">'grammars/sem1.fcfg'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>result  = nltk.sem.text_interpret([<span class="pysrc-string">'a dog barks'</span>], grammar, beta_reduce=0)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>(syntree, semrep) = result[<span class="pysrc-string">'a dog barks'</span>][0]
+<span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">print</span> syntree
+<span class="pysrc-output">(S[sem=&lt;exists x.(dog(x) &amp; bark(x))&gt;]</span>
+<span class="pysrc-output">  (NP[sem=&lt;\P.exists x.(dog(x) &amp; P(x))&gt;]</span>
+<span class="pysrc-output">    (Det[sem=&lt;\Q.\P.exists x.(Q(x) &amp; P(x))&gt;] a)</span>
+<span class="pysrc-output">     (N[sem=&lt;dog&gt;] dog))</span>
+<span class="pysrc-output">   (VP[sem=&lt;\x.bark(x)&gt;] (IV[sem=&lt;\x.bark(x)&gt;] barks)))</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p> By default, the semantic representation that is produced by
+<tt class="doctest"><span class="pre">text_interpret()</span></tt> has already undergone &#946;-reduction, but in the
+above example, we have overridden this.  Subsequent reduction is
+possible using the <tt class="doctest"><span class="pre">simplify()</span></tt> method, and Boolean connectives can be
+placed in infix position with the <tt class="doctest"><span class="pre">infixify()</span></tt> method.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">print</span> semrep.simplify()
+<span class="pysrc-output">exists x.(dog(x) &amp; bark(x))</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+</div>
+<div class="section" id="transitive-verbs">
+<h3>11.4.3&nbsp;&nbsp;&nbsp;Transitive Verbs</h3>
+<p>Our next challenge is to deal with sentences containing transitive
+verbs, such as <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem8">(23)</a>.</p>
+<span class="target" id="sem8"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(23)</td><td width="15"></td><td>Suzie chases a dog.</td></tr></tbody></table><p></p>
+<p> The output semantics that we want to build is shown in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem9">(24)</a>.</p>
+<span class="target" id="sem9"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(24)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'exists x.(dog(x) &amp; chase(suzie, x))'</span></span></tt></td></tr></tbody></table><p></p>
+<p> Let's look at how we can use &#955;-abstraction to get this
+result. A significant constraint on possible solutions is to require
+that the semantic representation of <span class="example">a dog</span> be independent of
+whether the <span class="category">np</span> acts as subject or object of the sentence. In
+other words, we want to get <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem9">(24)</a> as our output while sticking to
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7">(21)</a> as the <span class="category">np</span> semantics. A second constraint is that
+<span class="category">vp</span>s should have a uniform type of interpretation regardless
+of whether they consist of just an intransitive verb or a transitive
+verb plus object. More specifically, we stipulate that <span class="category">vp</span>s
+always denote characteristic functions on individuals. Given these
+constraints, here's a semantic representation for <span class="example">chases a dog</span>
+which does the trick.</p>
+<span class="target" id="sem99"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(25)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'\y.exists x.(dog(x) &amp; chase(y, x))'</span></span></tt></td></tr></tbody></table><p></p>
+<p> Think of <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem99">(25)</a> as the property of being a <span class="math">y</span> such that
+for some dog <span class="math">x</span>, <span class="math">y</span> chases <span class="math">x</span>; or more
+colloquially, being a <span class="math">y</span> who chases a dog. Our task now
+resolves to designing a semantic representation for
+<span class="example">chases</span> which can combine via <tt class="doctest"><span class="pre">app</span></tt> with <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7">(21)</a> so as to allow
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem99">(25)</a> to be derived.</p>
+<p>Let's carry out a kind of inverse &#946;-reduction on <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem99">(25)</a>,
+giving rise to <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem10">(26)</a>.</p>
+<p>Then we are part
+way to the solution if we can derive <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem10">(26)</a>, where <tt class="doctest"><span class="pre"><span class="pysrc-string">'X'</span></span></tt> is applied to
+<tt class="doctest"><span class="pre"><span class="pysrc-string">'\z.chase(y, z)'</span></span></tt>.</p>
+<span class="target" id="sem10"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(26)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'(\P.exists x.(dog(x) &amp; P(x)))(\z.chase(y, z))'</span></span></tt></td></tr></tbody></table><p></p>
+<p> <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem10">(26)</a> may be slightly hard to read at first; you need to see that
+it involves applying the quantified <span class="category">np</span> representation from
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7">(21)</a> to <tt class="doctest"><span class="pre"><span class="pysrc-string">'\z.chase(y,z))'</span></span></tt>. <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem10">(26)</a> is of course
+equivalent to <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem99">(25)</a>.</p>
+<p>Now let's replace the functor in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem10">(26)</a> by a variable <tt class="doctest"><span class="pre"><span class="pysrc-string">'X'</span></span></tt> of the
+same type as an <span class="category">np</span>; that is, of type ((<strong>Ind</strong> &#8594; <strong>Bool</strong>)
+&#8594; <strong>Bool</strong>).</p>
+<span class="target" id="sem11"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(27)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'X(\z.chase(y, z))'</span></span></tt></td></tr></tbody></table><p></p>
+<p> The representation of a transitive verb will have to apply to
+an argument of the type of <tt class="doctest"><span class="pre"><span class="pysrc-string">'X'</span></span></tt> to yield a functor of the type of
+<span class="category">vp</span>s, that is, of type (<strong>Ind</strong> &#8594; <strong>Bool</strong>). We can ensure
+this by abstracting over both the <tt class="doctest"><span class="pre"><span class="pysrc-string">'X'</span></span></tt> variable in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem11">(27)</a> and also
+the subject variable <tt class="doctest"><span class="pre"><span class="pysrc-string">'y'</span></span></tt>. So the full solution is reached by
+giving <span class="example">chases</span> the semantic representation shown in <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem12">(28)</a>.</p>
+<span class="target" id="sem12"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(28)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'\X y.X(\x.chase(y, x))'</span></span></tt></td></tr></tbody></table><p></p>
+<p> If <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem12">(28)</a> is applied to <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem7">(21)</a>, the result after &#946;-reduction is
+equivalent to <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem99">(25)</a>, which is what we wanted all along:</p>
+<p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(29)</td><td width="15"></td><td><div class="line-block">
+<div class="line"><tt class="doctest"><span class="pre"><span class="pysrc-string">'(\X y.(X \x.(chase(y, x)) \P.exists x.(dog(x) &amp; P(x))'</span></span></tt></div>
+<div class="line">&#8605;</div>
+<div class="line"><tt class="doctest"><span class="pre"><span class="pysrc-string">'(\y.(\P.exists x.(dog(x) &amp; P(x)) \x.chase(y, x))'</span></span></tt></div>
+<div class="line">&#8605;</div>
+<div class="line"><tt class="doctest"><span class="pre"><span class="pysrc-string">'\y.(exists x.(dog(x) &amp; chase(y, x)))'</span></span></tt></div>
+</div>
+</td></tr></tbody></table><p></p>
+<p>In order to build a semantic representation for a sentence, we also
+need to combine in the semantics of the subject <span class="category">np</span>. If the
+latter is a quantified expression like <span class="example">every girl</span>, everything
+proceeds in the same way as we showed for <span class="example">a dog barks</span> earlier
+on; the subject is translated as a functor which is applied to the
+semantic representation of the <span class="category">vp</span>.  However, we now seem to have
+created another problem for ourselves with proper names. So far, these
+have been treated semantically as individual constants, and these
+cannot be applied as functors to expressions like
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem99">(25)</a>. Consequently, we need to come up with a different semantic
+representation for them. What we do
+in this case is re-interpret proper names so that they too are
+functors, like quantified <span class="category">np</span>s. <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem13">(30)</a> shows the required
+&#955; expression for <span class="example">Suzie</span>.</p>
+<span class="target" id="sem13"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(30)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'\P.P(suzie)'</span></span></tt></td></tr></tbody></table><p></p>
+<p> <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem13">(30)</a> denotes the characteristic function corresponding to the set of
+all properties which are true of Suzie. Converting from an individual
+constant to an expression like <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#sem12">(28)</a> is known as <a name="type_raising_index_term"><span class="termdef">type raising</span>,
+and allows us to flip functors with arguments. That is, type raising
+means that we can replace a Boolean-valued application such as
+<span class="mathit">f(a</span>) with an equivalent application
+<span class="math">(</span>&#955;<span class="mathit">P.P(a))(f</span>).</a></p><a name="type_raising_index_term">
+</a><p><a name="type_raising_index_term">One important limitation of the approach we have presented here is
+that it does not attempt to deal with scope ambiguity. Instead,
+quantifier scope ordering directly reflects scope in the parse
+tree. As a result, a sentence like </a><a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope1">(12)</a>, repeated here, will always
+be translated as <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope12a">(32a)</a>, not <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#scope12b">(32b)</a>.</p>
+<span class="target" id="scope11"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(31)</td><td width="15"></td><td>Every girl chases a dog.</td></tr></tbody></table><p></p>
+<span class="target" id="scope12"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(32)</td><td width="15"></td><td><span class="target" id="scope12a"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">a.</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'all x.(girl(x) -&gt; exists y. (dog(y) &amp; chase(x,y)))'</span></span></tt></td></tr></tbody></table><p></p>
+<span class="target" id="scope12b"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">b.</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'exists y. dog(y) &amp; all x. (girl(x) -&gt; chase(x,y)))'</span></span></tt></td></tr></tbody></table><p></p>
+</td></tr></tbody></table><p></p>
+<p> This limitation can be overcome, for example using the hole semantics
+described in <a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#blackburn2005rin" id="id4">[Blackburn &amp; Bos, 2005]</a>, but discussing the details would take
+us outside the scope of the current chapter.</p>
+<p>Now that we have looked at some slightly more complex constructions, we can
+evaluate them in a model. In the following example, we derive two
+parses for the sentence <span class="example">every boy chases a girl in Noosa</span>, and
+evaluate each of the corresponding semantic representations in the
+model <tt class="doctest"><span class="pre">model0.py</span></tt> which we have imported.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>grammar = nltk.data.load(<span class="pysrc-string">'grammars/sem2.fcfg'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>val4 = nltk.data.load(<span class="pysrc-string">'grammars/valuation1.val'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>dom4 = val4.domain
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m4 = nltk.sem.Model(dom4, val4)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>g = nltk.sem.Assignment(dom4)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>sent = <span class="pysrc-string">'every boy chases a girl in Noosa'</span>
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>result = nltk.sem.text_evaluate([sent], grammar, m4, g)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">for</span> (syntree, semrep, value) <span class="pysrc-keyword">in</span> result[sent]:
+<span class="pysrc-more">... </span>        <span class="pysrc-keyword">print</span> <span class="pysrc-string">"'%s' is %s in Model m\n"</span> % (semrep, value)
+<span class="pysrc-output">'all x.(boy(x) -&gt; (exists z2.(girl(z2) &amp; chase(x,z2)) &amp; in(x,noosa)))' is True in Model m</span>
+<span class="pysrc-output"></span>
+<span class="pysrc-output">'all x.(boy(x) -&gt; (exists z2.(girl(z2) &amp; chase(x,z2)) &amp; in(x,noosa)))' is True in Model m</span>
+<span class="pysrc-output"></span>
+<span class="pysrc-output">'all x.(boy(x) -&gt; exists z3.((girl(z3) &amp; in(z3,noosa)) &amp; chase(x,z3)))' is False in Model m</span>
+<span class="pysrc-output"></span>
+<span class="pysrc-output">'all x.(boy(x) -&gt; exists z3.((girl(z3) &amp; in(z3,noosa)) &amp; chase(x,z3)))' is False in Model m</span>
+<span class="pysrc-output"></span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+</div>
+</div>
+<div class="section" id="case-study-extracting-valuations-from-chat-80">
+<h2>11.5&nbsp;&nbsp;&nbsp;Case Study: Extracting Valuations from Chat-80</h2>
+<p>Building <tt class="doctest"><span class="pre">Valuation</span></tt> objects by hand becomes rather tedious once we
+consider larger examples. This raises the question of whether the
+relation data in a <tt class="doctest"><span class="pre">Valuation</span></tt> could be extracted from some
+pre-existing source. The <tt class="doctest"><span class="pre">corpora.chat80</span></tt> module
+provides an example of extracting data from the Chat-80 Prolog
+knowledge base (which included as part of the NLTK <tt class="doctest"><span class="pre">corpora</span></tt>
+distribution).</p>
+<p>Chat-80 data is organized into collections of clauses, where each
+collection functions as a table in a relational database. The
+predicate of the clause provides the name of the table; the first
+element of the tuple acts as the
+'key'; and subsequent elements are further columns in the
+table.</p>
+<p>In general, the name of the table provides a label for a unary
+relation whose extension is all the keys. For example,
+the table in <tt class="doctest"><span class="pre">cities.pl</span></tt> contains triples such as <a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#city">(33)</a>.</p>
+<span class="target" id="city"></span><p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(33)</td><td width="15"></td><td><tt class="doctest"><span class="pre"><span class="pysrc-string">'city(athens,greece,1368).'</span></span></tt></td></tr></tbody></table><p></p>
+<p> Here, <tt class="doctest"><span class="pre"><span class="pysrc-string">'athens'</span></span></tt> is the key, and will be mapped to a member of the
+unary relation <span class="mathit">city</span>.</p>
+<p>The other two columns in the table are mapped to binary relations, where the first
+argument of the relation is filled by the table key, and the
+second argument is filled by the data in the relevant column. Thus, in
+the <tt class="doctest"><span class="pre">city</span></tt> table illustrated by the tuple in
+<a class="reference internal" href="http://nltk.sourceforge.net/doc/en/ch11.html#city">(33)</a>, the data from the third column is extracted  into a binary predicate
+<span class="mathit">population_of</span>, whose extension is a set of pairs such as
+<tt class="doctest"><span class="pre"><span class="pysrc-string">'(athens, 1368)'</span></span></tt>.</p>
+<p>In order to encapsulate the results of the extraction, a class of
+<tt class="doctest"><span class="pre">Concept</span></tt>s is introduced.  A <tt class="doctest"><span class="pre">Concept</span></tt> object has a number of
+attributes, in particular a <tt class="doctest"><span class="pre">prefLabel</span></tt> and <tt class="doctest"><span class="pre">extension</span></tt>, which
+make it easier to inspect the output of the extraction. The
+<tt class="doctest"><span class="pre">extension</span></tt> of a <tt class="doctest"><span class="pre">Concept</span></tt> object is incorporated into a
+<tt class="doctest"><span class="pre">Valuation</span></tt> object.</p>
+<p>As well as deriving unary and binary relations from the Chat-80 data,
+we also create a set of individual constants, one for each entity in
+the domain. The individual constants are string-identical to the
+entities. For example, given a data item such as <tt class="doctest"><span class="pre"><span class="pysrc-string">'zloty'</span></span></tt>, we add
+to the valuation a pair <tt class="doctest"><span class="pre">(<span class="pysrc-string">'zloty'</span>, <span class="pysrc-string">'zloty'</span>)</span></tt>. In order to parse
+English sentences that refer to these entities, we also create a
+lexical item such as the following for each individual constant:</p>
+<p></p><table border="0" cellpadding="0" cellspacing="0" class="example">
+  <tbody><tr valign="top"><td width="30" align="right">(34)</td><td width="15"></td><td><pre class="literal-block">PropN[num=sg, sem=&lt;\P.P(zloty)&gt;] -&gt; 'Zloty'
+</pre>
+</td></tr></tbody></table><p></p>
+<p>The <tt class="doctest"><span class="pre">chat80</span></tt> module can be found in the <tt class="doctest"><span class="pre">corpora</span></tt> package. The
+attribute <tt class="doctest"><span class="pre">chat80.items</span></tt> gives us a list of Chat-80 relations:</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span><span class="pysrc-keyword">from</span> nltk.corpus <span class="pysrc-keyword">import</span> chat80
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>chat80.items 
+<span class="pysrc-output"> ('borders', 'circle_of_lat', 'circle_of_long', 'city', ...)</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p>The <tt class="doctest"><span class="pre">concepts()</span></tt> method shows the list of <tt class="doctest"><span class="pre">Concept</span></tt>s that can be
+extracted from a <tt class="doctest"><span class="pre">chat80</span></tt> relation, and we can then inspect their extensions.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>concepts = chat80.concepts(<span class="pysrc-string">'city'</span>)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>concepts
+<span class="pysrc-output">[Concept('city'), Concept('country_of'), Concept('population_of')]</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>rel = concepts[1].extension
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>list(rel)[:5]
+<span class="pysrc-output">[('chungking', 'china'), ('karachi', 'pakistan'),</span>
+<span class="pysrc-output">('singapore_city', 'singapore'), ('athens', 'greece'),</span>
+<span class="pysrc-output">('birmingham', 'united_kingdom')]</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<p> In order to convert such an extension into a valuation, we use the
+<tt class="doctest"><span class="pre">make_valuation()</span></tt> method; setting <tt class="doctest"><span class="pre">read=True</span></tt> creates and returns
+a new <tt class="doctest"><span class="pre">Valuation</span></tt> object which contains the results.</p>
+<div class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" class="doctest" width="95%">
+<tbody><tr><td class="doctest">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td width="1" class="copybar" onclick="javascript:copy_doctest_to_clipboard(this.nextSibling);">&nbsp;</td>
+<td class="pysrc"><pre class="doctest"><span class="pysrc-prompt">&gt;&gt;&gt; </span>val = nltk.corpus.chat80.make_valuation(concepts, read=True)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>val[<span class="pysrc-string">'city'</span>][<span class="pysrc-string">'calcutta'</span>]
+<span class="pysrc-output">True</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>val[<span class="pysrc-string">'country_of'</span>][<span class="pysrc-string">'india'</span>]
+<span class="pysrc-output">{'hyderabad': True, 'delhi': True, 'bombay': True,</span>
+<span class="pysrc-output">'madras': True, 'calcutta': True}</span>
+<span class="pysrc-output"></span><span class="pysrc-prompt">&gt;&gt;&gt; </span>dom = val.domain
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>g = nltk.sem.Assignment(dom)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m = nltk.sem.Model(dom, val)
+<span class="pysrc-prompt">&gt;&gt;&gt; </span>m.evaluate(r<span class="pysrc-string">'\x .population_of(jakarta, x)'</span>, g)
+<span class="pysrc-output">{'533': True}</span></pre>
+</td>
+</tr></tbody></table></td></tr>
+</tbody></table></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Population figures are given in thousands. Bear in mind that
+the geographical data used in these examples dates back at least to
+the 1980s, and was already somewhat out of date at the point when
+<a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#warren1982eea" id="id5">[Warren &amp; Pereira, 1982]</a> was published.</p>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>11.6&nbsp;&nbsp;&nbsp;Summary</h2>
+<ul class="simple">
+<li>Semantic Representations (SRs) for English are constructed using a
+language based on the &#955;-calculus, together with Boolean
+connectives, equality, and first-order quantifiers.</li>
+<li>&#946;-reduction in the &#955;-calculus corresponds semantically
+to application of a function to an argument. Syntactically, it
+involves replacing a variable bound by &#955; in the functor with
+the expression that provides the argument in the function
+application.</li>
+<li>If two &#955;-abstracts differ only in the label of the variable
+bound by &#955;, they are said to be &#945;
+equivalents. Relabeling a variable bound by a &#955; is called
+&#945;-conversion.</li>
+<li>Currying of a binary function turns it into a unary function whose
+value is again a unary function.</li>
+<li>FSRL has both a syntax and a semantics. The semantics is
+determined by recursively evaluating expressions in a model.</li>
+<li>A key part of constructing a model lies in building a valuation
+which assigns interpretations to non-logical constants. These are
+interpreted as either curried characteristic functions or as
+individual constants.</li>
+<li>The interpretation of Boolean connectives is handled by the
+model; these are interpreted as characteristic functions.</li>
+<li>An open expression is an expression containing one or more free
+variables. Open expressions only receive an interpretation when
+their free variables receive values from a
+variable assignment.</li>
+<li>Quantifiers are interpreted by constructing, for a formula &#966;[<span class="mathit">x</span>] open in variable <span class="mathit">x</span>, the set of individuals
+which make &#966;[<span class="mathit">x</span>] true when an assignment <em>g</em>
+assigns them as the value of <span class="mathit">x</span>. The quantifier then places
+constraints on that set.</li>
+<li>A closed expression is one that has no free variables; that is, the
+variables are all bound. A closed sentence is true or
+false with respect to all variable assignments.</li>
+<li>Given a formula with two nested quantifiers <em>Q</em><sub>1</sub> and <em>Q</em><sub>2</sub>, the outermost quantifier <em>Q</em><sub>1</sub> is said to have wide
+scope (or scope over <em>Q</em><sub>2</sub>). English sentences are frequently
+ambiguous with respect to the scope of the quantifiers they
+contain.</li>
+<li>English sentences can be associated with an SR by treating <tt class="doctest"><span class="pre">sem</span></tt>
+as a feature. The <tt class="doctest"><span class="pre">sem</span></tt> value of a complex expressions typically
+involves functional application of the <tt class="doctest"><span class="pre">sem</span></tt> values of the
+component expressions.</li>
+<li>Model valuations need not be built by hand, but can also be
+extracted from relational tables, as in the Chat-80 example.</li>
+</ul>
+</div>
+<div class="section" id="exercises">
+<h2>11.7&nbsp;&nbsp;&nbsp;Exercises</h2>
+<ol class="arabic simple">
+<li>&#9681; Modify the <tt class="doctest"><span class="pre">sem.evaluate</span></tt> code so that it will
+give a helpful error message if an expression is not in the domain
+of a model's valuation function.</li>
+<li>&#9733; Specify and implement a typed functional language with quantifiers,
+Boolean connectives and equality. Modify
+<tt class="doctest"><span class="pre">sem.evaluate</span></tt> to interpret expressions of this language.</li>
+<li>&#9733; Extend the <tt class="doctest"><span class="pre">chat80</span></tt> code so that it will extract data from a
+relational database using SQL queries.</li>
+<li>&#9733; Taking [WarrenPereira1982] as a starting point, develop a technique
+for converting a natural language query into a form that can be
+evaluated more efficiently in a model. For example, given a query
+of the form <tt class="doctest"><span class="pre"><span class="pysrc-string">'(P(x) &amp; Q(x)'</span></span></tt>, convert it to <tt class="doctest"><span class="pre"><span class="pysrc-string">'(Q(x) &amp; P(x)'</span></span></tt> if
+the extension of <tt class="doctest"><span class="pre"><span class="pysrc-string">'Q'</span></span></tt> is smaller than the extension of
+<tt class="doctest"><span class="pre"><span class="pysrc-string">'P'</span></span></tt>.</li>
+</ol>
+</div>
+<div class="section" id="further-reading">
+<h2>11.8&nbsp;&nbsp;&nbsp;Further Reading</h2>
+<p>For more examples of semantic analysis with NLTK, please see the
+guides at
+<tt class="doctest"><span class="pre">http://nltk.org/doc/guides/sem.html</span></tt> and
+<tt class="doctest"><span class="pre">http://nltk.org/doc/guides/logic.html</span></tt>.</p>
+<p>The use of characteristic functions for interpreting expressions of
+natural language was primarily due to Richard
+Montague. <a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#dowty1981ims" id="id6">[Dowty, Wall, &amp; Peters, 1981]</a> gives a comprehensive and reasonably
+approachable introduction to Montague's grammatical framework.</p>
+<p>A more recent and wide-reaching study of the use of a &#955; based
+approach to natural language can be found in <a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#carpenter1997tls" id="id7">[Carpenter, 1997]</a>.</p>
+<p><a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#heim1998sgg" id="id8">[Heim &amp; Kratzer, 1998]</a> is a thorough application of formal semantics to
+transformational grammars in the Government-Binding model.</p>
+<p><a class="reference external" href="http://nltk.sourceforge.net/doc/en/bibliography.html#blackburn2005rin" id="id9">[Blackburn &amp; Bos, 2005]</a> is the first textbook devoted to computational
+semantics, and provides an excellent introduction to the area.</p>
+<!-- Footer to be used in all chapters -->
+<div class="admonition-about-this-document admonition">
+<p class="first admonition-title">About this document...</p>
+<p>This chapter is a draft from
+<em>Natural Language Processing</em> [<a class="reference external" href="http://nltk.org/book.html">http://nltk.org/book.html</a>],
+by <a class="reference external" href="http://www.csse.unimelb.edu.au/~sb/">Steven Bird</a>, <a class="reference external" href="http://www.ltg.ed.ac.uk/~ewan/">Ewan Klein</a> and <a class="reference external" href="http://www.cis.upenn.edu/~edloper/">Edward Loper</a>,
+Copyright © 2008 the authors.
+It is distributed with the <em>Natural Language Toolkit</em> [<a class="reference external" href="http://nltk.org/">http://nltk.org/</a>],
+Version 0.9.5, under the terms of the
+<em>Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 United States License</em>
+[<a class="reference external" href="http://creativecommons.org/licenses/by-nc-nd/3.0/us/">http://creativecommons.org/licenses/by-nc-nd/3.0/us/</a>].</p>
+<p class="last">This document is</p>
+</div>
+</div>
+</div>
+</div>
+
+
+</body></html>
