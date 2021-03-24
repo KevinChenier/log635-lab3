@@ -19,8 +19,8 @@ class Bot:
         self.Language
         file = gTTS(text=text, lang=self.Language, slow=False)
         # Saving the converted audio in a mp3 file
-        file.save('audio/speech.mp3')
+        file.save('speech.mp3')
         # Playing the converted file
-        playsound('audio/speech.mp3', True)
-        os.remove('audio/speech.mp3')
+        playsound('speech.mp3', True)
+        os.remove('speech.mp3')
 
