@@ -1,5 +1,6 @@
 # Google Text to Speech API
 from gtts import gTTS
+import os
 
 # Library to play an mp3 using python
 from playsound import playsound
@@ -16,8 +17,9 @@ class Bot:
     # have a high speed
     def speak(self, text):
         self.Language
-        myobj = gTTS(text=text, lang=self.Language, slow=False)
+        file = gTTS(text=text, lang=self.Language, slow=False)
         # Saving the converted audio in a mp3 file
-        myobj.save("speech.mp3")
+        file.save('audio/speech.mp3')
         # Playing the converted file
-        playsound('speech.mp3', True)
+        playsound('audio/speech.mp3', True)
+        os.remove('audio/speech.mp3')
