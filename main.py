@@ -8,10 +8,5 @@ from bot import *
 if __name__ == '__main__':
     bot = Bot('en')
 
-    bot.listenMicrophone()
-
-    bot.listenConsole()
-
-    text = bot.readFileText("informations.txt")
-    bot.speak(text)
+    bot.askQuestion(bot.questions[0])
 

@@ -1,18 +1,21 @@
 from Ressources.SyntheseVocaleSimple.tts import *
 from fileReader import *
 import speech_recognition as sr
+import random
 sr.__version__
 
 class Bot:
 
-    voice = Tts('en')
+    voice = Tts('fr')
     voice_recognizer = sr.Recognizer()
     micro = sr.Microphone()
 
     file_reader = FileReader()
 
-    text_memorized = ''
-    questions = 'How are you?', 'Where are you?', 'Who are you?'
+    info_to_analyze = ''
+    questions = "Ou suis-je?", \
+                "Qu'est-ce que c'est?"
+    response = ''
 
     def __init__(self, language):
         self.voice = Tts(language)
@@ -25,8 +28,8 @@ class Bot:
         self.voice.playaudio(textToSay)
 
     def memorize(self, text):
-        self.text_memorized = text
-        print('Text memorized:', text)
+        self.info_to_analyze = text
+        print('Texte memorisé:', text)
 
     # from https://realpython.com/python-speech-recognition/
     def recognize_speech_from_mic(self):
@@ -59,20 +62,41 @@ class Bot:
         return response
 
     def listenMicrophone(self):
-        print("Listening...")
+        self.speak("J'écoute...")
         response = self.recognize_speech_from_mic()
-
         transcription = response["transcription"]
         # show the user the transcription
-        self.speak("You said: {}".format(transcription))
-        return transcription
+        self.speak("Tu as dit: {}".format(transcription) + ", est-ce correcte?")
+
+        if self.confirm():
+            self.speak("Confirmé")
+            return transcription
+        else:
+            self.speak("Recommençons,")
+            self.listenMicrophone()
+
+    def confirm(self):
+        rand = random.choice([True, False])
+        verdict = ''
+        if rand:
+            verdict = self.listenConsole()
+        else:
+            print("Confirmez par voix...")
+            response = self.recognize_speech_from_mic()
+            verdict = response["transcription"]
+
+        return verdict in ('yes', 'oui', '1', 'true', 'vrai', 'v')
 
     def listenConsole(self):
-        print("Enter your text: ")
+        print("Entrez votre texte: ")
         user_input = input()
-        self.speak("You wrote: " + user_input)
+        self.speak("Vous avez écrit: " + user_input)
         return user_input
 
     def askQuestion(self, question):
-        self.voice.playaudio(question)
-        print(question)
+        self.speak(question)
+        rand = random.choice([True, False])
+        if rand:
+            self.response = self.listenConsole()
+        else:
+            self.response = self.listenMicrophone()
