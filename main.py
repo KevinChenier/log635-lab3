@@ -4,15 +4,14 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 from pynput import keyboard
 
-from bot import *
+from bot import  *
 from board import *
-#from Keyboard import *
 
 if __name__ == '__main__':
-    #bot = Bot('fr')
+    bot = Bot('fr')
     board = board(10)
 
-    #bot.askQuestion(bot.questions[0])
+    bot.askQuestion(bot.questions[0])
 
 
 

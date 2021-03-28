@@ -1,3 +1,7 @@
+from random import random
+
+import keyboard
+
 from Ressources.SyntheseVocaleSimple.tts import *
 from fileReader import *
 import speech_recognition as sr
@@ -76,6 +80,44 @@ class Bot:
             self.speak("Recommençons,")
             self.listenMicrophone()
 
+    def listenKeyboard(self):
+
+        # self.speak("Appuyez sur une des touches suivantes")
+        print("Appuyez sur [↑] [↓] [←] [→]")
+        while True:  # making a loop
+            if keyboard.is_pressed('1'):
+                # print('You Pressed 1 Key!')
+                user_input = '1'
+                break
+
+            if keyboard.is_pressed('2'):
+                # print('You Pressed 2 Key!')
+                user_input = '2'
+                break
+
+            if keyboard.is_pressed('up'):
+                # print('You Pressed ↑ Key!')
+                user_input = 'up'
+                break
+
+            if keyboard.is_pressed('down'):
+                # print('You Pressed ↓ Key!')
+                user_input = 'down'
+                break
+
+            if keyboard.is_pressed('left'):
+                # print('You Pressed ← Key!')
+                user_input = 'left'
+                break
+
+            if keyboard.is_pressed('right'):
+                print('You Pressed → Key!')
+                user_input = 'right'
+                break
+
+        self.speak("Vous avez écrit: " + user_input)
+        return user_input
+
     def confirm(self):
         rand = random.choice([True, False])
         verdict = ''
@@ -96,8 +138,10 @@ class Bot:
 
     def askQuestion(self, question):
         self.speak(question)
-        rand = random.choice([True, False])
-        if rand:
-            self.response = self.listenConsole()
-        else:
+        rand = random.choice([1, 2, 3])
+        if rand == 1:
             self.response = self.listenMicrophone()
+        if rand == 2:
+            self.response = self.listenConsole()
+        if rand == 3:
+            self.response = self.listenKeyboard()
