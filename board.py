@@ -54,7 +54,7 @@ class board:
             data['SalleDeJeu'] = []
 
             i = 0
-            while i < 5:
+            while i < 6:
                 position = randrange(numberOfRooms)
                 positionPionOneHour = randrange(numberOfRooms)
                 positionWeaponOneHour = randrange(numberOfRooms)
