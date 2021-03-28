@@ -6,7 +6,7 @@
 from bot import *
 
 if __name__ == '__main__':
-    bot = Bot('en')
+    bot = Bot('fr')
 
     bot.askQuestion(bot.questions[0])
 

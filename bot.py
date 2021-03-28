@@ -9,6 +9,7 @@ class Bot:
     voice = Tts('fr')
     voice_recognizer = sr.Recognizer()
     micro = sr.Microphone()
+    
 
     file_reader = FileReader()
 
@@ -16,6 +17,8 @@ class Bot:
     questions = "Ou suis-je?", \
                 "Qu'est-ce que c'est?"
     response = ''
+
+    
 
     def __init__(self, language):
         self.voice = Tts(language)
@@ -50,7 +53,7 @@ class Bot:
         # if a RequestError or UnknownValueError exception is caught,
         #     update the response object accordingly
         try:
-            response["transcription"] = self.voice_recognizer.recognize_google(audio)
+            response["transcription"] = self.voice_recognizer.recognize_google(audio,language="fr-FR")
         except sr.RequestError:
             # API was unreachable or unresponsive
             response["success"] = False
