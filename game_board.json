@@ -1,1 +1,92 @@
-{"informations": [{"crime_hour": 16}, {"crime_injury": "Matraque"}], "SalleDeJeu": [{"name": "Bibliotheque", "character": {"name": "blanc", "location": "Bibliotheque", "location_one_hour_after_crime": "Cuisine", "isKiller": false}, "weapon": {"name": "Matraque", "location": "Bibliotheque", "location_one_hour_after_crime": "Studio", "is_crime_weapon": false}, "is_crime_room": false}]}
+{
+  "informations": [
+    {
+      "crime_hour": 18
+    },
+    {
+      "crime_injury": "Revolver"
+    }
+  ],
+  "SalleDeJeu": [
+    {
+      "name": "Salle de ball",
+      "character": {
+        "name": "rouge",
+        "location": "Salle de ball",
+        "location_one_hour_after_crime": "SalleAManger",
+        "isKiller": true
+      },
+      "weapon": {
+        "name": "Poignard",
+        "location": "Salle de ball",
+        "location_one_hour_after_crime": "Veranda",
+        "is_crime_weapon": true
+      },
+      "is_crime_room": false
+    },
+    {
+      "name": "Hall",
+      "character": {
+        "name": "mauve",
+        "location": "Hall",
+        "location_one_hour_after_crime": "Hall",
+        "isKiller": false
+      },
+      "weapon": {
+        "name": "Corde",
+        "location": "Hall",
+        "location_one_hour_after_crime": "Salon",
+        "is_crime_weapon": false
+      },
+      "is_crime_room": false
+    },
+    {
+      "name": "Hall",
+      "character": {
+        "name": "bleu",
+        "location": "Hall",
+        "location_one_hour_after_crime": "Salon",
+        "isKiller": false
+      },
+      "weapon": {
+        "name": "Revolver",
+        "location": "Hall",
+        "location_one_hour_after_crime": "SalleAManger",
+        "is_crime_weapon": false
+      },
+      "is_crime_room": false
+    },
+    {
+      "name": "Cuisine",
+      "character": {
+        "name": "vert",
+        "location": "Cuisine",
+        "location_one_hour_after_crime": "Cave",
+        "isKiller": false
+      },
+      "weapon": {
+        "name": "Chandelier",
+        "location": "Cuisine",
+        "location_one_hour_after_crime": "Cave",
+        "is_crime_weapon": false
+      },
+      "is_crime_room": false
+    },
+    {
+      "name": "Salon",
+      "character": {
+        "name": "jaune",
+        "location": "Salon",
+        "location_one_hour_after_crime": "Cave",
+        "isKiller": false
+      },
+      "weapon": {
+        "name": "Clé anglaise",
+        "location": "Salon",
+        "location_one_hour_after_crime": "Bibliotheque",
+        "is_crime_weapon": false
+      },
+      "is_crime_room": true
+    }
+  ]
+}

@@ -24,6 +24,11 @@ class board:
             Killer = pionCouleur[randrange(6)]
             is_crime_weapon = weapons[randrange(6)]
 
+
+            print(Killer)
+            print(is_crime_weapon)
+            print('***********************************')
+
             # Construction du tableau de jeu
             data = {};
             data['informations'] = []
@@ -44,25 +49,35 @@ class board:
                         numeroPieceUtiliser.append(Salles[test])
                         ok = True
 
+            crimeRoom = numeroPieceUtiliser[randrange(numberOfRooms)]
             weaponIndex = 0
-            for y in pionCouleur:
+            # for y in pionCouleur:
+
+            data['SalleDeJeu'] = []
+
+            i = 0
+            while i < 5:
                 position = randrange(numberOfRooms)
                 positionPionOneHour = randrange(numberOfRooms)
                 positionWeaponOneHour = randrange(numberOfRooms)
 
                 iskiller = False
-                if Killer is y:
+                if Killer is pionCouleur[i]:
                     iskiller = True
 
                 isCrimeWeapon = False
                 if is_crime_weapon is weapons[weaponIndex]:
                     isCrimeWeapon = True
 
-                data['SalleDeJeu'] = []
+                isCrimeRoom = False
+                if Salles[position] is crimeRoom:
+                    isCrimeRoom = True
+
+
                 data['SalleDeJeu'].append({
                     'name': Salles[position],
                     'character': {
-                        'name': y,
+                        'name': pionCouleur[i],
                         'location': Salles[position],
                         'location_one_hour_after_crime': Salles[positionPionOneHour],
                         'isKiller': iskiller
@@ -73,10 +88,13 @@ class board:
                         'location_one_hour_after_crime': Salles[positionWeaponOneHour],
                         'is_crime_weapon': isCrimeWeapon
                     },
-                    'is_crime_room': False
+                    'is_crime_room': isCrimeRoom
                 })
 
+                print(weapons[weaponIndex])
                 weaponIndex += 1
+                i += 1
+
 
             with open('game_board.json', 'w') as outfile:
                 json.dump(data, outfile)
