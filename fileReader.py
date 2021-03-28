@@ -1,7 +1,7 @@
 import os.path
 
-class FileReader:
 
+class FileReader:
     THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
     def __init__(self):
