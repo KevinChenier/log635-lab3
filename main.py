@@ -10,7 +10,7 @@ from board import *
 
 if __name__ == '__main__':
     #bot = Bot('fr')
-    board = board(10)
+    board = board(4)
 
     #bot.askQuestion(bot.questions[0])
 
