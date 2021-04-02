@@ -1,11 +1,17 @@
 import json
 from random import randrange
+from room import *
+from weapon import *
+from character import *
 from types import SimpleNamespace
 
 import jsbeautifier
 
-
 class board:
+
+    characters = []
+    weapons = []
+    rooms = []
 
     def __init__(self, numberOfRooms):
         if numberOfRooms > 0 & numberOfRooms <= 10:
@@ -13,42 +19,40 @@ class board:
 
             SallesJeux = []
 
-            # Informations
-            heureDuCrime = randrange(24)
-            Salles = ["Cuisine", "Salle de ball", "Salon", "SalleAManger",
-                      "Cave", "Bureau", "Bibliotheque", "Veranda", "Hall", "Studio"]
-
-            pionCouleur = ["rouge", "mauve", "bleu", "vert", "jaune", "blanc"]
+            salles = ["Cuisine", "Salle de balle", "Salon", "SalleAManger", "Cave", "Bureau", "Bibliotheque", "Veranda", "Hall", "Studio"]
+            pion_couleur = ["rouge", "mauve", "bleu", "vert", "jaune", "blanc"]
             weapons = ["Poignard", "Corde", "Revolver", "Chandelier", "Clé anglaise", "Matraque"]
 
-            Killer = pionCouleur[randrange(6)]
+            # Informations
+            heure_crime = randrange(24)
+            killer = pion_couleur[randrange(6)]
             is_crime_weapon = weapons[randrange(6)]
 
-            print(Killer)
-            print(is_crime_weapon)
+            print("Le tueur est ", killer)
+            print("L'arme du crime est ", is_crime_weapon)
 
             # Construction du tableau de jeu
             data = {};
             data['informations'] = []
             data['informations'].append({
-                'crime_hour': heureDuCrime
+                'crime_hour': heure_crime
             })
             data['informations'].append({
                 'crime_injury': weapons[randrange(6)]
             })
 
-            # On ajoute les salles aleatoirement que l'on va utiliser
             numeroPieceUtiliser = []
+            # On ajoute les salles aleatoirement que l'on va utiliser
             for x in range(numberOfRooms):
                 ok = False
                 while not ok:
                     test = randrange(10)
                     if test not in numeroPieceUtiliser:
-                        numeroPieceUtiliser.append(Salles[test])
+                        numeroPieceUtiliser.append(salles[test])
                         ok = True
 
-            crimeRoom = numeroPieceUtiliser[randrange(numberOfRooms)]
-            weaponIndex = 0
+            crime_room = numeroPieceUtiliser[randrange(numberOfRooms)]
+            weapon_index = 0
             # for y in pionCouleur:
 
             data['SalleDeJeu'] = []
@@ -59,38 +63,46 @@ class board:
                 positionPionOneHour = randrange(numberOfRooms)
                 positionWeaponOneHour = randrange(numberOfRooms)
 
-                iskiller = False
-                if Killer is pionCouleur[i]:
-                    iskiller = True
+                is_killer = False
+                if killer is pion_couleur[i]:
+                    is_killer = True
 
                 isCrimeWeapon = False
-                if is_crime_weapon is weapons[weaponIndex]:
+                if is_crime_weapon is weapons[weapon_index]:
                     isCrimeWeapon = True
 
                 isCrimeRoom = False
-                if Salles[position] is crimeRoom:
+                if salles[position] is crime_room:
                     isCrimeRoom = True
 
                 data['SalleDeJeu'].append({
-                    'name': Salles[position],
+                    'name': salles[position],
                     'character': {
-                        'name': pionCouleur[i],
-                        'location': Salles[position],
-                        'location_one_hour_after_crime': Salles[positionPionOneHour],
-                        'isKiller': iskiller
+                        'name': pion_couleur[i],
+                        'location': salles[position],
+                        'location_one_hour_after_crime': salles[positionPionOneHour],
+                        'isKiller': is_killer
                     },
                     'weapon': {
-                        'name': weapons[weaponIndex],
-                        'location': Salles[position],
-                        'location_one_hour_after_crime': Salles[positionWeaponOneHour],
+                        'name': weapons[weapon_index],
+                        'location': salles[position],
+                        'location_one_hour_after_crime': salles[positionWeaponOneHour],
                         'is_crime_weapon': isCrimeWeapon
                     },
                     'is_crime_room': isCrimeRoom
                 })
 
+                character = Character(pion_couleur[i], salles[position], salles[positionPionOneHour], is_killer)
+                weapon = Weapon(weapons[weapon_index], salles[position], salles[positionWeaponOneHour], isCrimeWeapon)
+                room = Room(salles[position], character, weapon, isCrimeRoom)
+
+                self.characters.append(character)
+                self.weapons.append(weapon)
+                self.rooms.append(room)
+
                 # print(weapons[weaponIndex]) --- DEBUG ---
 
-                weaponIndex += 1
+                weapon_index += 1
                 i += 1
 
             with open('game_board.json', 'w') as outfile:
@@ -116,3 +128,12 @@ class board:
 
         with open('room_facts.json', 'w') as outfile:
             json.dump(dataW, outfile)
+
+    def get_rooms(self):
+        return self.rooms
+
+    def get_weapons(self):
+        return self.weapons
+
+    def get_characters(self):
+        return self.characters

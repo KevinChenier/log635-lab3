@@ -1,29 +1,34 @@
 from random import random
 
 import keyboard
-
 from Ressources.SyntheseVocaleSimple.tts import *
 from fileReader import *
 import speech_recognition as sr
 import random
+from board import *
 
 sr.__version__
 
-
 class Bot:
-    voice = Tts('fr')
     voice_recognizer = sr.Recognizer()
     micro = sr.Microphone()
-
     file_reader = FileReader()
 
-    info_to_analyze = ''
     questions = "Ou suis-je?", \
                 "Qu'est-ce que c'est?"
-    response = ''
 
-    def __init__(self, language):
+    response_user = ''
+    info_to_analyze = ''
+
+    WHO = ''
+    HOW = ''
+    WHERE = ''
+    WHEN = ''
+
+    def __init__(self, language, board):
         self.voice = Tts(language)
+        self.board = board
+        self.current_room = board.get_rooms()[0]
 
     def readFileText(self, fileName):
         return self.file_reader.getfiletext(fileName)
@@ -80,43 +85,36 @@ class Bot:
             self.speak("Recommençons,")
             self.listenMicrophone()
 
-    def listenKeyboard(self):
-
+    def move(self):
         # self.speak("Appuyez sur une des touches suivantes")
         print("Appuyez sur [↑] [↓] [←] [→]")
         while True:  # making a loop
-            if keyboard.is_pressed('1'):
-                # print('You Pressed 1 Key!')
-                user_input = '1'
-                break
-
-            if keyboard.is_pressed('2'):
-                # print('You Pressed 2 Key!')
-                user_input = '2'
-                break
 
             if keyboard.is_pressed('up'):
                 # print('You Pressed ↑ Key!')
-                user_input = 'up'
+                self.current_room = self.board.get_rooms()[0]
                 break
 
             if keyboard.is_pressed('down'):
                 # print('You Pressed ↓ Key!')
-                user_input = 'down'
+                length = len(self.board.get_rooms())
+                self.current_room = self.board.get_rooms()[length-1]
                 break
 
             if keyboard.is_pressed('left'):
                 # print('You Pressed ← Key!')
-                user_input = 'left'
+                i = self.board.get_rooms().index(self.current_room)
+                i = len(self.board.get_rooms()) - 1 if i == 0 else i - 1
+                self.current_room = self.board.get_rooms()[i]
                 break
 
             if keyboard.is_pressed('right'):
-                print('You Pressed → Key!')
-                user_input = 'right'
+                i = self.board.get_rooms().index(self.current_room)
+                i = 0 if i == len(self.board.get_rooms()) - 1 else i + 1
+                self.current_room = self.board.get_rooms()[i]
                 break
 
-        self.speak("Vous avez écrit: " + user_input)
-        return user_input
+        self.speak("Je suis dans: " + self.current_room.get_name())
 
     def confirm(self):
         rand = random.choice([True, False])
@@ -138,10 +136,8 @@ class Bot:
 
     def askQuestion(self, question):
         self.speak(question)
-        rand = random.choice([1, 2, 3])
-        if rand == 1:
-            self.response = self.listenMicrophone()
-        if rand == 2:
-            self.response = self.listenConsole()
-        if rand == 3:
-            self.response = self.listenKeyboard()
+        rand = random.choice([True, False])
+        if rand:
+            self.response_user = self.listenMicrophone()
+        else:
+            self.response_user = self.listenConsole()
