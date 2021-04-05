@@ -1,3 +1,6 @@
+##############
+#1.1 paquets #
+##############
 
 #from Ressources.SystemeDeRaisonnement.aima import *
 from aima.logic import *
@@ -8,6 +11,9 @@ class inference:
     
     # Permet d'inferer qui est le meurtrier, quand, comment, où il a tué.
 
+#######################
+#1.2 Moteur Inference #
+#######################
     def __init__(self):
         ###############TODO : Ajuster avec nos param#######################
         self.weapons = ["Corde", "Fusil", "Couteau"]
@@ -180,6 +186,103 @@ class inference:
             return result
         else:
             return result[x]
+
+
+
+
+#########################
+#1.3 Faits et deduction #
+#########################
+# Cette fonction retourne le format d'une expression logique de premier ordre
+    def results_as_string(results):
+        res = ''
+        for result in results:
+            # synrep = syntactic representation
+            # semrep = semantic representation
+            for (synrep, semrep) in result:            
+                res += str(semrep)
+        return res
+
+    # Cette fonction transforme une phrase en fraçais dans une expression logique du premier ordre
+    def to_fol(fact, grammar):
+        sent = results_as_string(nltk.interpret_sents(fact, grammar))
+        print(sent)
+        return sent 
+
+
+
+
+
+
+
+
+    ### MAIN? ###    
+    #Creation d'une instance du moteur d'inference
+    agent = inference()
+    # Faits
+    facts = [['Scarlet est morte'],
+            ['Mustard est vivant'],
+            ['Peacock est vivant'],
+            ['Plum est vivant'],
+            ['White est vivant']]
+
+    # Les fait sont ajoutés à la base de connaissances
+    agent.add_clause(to_fol(facts[0], 'grammars/personne_morte.fcfg'))
+    facts.pop(0)
+
+    for fact in facts:    
+        agent.add_clause(to_fol(fact, 'grammars/personne_vivant.fcfg'))
+
+
+
+    # Dans le salon
+    # Voit qu'il y a un fusil et Plum dans le salon
+    fact = ['Le fusil est dans le salon']
+    agent.add_clause(to_fol(fact, 'grammars/arme_piece.fcfg'))
+
+    fact = ['Plum est dans le salon']
+    agent.add_clause(to_fol(fact, 'grammars/personne_piece.fcfg'))
+
+    # Demande à Plum dans quelle pièce il était une heure après le meurtre -> Rep : Plum dans le Salon à 15h
+    fact = ['Plum était dans le salon à ' + str(uneHeureApres) + 'h']
+    agent.add_clause(to_fol(fact, 'grammars/personne_piece_heure.fcfg'))
+
+
+
+    # Dans la cuisine
+    # Voit qu'il y a un couteau, White et Mustard dans la cuisine
+    fact = ['Le couteau est dans la cuisine']
+    agent.add_clause(to_fol(fact, 'grammars/arme_piece.fcfg'))
+
+    fact = ['White est dans la cuisine']
+    agent.add_clause(to_fol(fact, 'grammars/personne_piece.fcfg'))
+
+    fact = ['Mustard est dans la cuisine']
+    agent.add_clause(to_fol(fact, 'grammars/personne_piece.fcfg'))
+
+    # Demande à White dans quelle pièce il était une heure après le meurtre -> Rep : White dans la Cuisine à 15h
+    fact = ['White était dans la cuisine à ' + str(uneHeureApres) + 'h']
+    agent.add_clause(to_fol(fact, 'grammars/personne_piece_heure.fcfg'))
+
+    # Demande à Mustard dans quelle pièce il était une heure après le meurtre -> Rep : Mustard dans le Garage à 15h
+    fact = ['Mustard était dans le garage à ' + str(uneHeureApres) + 'h']
+    agent.add_clause(to_fol(fact, 'grammars/personne_piece_heure.fcfg'))
+
+
+    # Dans le garage
+    # On se rend compte qu'il y a une corde dans le garage
+    fact = ['La corde est dans le garage']
+    agent.add_clause(to_fol(fact, 'grammars/arme_piece.fcfg'))
+
+
+    # Conclusions
+    print("Pièce du crime : ", agent.get_crime_room())
+    print("Arme du crime : ", agent.get_crime_weapon())
+    print("Personne victime : ", agent.get_victim())
+    print("Heure du crime : ", agent.get_crime_hour())
+    print("Meurtrier : ", agent.get_suspect())
+    print("Personnes innocentes : ", agent.get_innocent())
+
 
 
 
