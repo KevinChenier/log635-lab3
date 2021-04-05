@@ -5,3 +5,6 @@ class Character:
         self.location = location
         self.location_one_hour_after_crime = location_one_hour_after_crime
         self.is_killer = is_killer
+
+    def get_name(self):
+        return self.name

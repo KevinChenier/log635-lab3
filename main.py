@@ -8,8 +8,7 @@ from bot import *
 from board import *
 
 if __name__ == '__main__':
-    board = board(10)
+    board = board(3)
     bot = Bot('fr', board)
-    bot.move()
-    bot.move()
-    bot.move()
+    while True:
+        bot.move()

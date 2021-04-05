@@ -10,15 +10,11 @@ import nltk
 class inference:
     
     # Permet d'inferer qui est le meurtrier, quand, comment, où il a tué.
+    def __init__(self, weapons, rooms, persons):
 
-#######################
-#1.2 Moteur Inference #
-#######################
-    def __init__(self):
-        ###############TODO : Ajuster avec nos param#######################
-        self.weapons = ["Corde", "Fusil", "Couteau"]
-        self.rooms = ["Cuisine", "Bureau", "Garage", "Salon"]
-        self.persons = ["Mustard", "Peacock", "Scarlet", "Plum", "White"]
+        self.weapons = weapons
+        self.rooms = rooms
+        self.persons = persons
         
         # Liste de clauses (faits) qui seront stockées dans la base de connaissance.
         self.clauses = []        
@@ -187,13 +183,7 @@ class inference:
         else:
             return result[x]
 
-
-
-
-#########################
-#1.3 Faits et deduction #
-#########################
-# Cette fonction retourne le format d'une expression logique de premier ordre
+    # Cette fonction retourne le format d'une expression logique de premier ordre
     def results_as_string(results):
         res = ''
         for result in results:
@@ -203,9 +193,9 @@ class inference:
                 res += str(semrep)
         return res
 
-    # Cette fonction transforme une phrase en fraçais dans une expression logique du premier ordre
+    # Cette fonction transforme une phrase en français dans une expression logique du premier ordre
     def to_fol(fact, grammar):
-        sent = results_as_string(nltk.interpret_sents(fact, grammar))
+        sent = fact.results_as_string(nltk.interpret_sents(fact, grammar))
         print(sent)
         return sent 
 
@@ -215,7 +205,7 @@ class inference:
 
 
 
-
+'''
     ### MAIN? ###    
     #Creation d'une instance du moteur d'inference
     agent = inference()
@@ -281,9 +271,5 @@ class inference:
     print("Personne victime : ", agent.get_victim())
     print("Heure du crime : ", agent.get_crime_hour())
     print("Meurtrier : ", agent.get_suspect())
-    print("Personnes innocentes : ", agent.get_innocent())
-
-
-
-
-  
+    print("Personnes innocentes : ", agent.get_innocent()) 
+'''

@@ -5,3 +5,6 @@ class Weapon:
         self.location = location
         self.location_one_hour_after_crime = location_one_hour_after_crime
         self.is_crime_weapon = is_crime_weapon
+
+    def get_name(self):
+        return self.name

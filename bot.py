@@ -4,8 +4,8 @@ import keyboard
 from Ressources.SyntheseVocaleSimple.tts import *
 from fileReader import *
 import speech_recognition as sr
+from inference import *
 import random
-from board import *
 
 sr.__version__
 
@@ -20,15 +20,13 @@ class Bot:
     response_user = ''
     info_to_analyze = ''
 
-    WHO = ''
-    HOW = ''
-    WHERE = ''
-    WHEN = ''
-
     def __init__(self, language, board):
         self.voice = Tts(language)
         self.board = board
         self.current_room = board.get_rooms()[0]
+        self.moteur_inference = inference(board.get_weapons_string(),
+                                          board.get_rooms_string(),
+                                          board.get_characters_string())
 
     def readFileText(self, fileName):
         return self.file_reader.getfiletext(fileName)
@@ -76,7 +74,7 @@ class Bot:
         response = self.recognize_speech_from_mic()
         transcription = response["transcription"]
         # show the user the transcription
-        self.speak("Tu as dit: {}".format(transcription) + ", est-ce correcte?")
+        self.speak("J'ai compris: {}".format(transcription) + ", est-ce correcte?")
 
         if self.confirm():
             self.speak("Confirmé")
@@ -87,7 +85,7 @@ class Bot:
 
     def move(self):
         # self.speak("Appuyez sur une des touches suivantes")
-        print("Appuyez sur [↑] [↓] [←] [→]")
+        print("Appuyez sur [↑] [↓] [←] [→] pour vous déplacer")
         while True:  # making a loop
 
             if keyboard.is_pressed('up'):
@@ -117,16 +115,15 @@ class Bot:
         self.speak("Je suis dans: " + self.current_room.get_name())
 
     def confirm(self):
-        rand = random.choice([True, False])
-        verdict = ''
-        if rand:
-            verdict = self.listenConsole()
-        else:
-            print("Confirmez par voix...")
-            response = self.recognize_speech_from_mic()
-            verdict = response["transcription"]
+        print("Confirmer par [1] Oui ou [2] Non")
+        while True:  # making a loop
 
-        return verdict in ('yes', 'oui', '1', 'true', 'vrai', 'v')
+            if keyboard.is_pressed('1'):
+                return True;
+
+            if keyboard.is_pressed('2'):
+                # print('You Pressed ↓ Key!')
+                return False;
 
     def listenConsole(self):
         print("Entrez votre texte: ")
