@@ -83,6 +83,21 @@ class Bot:
             self.speak("Recommençons,")
             self.listenMicrophone()
 
+    def listenConsole(self):
+        print("Entrez votre texte: ")
+        user_input = input()
+        self.speak("Vous avez écrit: " + user_input)
+        return user_input
+
+    def listenFile(self):
+        print("Appuyer sur Enter pour lire le fichier texte")
+        while True:
+
+            if(keyboard.is_pressed('Enter')):
+                text = self.readFileText('key_log.txt')
+                self.speak("Vous avez écrit: " + text)
+                break
+
     def move(self):
         # self.speak("Appuyez sur une des touches suivantes")
         print("Appuyez sur [↑] [↓] [←] [→] pour vous déplacer")
@@ -125,16 +140,13 @@ class Bot:
                 # print('You Pressed ↓ Key!')
                 return False;
 
-    def listenConsole(self):
-        print("Entrez votre texte: ")
-        user_input = input()
-        self.speak("Vous avez écrit: " + user_input)
-        return user_input
-
     def askQuestion(self, question):
         self.speak(question)
-        rand = random.choice([True, False])
-        if rand:
+        rand = random.choice([1, 2, 3])
+
+        if rand is 1:
             self.response_user = self.listenMicrophone()
-        else:
+        elif rand is 2:
             self.response_user = self.listenConsole()
+        elif rand is 3:
+            self.response_user = self.listenFile()
