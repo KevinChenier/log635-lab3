@@ -14,5 +14,6 @@ class Gameplay:
     def play(self):
         while True:
             self.bot.move()
+            self.bot.memorize('Rose est morte')
             self.bot.memorize(self.bot.current_room.get_character().get_name() + ' est dans ' + self.bot.current_room.get_name())
             self.bot.memorize(self.bot.current_room.get_weapon().get_name() + ' est dans ' + self.bot.current_room.get_name())

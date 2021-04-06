@@ -35,45 +35,56 @@ class Bot:
 
     def memorize(self, text):
         grammar = self.interpret_text(text)
-        self.moteur_inference.add_clause(self.moteur_inference.to_fol(text, grammar))
-        self.speak(self.moteur_inference.get_last_clause())
+        print(self.moteur_inference.to_fol([text], grammar))
+        self.moteur_inference.add_clause(self.moteur_inference.to_fol([text], grammar))
 
     def interpret_text(self, text):
         # Heure information
         if any(char.isdigit() for char in text) \
                 and any(sub in text for sub in ['trouve', 'est dans']) \
-                and any(room in text for room in self.board.get_rooms_string()):
-            return "grammaires/personne_piece_heure.fcfg"
+                and any(room in text for room in self.board.get_rooms_string()) \
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_piece_heure.fcfg'
         elif any(char.isdigit() for char in text) \
                 and any(sub in text for sub in ['mort', 'morte']) \
-                and any(room in text for room in self.board.get_rooms_string()):
-            return "grammaires/personne_morte_heure.fcfg"
+                and any(room in text for room in self.board.get_rooms_string()) \
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_morte_heure.fcfg'
 
         # Présence d'un objet ou personne dans une piece
-        elif any(sub in text for sub in ['trouve', 'est dans'])\
-                and any(weapon in text for weapon in self.board.get_weapons_string()):
-            return "grammaires/arme_piece.fcfg"
-        elif any(sub in text for sub in ['trouve', 'est'])\
-                and any(character in text for character in self.board.get_characters_string()):
-            return "grammaires/personne_piece.fcfg"
+        elif any(sub in text for sub in ['trouve', 'est', 'dans']) \
+                and any(weapon in text for weapon in self.board.get_weapons_string()) \
+                and any(room in text for room in self.board.get_rooms_string()):
+            return 'grammaires/arme_piece.fcfg'
+        elif any(sub in text for sub in ['trouve', 'est', 'dans']) \
+                and any(character in text for character in self.board.get_characters_string()) \
+                and any(room in text for room in self.board.get_rooms_string()):
+            return 'grammaires/personne_piece.fcfg'
 
         # Mort ou vivant
-        elif any(sub in text for sub in ['mort', 'morte']):
-            return "grammaires/personne_morte.fcfg"
-        elif any(sub in text for sub in ['vivant', 'vivante']):
-            return "grammaires/personne_vivant.fcfg"
+        elif any(sub in text for sub in ['mort', 'morte'])\
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_morte.fcfg'
+        elif any(sub in text for sub in ['vivant', 'vivante'])\
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_vivant.fcfg'
 
         # Blessure
-        elif 'plaie' in text:
-            return "grammaires/personne_plaie.fcfg"
-        elif 'peau' in text:
-            return "grammaires/personne_peau.fcfg"
-        elif 'trou' in text:
-            return "grammaires/personne_trou.fcfg"
-        elif any(sub in text for sub in ['marque', 'marques']):
-            return "grammaires/personne_marque.fcfg"
-        elif any(sub in text for sub in ['crâne', 'crane']):
-            return "grammaires/personne_crane.fcfg"
+        elif 'plaie' in text\
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_plaie.fcfg'
+        elif 'peau' in text\
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_peau.fcfg'
+        elif 'trou' in text\
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_trou.fcfg'
+        elif any(sub in text for sub in ['marque ', 'marques'])\
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_marque.fcfg'
+        elif any(sub in text for sub in ['crâne', 'crane'])\
+                and any(character in text for character in self.board.get_characters_string()):
+            return 'grammaires/personne_crane.fcfg'
 
         return "Could not interpret text"
 
