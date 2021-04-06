@@ -96,7 +96,7 @@ class Bot:
             if(keyboard.is_pressed('Enter')):
                 text = self.readFileText('key_log.txt')
                 self.speak("Vous avez écrit: " + text)
-                break
+                return text
 
     def move(self):
         # self.speak("Appuyez sur une des touches suivantes")
@@ -127,7 +127,7 @@ class Bot:
                 self.current_room = self.board.get_rooms()[i]
                 break
 
-        self.speak("Je suis dans: " + self.current_room.get_name())
+        self.speak("Je suis présentement dans: " + self.current_room.get_name())
 
     def confirm(self):
         print("Confirmer par [1] Oui ou [2] Non")

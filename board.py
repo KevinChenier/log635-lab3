@@ -8,7 +8,7 @@ from types import SimpleNamespace
 
 import jsbeautifier
 
-class board:
+class Board:
 
     characters = []
     weapons = []
@@ -18,9 +18,9 @@ class board:
         if numberOfRooms > 0 & numberOfRooms <= 6:
             # print(number)
 
-            salles = ["Cuisine", "Garage", "Salon", "Cave", "Bureau", "Studio"]
-            pions_couleur = ["Rouge", "Mauve", "Bleu", "Vert", "Jaune", "Blanc"]
-            weapons = ["Poignard", "Corde", "Revolver", "Chandelier", "Poison", "Matraque"]
+            salles = ["Cuisine", "Garage", "Salon", "Cave", "Bureau", "Studio", "Lounge", "Toilette", "Corridor", "Entrée"]
+            pions_couleur = ["Rouge", "Mauve", "Bleu", "Vert", "Jaune", "Blanc", "Violet", "Turquoise", "Noir", "Rose"]
+            weapons = ["Poignard", "Corde", "Revolver", "Chandelier", "Poison", "Matraque", "Couteau", "Verre", "Shotgun", "Clavier"]
 
             random.shuffle(salles)
             random.shuffle(pions_couleur)
