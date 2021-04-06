@@ -6,9 +6,12 @@ from pynput import keyboard
 
 from bot import *
 from board import *
+from gameplay import *
 
 if __name__ == '__main__':
     board = Board(10)
+    gameplay = Gameplay()
     bot = Bot('fr', board)
+    
     while True:
-        bot.move()
+        gameplay.play()
