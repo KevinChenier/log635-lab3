@@ -17,8 +17,6 @@ class Bot:
     questions = "Ou suis-je?", \
                 "Qu'est-ce que c'est?"
 
-    response_user = ''
-    info_to_analyze = ''
 
     def __init__(self, language, board):
         self.voice = Tts(language)
@@ -36,8 +34,9 @@ class Bot:
         self.voice.playaudio(textToSay)
 
     def memorize(self, text):
-        self.info_to_analyze = text
-        print('Texte memorisé:', text)
+
+        self.moteur_inference.add_clause()
+
 
     # from https://realpython.com/python-speech-recognition/
     def recognize_speech_from_mic(self):
@@ -87,7 +86,15 @@ class Bot:
         print("Entrez votre texte: ")
         user_input = input()
         self.speak("Vous avez écrit: " + user_input)
-        return user_input
+
+        if self.confirm():
+            self.speak("Confirmé")
+            return user_input
+        else:
+            self.speak("Recommençons,")
+            self.listenConsole()
+
+
 
     def listenFile(self):
         print("Appuyer sur Enter pour lire le fichier texte")
@@ -97,6 +104,8 @@ class Bot:
                 text = self.readFileText('key_log.txt')
                 self.speak("Vous avez écrit: " + text)
                 return text
+
+
 
     def move(self):
         # self.speak("Appuyez sur une des touches suivantes")
@@ -141,12 +150,20 @@ class Bot:
                 return False;
 
     def askQuestion(self, question):
+        response_user = ""
+
         self.speak(question)
         rand = random.choice([1, 2, 3])
 
         if rand is 1:
-            self.response_user = self.listenMicrophone()
+            response_user = self.listenMicrophone()
+
         elif rand is 2:
-            self.response_user = self.listenConsole()
+            response_user = self.listenConsole()
         elif rand is 3:
-            self.response_user = self.listenFile()
+            response_user = self.listenFile()
+
+        self.memorize(response_user)
+
+
+

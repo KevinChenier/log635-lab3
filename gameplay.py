@@ -8,6 +8,12 @@ class Gameplay:
         self.bot = Bot('fr', self.board)
 
     def loop(self):
-
         while True:
             self.bot.move()
+
+    def play(self):
+        while True:
+            self.bot.move() 
+            self.bot.searchRoom(1)
+            
+            
