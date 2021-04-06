@@ -215,52 +215,52 @@ class inference:
             ['White est vivant']]
 
     # Les fait sont ajoutés à la base de connaissances
-    agent.add_clause(to_fol(facts[0], 'grammars/personne_morte.fcfg'))
+    agent.add_clause(to_fol(facts[0], 'grammaires/personne_morte.fcfg'))
     facts.pop(0)
 
     for fact in facts:    
-        agent.add_clause(to_fol(fact, 'grammars/personne_vivant.fcfg'))
+        agent.add_clause(to_fol(fact, 'grammaires/personne_vivant.fcfg'))
 
 
 
     # Dans le salon
     # Voit qu'il y a un fusil et Plum dans le salon
     fact = ['Le fusil est dans le salon']
-    agent.add_clause(to_fol(fact, 'grammars/arme_piece.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/arme_piece.fcfg'))
 
     fact = ['Plum est dans le salon']
-    agent.add_clause(to_fol(fact, 'grammars/personne_piece.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/personne_piece.fcfg'))
 
     # Demande à Plum dans quelle pièce il était une heure après le meurtre -> Rep : Plum dans le Salon à 15h
     fact = ['Plum était dans le salon à ' + str(uneHeureApres) + 'h']
-    agent.add_clause(to_fol(fact, 'grammars/personne_piece_heure.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/personne_piece_heure.fcfg'))
 
 
 
     # Dans la cuisine
     # Voit qu'il y a un couteau, White et Mustard dans la cuisine
     fact = ['Le couteau est dans la cuisine']
-    agent.add_clause(to_fol(fact, 'grammars/arme_piece.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/arme_piece.fcfg'))
 
     fact = ['White est dans la cuisine']
-    agent.add_clause(to_fol(fact, 'grammars/personne_piece.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/personne_piece.fcfg'))
 
     fact = ['Mustard est dans la cuisine']
-    agent.add_clause(to_fol(fact, 'grammars/personne_piece.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/personne_piece.fcfg'))
 
     # Demande à White dans quelle pièce il était une heure après le meurtre -> Rep : White dans la Cuisine à 15h
     fact = ['White était dans la cuisine à ' + str(uneHeureApres) + 'h']
-    agent.add_clause(to_fol(fact, 'grammars/personne_piece_heure.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/personne_piece_heure.fcfg'))
 
     # Demande à Mustard dans quelle pièce il était une heure après le meurtre -> Rep : Mustard dans le Garage à 15h
     fact = ['Mustard était dans le garage à ' + str(uneHeureApres) + 'h']
-    agent.add_clause(to_fol(fact, 'grammars/personne_piece_heure.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/personne_piece_heure.fcfg'))
 
 
     # Dans le garage
     # On se rend compte qu'il y a une corde dans le garage
     fact = ['La corde est dans le garage']
-    agent.add_clause(to_fol(fact, 'grammars/arme_piece.fcfg'))
+    agent.add_clause(to_fol(fact, 'grammaires/arme_piece.fcfg'))
 
 
     # Conclusions

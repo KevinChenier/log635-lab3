@@ -43,37 +43,37 @@ class Bot:
         if any(char.isdigit() for char in text) \
                 and any(sub in text for sub in ['trouve', 'est dans']) \
                 and any(room in text for room in self.board.get_rooms_string()):
-            return "grammars/personne_piece_heure.fcfg"
+            return "grammaires/personne_piece_heure.fcfg"
         elif any(char.isdigit() for char in text) \
                 and any(sub in text for sub in ['mort', 'morte']) \
                 and any(room in text for room in self.board.get_rooms_string()):
-            return "grammars/personne_morte_heure.fcfg"
+            return "grammaires/personne_morte_heure.fcfg"
 
         # Présence d'un objet ou personne dans une piece
         elif any(sub in text for sub in ['trouve', 'est dans'])\
                 and any(weapon in text for weapon in self.board.get_weapons_string()):
-            return "grammars/arme_piece.fcfg"
+            return "grammaires/arme_piece.fcfg"
         elif any(sub in text for sub in ['trouve', 'est'])\
                 and any(character in text for character in self.board.get_characters_string()):
-            return "grammars/personne_piece.fcfg"
+            return "grammaires/personne_piece.fcfg"
 
         # Mort ou vivant
         elif any(sub in text for sub in ['mort', 'morte']):
-            return "grammars/personne_morte.fcfg"
+            return "grammaires/personne_morte.fcfg"
         elif any(sub in text for sub in ['vivant', 'vivante']):
-            return "grammars/personne_vivant.fcfg"
+            return "grammaires/personne_vivant.fcfg"
 
         # Blessure
         elif 'plaie' in text:
-            return "grammars/personne_plaie.fcfg"
+            return "grammaires/personne_plaie.fcfg"
         elif 'peau' in text:
-            return "grammars/personne_peau.fcfg"
+            return "grammaires/personne_peau.fcfg"
         elif 'trou' in text:
-            return "grammars/personne_trou.fcfg"
+            return "grammaires/personne_trou.fcfg"
         elif any(sub in text for sub in ['marque', 'marques']):
-            return "grammars/personne_marque.fcfg"
+            return "grammaires/personne_marque.fcfg"
         elif any(sub in text for sub in ['crâne', 'crane']):
-            return "grammars/personne_crane.fcfg"
+            return "grammaires/personne_crane.fcfg"
 
         return "Could not interpret text"
 
@@ -154,18 +154,14 @@ class Bot:
         while True:  # making a loop
 
             if keyboard.is_pressed('up'):
-                # print('You Pressed ↑ Key!')
                 self.current_room = self.board.get_rooms()[0]
                 break
 
             if keyboard.is_pressed('down'):
-                # print('You Pressed ↓ Key!')
-                length = len(self.board.get_rooms())
                 self.current_room = self.board.get_rooms()[-1]
                 break
 
             if keyboard.is_pressed('left'):
-                # print('You Pressed ← Key!')
                 i = self.board.get_rooms().index(self.current_room)
                 i = - 1 if i == 0 else i - 1
                 self.current_room = self.board.get_rooms()[i]
