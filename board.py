@@ -30,6 +30,7 @@ class Board:
             heure_crime = randrange(24)
             killer = pions_couleur[randrange(numberOfRooms)]
             crime_weapon = weapons[randrange(numberOfRooms)]
+            crime_injury = self.get_crime_injury(crime_weapon)
             crime_room = salles[randrange(numberOfRooms)]
 
             print("Le tueur est ", killer)
@@ -42,7 +43,7 @@ class Board:
                 'crime_hour': heure_crime
             })
             data['informations'].append({
-                'crime_injury': crime_weapon
+                'crime_injury': crime_injury
             })
 
             data['SalleDeJeu'] = []
@@ -130,3 +131,15 @@ class Board:
         for character in self.characters:
             characters.append(character.get_name())
         return characters
+
+    def get_crime_injury(self, weapon):
+        if weapon in ("Revolver", "Shotgun"):
+            return "Trou à la poitrine"
+        elif weapon in ("Poignard", "Verre", "Couteau"):
+            return "Plaie à la poitrine"
+        elif weapon in ("Matraque", "Chandelier", "Clavier"):
+            return "Crâne fendu"
+        elif weapon in ("Corde"):
+            return "Marque au cou"
+        elif weapon in ("Poison"):
+            return "Peau verte"

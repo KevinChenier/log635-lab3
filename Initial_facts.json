@@ -1,7 +1,12 @@
 [
-  "Pour étrangler une personne, il faut une corde.",
-  "Pour poignarder une personne, il faut un couteau.",
-  "On trouve des couteaux dans les cuisines.",
-  "On peut tuer une personne avec du poison.",
-  "Dans les salles de bain, il y a du poison."
+  "Un shotgun cause un trou à la poitrine",
+  "Un revolver cause un trou à la poitrine",
+  "Une matraque cause un crâne fendu",
+  "Un chandelier cause un crâne fendu",
+  "Un clavier cause un crâne fendu",
+  "Un couteau cause une plaie à la poitrine",
+  "Un verre cause une plaie à la poitrine",
+  "Un poignard cause une plaie à la poitrine",
+  "Une corde cause des marques au cou",
+  "Un poison cause une peau verte"
 ]

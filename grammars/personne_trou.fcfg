@@ -1,10 +1,15 @@
 %start S
 
-S[SEM=<EstVivant(?vp)>] -> VP[SEM=?vp]
-VP[SEM=?n] -> N[SEM=?n] V AD
+S[SEM=<TrouPoitrine(?vp)>] -> VP[SEM=?vp]
+VP[SEM=?n] -> N[SEM=?n] V Det Ntrou P Det2 Npoitrine
 N[SEM=?np] -> Nprop[SEM=?np]
-V -> 'est'
-AD -> 'vivant' | 'vivante'
+V -> 'a'
+Det -> 'un'
+Det2 -> 'la'
+P -> 'à'
+AD -> 'mort' | 'morte'
+Ntrou -> 'trou'
+Npoitrine -> 'poitrine'
 
 Nprop[SEM=<Rouge>] -> 'Rouge'
 Nprop[SEM=<Mauve>] -> 'Mauve'

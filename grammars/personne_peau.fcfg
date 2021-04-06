@@ -1,10 +1,12 @@
 %start S
 
-S[SEM=<EstVivant(?vp)>] -> VP[SEM=?vp]
-VP[SEM=?n] -> N[SEM=?n] V AD
+S[SEM=<PeauVerte(?vp)>] -> VP[SEM=?vp]
+VP[SEM=?n] -> N[SEM=?n] V Det Npeau AD
 N[SEM=?np] -> Nprop[SEM=?np]
-V -> 'est'
-AD -> 'vivant' | 'vivante'
+V -> 'a'
+Det -> 'la'
+AD -> 'verte'
+Npeau -> 'peau'
 
 Nprop[SEM=<Rouge>] -> 'Rouge'
 Nprop[SEM=<Mauve>] -> 'Mauve'
