@@ -34,9 +34,48 @@ class Bot:
         self.voice.playaudio(textToSay)
 
     def memorize(self, text):
+        grammar = self.interpret_text(text)
+        self.moteur_inference.add_clause(self.moteur_inference.to_fol(text, grammar))
+        self.speak(self.moteur_inference.get_last_clause())
 
-        self.moteur_inference.add_clause()
+    def interpret_text(self, text):
+        # Heure information
+        if any(char.isdigit() for char in text) \
+                and any(sub in text for sub in ['trouve', 'est dans']) \
+                and any(room in text for room in self.board.get_rooms_string()):
+            return "grammars/personne_piece_heure.fcfg"
+        elif any(char.isdigit() for char in text) \
+                and any(sub in text for sub in ['mort', 'morte']) \
+                and any(room in text for room in self.board.get_rooms_string()):
+            return "grammars/personne_morte_heure.fcfg"
 
+        # Présence d'un objet ou personne dans une piece
+        elif any(sub in text for sub in ['trouve', 'est dans'])\
+                and any(weapon in text for weapon in self.board.get_weapons_string()):
+            return "grammars/arme_piece.fcfg"
+        elif any(sub in text for sub in ['trouve', 'est'])\
+                and any(character in text for character in self.board.get_characters_string()):
+            return "grammars/personne_piece.fcfg"
+
+        # Mort ou vivant
+        elif any(sub in text for sub in ['mort', 'morte']):
+            return "grammars/personne_morte.fcfg"
+        elif any(sub in text for sub in ['vivant', 'vivante']):
+            return "grammars/personne_vivant.fcfg"
+
+        # Blessure
+        elif 'plaie' in text:
+            return "grammars/personne_plaie.fcfg"
+        elif 'peau' in text:
+            return "grammars/personne_peau.fcfg"
+        elif 'trou' in text:
+            return "grammars/personne_trou.fcfg"
+        elif any(sub in text for sub in ['marque', 'marques']):
+            return "grammars/personne_marque.fcfg"
+        elif any(sub in text for sub in ['crâne', 'crane']):
+            return "grammars/personne_crane.fcfg"
+
+        return "Could not interpret text"
 
     # from https://realpython.com/python-speech-recognition/
     def recognize_speech_from_mic(self):
@@ -85,7 +124,7 @@ class Bot:
     def listenConsole(self):
         print("Entrez votre texte: ")
         user_input = input()
-        self.speak("Vous avez écrit: " + user_input)
+        self.speak("Vous avez écrit: " + user_input + ", est-ce correcte?")
 
         if self.confirm():
             self.speak("Confirmé")
@@ -102,13 +141,15 @@ class Bot:
 
             if(keyboard.is_pressed('Enter')):
                 text = self.readFileText('key_log.txt')
-                self.speak("Vous avez écrit: " + text)
-                return text
-
-
+                self.speak("Il est écrit dans le fichier: " + text + ", est-ce correcte?")
+                if self.confirm():
+                    self.speak("Confirmé")
+                    return text
+                else:
+                    self.speak("Réécrivez dans le fichier texte et appuyez Enter")
+                    continue
 
     def move(self):
-        # self.speak("Appuyez sur une des touches suivantes")
         print("Appuyez sur [↑] [↓] [←] [→] pour vous déplacer")
         while True:  # making a loop
 
@@ -120,13 +161,13 @@ class Bot:
             if keyboard.is_pressed('down'):
                 # print('You Pressed ↓ Key!')
                 length = len(self.board.get_rooms())
-                self.current_room = self.board.get_rooms()[length-1]
+                self.current_room = self.board.get_rooms()[-1]
                 break
 
             if keyboard.is_pressed('left'):
                 # print('You Pressed ← Key!')
                 i = self.board.get_rooms().index(self.current_room)
-                i = len(self.board.get_rooms()) - 1 if i == 0 else i - 1
+                i = - 1 if i == 0 else i - 1
                 self.current_room = self.board.get_rooms()[i]
                 break
 
@@ -135,7 +176,6 @@ class Bot:
                 i = 0 if i == len(self.board.get_rooms()) - 1 else i + 1
                 self.current_room = self.board.get_rooms()[i]
                 break
-
         self.speak("Je suis présentement dans: " + self.current_room.get_name())
 
     def confirm(self):
@@ -150,20 +190,15 @@ class Bot:
                 return False;
 
     def askQuestion(self, question):
-        response_user = ""
-
         self.speak(question)
-        rand = random.choice([1, 2, 3])
+        channel = random.choice([1, 2, 3])
 
-        if rand is 1:
+        response_user = ""
+        if channel is 1:
             response_user = self.listenMicrophone()
-
-        elif rand is 2:
+        elif channel is 2:
             response_user = self.listenConsole()
-        elif rand is 3:
+        elif channel is 3:
             response_user = self.listenFile()
 
         self.memorize(response_user)
-
-
-

@@ -15,7 +15,7 @@ class Board:
     rooms = []
 
     def __init__(self, numberOfRooms):
-        if numberOfRooms > 0 & numberOfRooms <= 6:
+        if numberOfRooms > 0 & numberOfRooms <= 10:
             # print(number)
 
             salles = ["Cuisine", "Garage", "Salon", "Cave", "Bureau", "Studio", "Lounge", "Toilette", "Corridor", "Entrée"]

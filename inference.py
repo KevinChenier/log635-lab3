@@ -184,7 +184,7 @@ class inference:
             return result[x]
 
     # Cette fonction retourne le format d'une expression logique de premier ordre
-    def results_as_string(results):
+    def results_as_string(self, results):
         res = ''
         for result in results:
             # synrep = syntactic representation
@@ -194,16 +194,14 @@ class inference:
         return res
 
     # Cette fonction transforme une phrase en français dans une expression logique du premier ordre
-    def to_fol(fact, grammar):
-        sent = fact.results_as_string(nltk.interpret_sents(fact, grammar))
+    def to_fol(self, fact, grammar):
+        sent = self.results_as_string(nltk.interpret_sents(fact, grammar))
         print(sent)
-        return sent 
+        return sent
 
-
-
-
-
-
+    def get_last_clause(self):
+        if self.clauses:
+            return self.clauses[-1]
 
 '''
     ### MAIN? ###    

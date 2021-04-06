@@ -11,3 +11,9 @@ class Room:
 
     def get_name(self):
         return self.name
+
+    def get_character(self):
+        return self.character
+
+    def get_weapon(self):
+        return self.weapon
