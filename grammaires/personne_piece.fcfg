@@ -19,7 +19,7 @@ N[SEM=<Studio>] -> 'studio' | 'Studio'
 N[SEM=<Lounge>] -> 'lounge' | 'Lounge'
 N[SEM=<Toilette>] -> 'toilette' | 'Toilette'
 N[SEM=<Corridor>] -> 'corridor' | 'Corridor'
-N[SEM=<Entrée>] -> 'entrée' | 'Entrée' | 'entree' | 'Entree'
+N[SEM=<Entrée>] -> 'hall' | 'Hall'
 
 Nprop[SEM=<Rouge>] -> 'Rouge' | 'rouge'
 Nprop[SEM=<Mauve>] -> 'Mauve' | 'mauve'

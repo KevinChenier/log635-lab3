@@ -37,15 +37,8 @@ class Gameplay:
                 response = self.bot.askQuestion("Où se trouvait le " + current_room.get_weapon().get_name() + " durant le crime?")
                 self.bot.memorize(response)
 
-            hour, room, suspect, weapon, innocents, victim = self.bot.moteur_inference.get_crime_info()
-            print(hour)
-            print(room)
-            print(suspect)
-            print(weapon)
-            print(innocents)
-            print(victim)
             if self.bot.try_solve_crime():
                 hour, room, suspect, weapon, innocents, victim = self.bot.moteur_inference.get_crime_info()
-                self.bot.speak(suspect + ' a tué ' + victim + ' avec un ' + weapon + ' dans le ' + room + ' à ' + hour + ' heure.')
+                self.bot.speak("J'ai terminé mon enquête!")
+                self.bot.speak(str(suspect) + " a tué " + str(victim) + " avec un " + str(weapon) + " dans le " + str(room) + " à " + str(hour) + " heure.")
                 break
-

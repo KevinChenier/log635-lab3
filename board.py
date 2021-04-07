@@ -18,7 +18,7 @@ class Board:
         if numberOfRooms > 0 & numberOfRooms <= 10:
             # print(number)
 
-            salles = ["Cuisine", "Garage", "Salon", "Cave", "Bureau", "Studio", "Lounge", "Toilette", "Corridor", "Entrée"]
+            salles = ["Cuisine", "Garage", "Salon", "Cave", "Bureau", "Studio", "Lounge", "Toilette", "Corridor", "Hall"]
             characters = ["Rouge", "Mauve", "Bleu", "Vert", "Jaune", "Blanc", "Violet", "Turquoise", "Noir", "Rose"]
             weapons = ["Poignard", "Corde", "Revolver", "Chandelier", "Poison", "Matraque", "Couteau", "Verre", "Shotgun", "Clavier"]
 

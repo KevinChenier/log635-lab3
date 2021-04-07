@@ -19,7 +19,7 @@ Npiece[SEM=<Studio>] -> 'studio' | 'Studio'
 Npiece[SEM=<Lounge>] -> 'lounge' | 'Lounge'
 Npiece[SEM=<Toilette>] -> 'toilette' | 'Toilette'
 Npiece[SEM=<Corridor>] -> 'corridor' | 'Corridor'
-Npiece[SEM=<Entrée>] -> 'entrée' | 'Entrée' | 'entree' | 'Entree'
+Npiece[SEM=<Entrée>] -> 'hall' | 'Hall'
 
 Narme[SEM=<Poignard>] -> 'poignard' | 'Poignard'
 Narme[SEM=<Corde>] -> 'corde' | 'Corde'

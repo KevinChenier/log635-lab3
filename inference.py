@@ -128,13 +128,13 @@ class inference:
         # Si la personne est vivante et était dans une pièce
         # qui ne contient pas l'arme du crime, alors elle est innocente
         self.clauses.append(expr(
-            'EstVivant(p) & UneHeureApresCrime(h1) & Personne_Piece_Heure(p,r2,h1) & PieceCrime(r1)'
+            'EstVivant(p) & Personne_Piece_Heure(p,r2,h1) & PieceCrime(r1)'
             ' & PieceDifferente(r1,r2) & ArmeCrime(a1) & Arme_Piece(a2,r2) & ArmeDifferente(a1,a2) ==> Innocent(p)'))
 
         # Si la personne se trouvait dans une piece qui contient l'arme
         # qui a tué la victime une heure après le meurtre alors elle est suspecte
         self.clauses.append(expr(
-            'EstVivant(p) & UneHeureApresCrime(h1) & Personne_Piece_Heure(p,r2,h1) & PieceCrime(r1)'
+            'EstVivant(p) & Personne_Piece_Heure(p,r2,h1) & PieceCrime(r1)'
             ' & PieceDifferente(r1,r2) & ArmeCrime(a) & Arme_Piece(a,r2) ==> Suspect(p)'))
 
     # Ajouter des clauses, c'est-à-dire des faits, à la base de connaissances
