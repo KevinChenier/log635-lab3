@@ -19,19 +19,19 @@ class Board:
             # print(number)
 
             salles = ["Cuisine", "Garage", "Salon", "Cave", "Bureau", "Studio", "Lounge", "Toilette", "Corridor", "Entrée"]
-            pions_couleur = ["Rouge", "Mauve", "Bleu", "Vert", "Jaune", "Blanc", "Violet", "Turquoise", "Noir", "Rose"]
+            characters = ["Rouge", "Mauve", "Bleu", "Vert", "Jaune", "Blanc", "Violet", "Turquoise", "Noir", "Rose"]
             weapons = ["Poignard", "Corde", "Revolver", "Chandelier", "Poison", "Matraque", "Couteau", "Verre", "Shotgun", "Clavier"]
 
             random.shuffle(salles)
-            random.shuffle(pions_couleur)
+            random.shuffle(characters)
             random.shuffle(weapons)
 
             # Informations
             heure_crime = randrange(24)
-            killer = pions_couleur[randrange(numberOfRooms)]
+            killer = characters[randrange(numberOfRooms)]
             crime_weapon = weapons[randrange(numberOfRooms)]
-            crime_injury = self.get_crime_injury(crime_weapon)
             crime_room = salles[randrange(numberOfRooms)]
+            self.crime_injury = self.set_crime_injury(crime_weapon)
 
             print("Le tueur est ", killer)
             print("L'arme du crime est ", crime_weapon)
@@ -43,7 +43,7 @@ class Board:
                 'crime_hour': heure_crime
             })
             data['informations'].append({
-                'crime_injury': crime_injury
+                'crime_injury': self.crime_injury
             })
 
             data['SalleDeJeu'] = []
@@ -52,14 +52,14 @@ class Board:
                 positionPionOneHour = randrange(numberOfRooms)
                 positionWeaponOneHour = randrange(numberOfRooms)
 
-                is_killer = True if killer is pions_couleur[i] else False
+                is_killer = True if killer is characters[i] else False
                 is_crime_weapon = True if crime_weapon is weapons[i] else False
                 is_crime_room = True if crime_room is salles[i] else False
 
                 data['SalleDeJeu'].append({
                     'name': salles[i],
                     'character': {
-                        'name': pions_couleur[i],
+                        'name': characters[i],
                         'location': salles[i],
                         'location_one_hour_after_crime': salles[positionPionOneHour],
                         'isKiller': is_killer
@@ -73,13 +73,16 @@ class Board:
                     'is_crime_room': is_crime_room
                 })
 
-                character = Character(pions_couleur[i], salles[i], salles[positionPionOneHour], is_killer)
+                character = Character(characters[i], salles[i], salles[positionPionOneHour], is_killer)
                 weapon = Weapon(weapons[i], salles[i], salles[positionWeaponOneHour], crime_weapon)
                 room = Room(salles[i], character, weapon, is_crime_room)
 
                 self.characters.append(character)
                 self.weapons.append(weapon)
                 self.rooms.append(room)
+            # Add the known victim
+            victim = Character('Alex', '', '', False)
+            self.characters.append(victim)
 
             with open('game_board.json', 'w') as outfile:
                 json.dump(data, outfile)
@@ -132,14 +135,17 @@ class Board:
             characters.append(character.get_name())
         return characters
 
-    def get_crime_injury(self, weapon):
+    def set_crime_injury(self, weapon):
         if weapon in ("Revolver", "Shotgun"):
-            return "Trou à la poitrine"
+            return "un trou à la poitrine"
         elif weapon in ("Poignard", "Verre", "Couteau"):
-            return "Plaie à la poitrine"
+            return "un plaie à la poitrine"
         elif weapon in ("Matraque", "Chandelier", "Clavier"):
-            return "Crâne fendu"
+            return "le crâne fendu"
         elif weapon in ("Corde"):
-            return "Marque au cou"
+            return " une marque au cou"
         elif weapon in ("Poison"):
-            return "Peau verte"
+            return "la peau verte"
+
+    def get_crime_injury(self):
+        return self.crime_injury

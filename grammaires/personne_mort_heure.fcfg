@@ -1,25 +1,10 @@
 %start S
 
-S[SEM=<Personne_Piece_Heure(?n, ?p, ?h)>] -> VP[SEM=?n] PP[SEM=?p] Prep Nh[SEM=?h]
-VP[SEM=?n] -> N[SEM=?n] Pron Vt | N[SEM=?n] V
+S[SEM=<HeureCrime(?h)>] -> N[SEM=?n] V AD P Nh[SEM=?h]
 N[SEM=?np] -> Nprop[SEM=?np]
-Pron -> 'se'
-Vt -> 'trouvait'
-V -> 'était' | 'etait'
-PP[SEM=?p] -> Prep Det Npiece[SEM=?p]
-Prep -> 'dans' | 'à' | 'a'
-Det -> 'le' | 'la'
-
-Npiece[SEM=<Cuisine>] -> 'cuisine' | 'Cuisine'
-Npiece[SEM=<Garage>] -> 'garage' | 'Garage'
-Npiece[SEM=<Salon>] -> 'salon' | 'Salon'
-Npiece[SEM=<Cave>] -> 'cave' | 'Cave'
-Npiece[SEM=<Bureau>] -> 'bureau' | 'Bureau'
-Npiece[SEM=<Studio>] -> 'studio' | 'Studio'
-Npiece[SEM=<Lounge>] -> 'lounge' | 'Lounge'
-Npiece[SEM=<Toilette>] -> 'toilette' | 'Toilette'
-Npiece[SEM=<Corridor>] -> 'corridor' | 'Corridor'
-Npiece[SEM=<Entrée>] -> 'entrée' | 'Entrée'
+V -> 'est'
+AD -> 'mort' | 'morte'
+P -> 'à' | 'a'
 
 Nprop[SEM=<Rouge>] -> 'Rouge' | 'rouge'
 Nprop[SEM=<Mauve>] -> 'Mauve' | 'mauve'

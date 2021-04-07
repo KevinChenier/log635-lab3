@@ -21,7 +21,7 @@ Npiece[SEM=<Toilette>] -> 'toilette' | 'Toilette'
 Npiece[SEM=<Corridor>] -> 'corridor' | 'Corridor'
 Npiece[SEM=<Entrée>] -> 'entrée' | 'Entrée'
 
-Narme[SEM=<Poignard>] -> 'poignard' | 'poignard'
+Narme[SEM=<Poignard>] -> 'poignard' | 'Poignard'
 Narme[SEM=<Corde>] -> 'corde' | 'Corde'
 Narme[SEM=<Revolver>] -> 'revolver' | 'Revolver'
 Narme[SEM=<Chandelier>] -> 'chandelier' | 'Chandelier'

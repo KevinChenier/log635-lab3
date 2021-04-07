@@ -17,3 +17,6 @@ class Room:
 
     def get_weapon(self):
         return self.weapon
+
+    def get_is_crime_room(self):
+        return self.is_crime_room

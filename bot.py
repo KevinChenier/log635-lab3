@@ -35,21 +35,20 @@ class Bot:
 
     def memorize(self, text):
         grammar = self.interpret_text(text)
-        print(self.moteur_inference.to_fol([text], grammar))
+        self.speak(text)
         self.moteur_inference.add_clause(self.moteur_inference.to_fol([text], grammar))
 
     def interpret_text(self, text):
         # Heure information
         if any(char.isdigit() for char in text) \
-                and any(sub in text for sub in ['trouve', 'est dans']) \
+                and any(sub in text for sub in ['se trouvait', 'était dans']) \
                 and any(room in text for room in self.board.get_rooms_string()) \
                 and any(character in text for character in self.board.get_characters_string()):
             return 'grammaires/personne_piece_heure.fcfg'
         elif any(char.isdigit() for char in text) \
                 and any(sub in text for sub in ['mort', 'morte']) \
-                and any(room in text for room in self.board.get_rooms_string()) \
                 and any(character in text for character in self.board.get_characters_string()):
-            return 'grammaires/personne_morte_heure.fcfg'
+            return 'grammaires/personne_mort_heure.fcfg'
 
         # Présence d'un objet ou personne dans une piece
         elif any(sub in text for sub in ['trouve', 'est', 'dans']) \
@@ -62,10 +61,10 @@ class Bot:
             return 'grammaires/personne_piece.fcfg'
 
         # Mort ou vivant
-        elif any(sub in text for sub in ['mort', 'morte'])\
+        elif any(sub in text for sub in ['est mort', 'est morte'])\
                 and any(character in text for character in self.board.get_characters_string()):
-            return 'grammaires/personne_morte.fcfg'
-        elif any(sub in text for sub in ['vivant', 'vivante'])\
+            return 'grammaires/personne_mort.fcfg'
+        elif any(sub in text for sub in ['est vivant', 'est vivante'])\
                 and any(character in text for character in self.board.get_characters_string()):
             return 'grammaires/personne_vivant.fcfg'
 
@@ -183,7 +182,7 @@ class Bot:
                 i = 0 if i == len(self.board.get_rooms()) - 1 else i + 1
                 self.current_room = self.board.get_rooms()[i]
                 break
-        self.speak("Je suis présentement dans: " + self.current_room.get_name())
+        self.speak("Je suis présentement dans le " + self.current_room.get_name())
 
     def confirm(self):
         print("Confirmer par [1] Oui ou [2] Non")
@@ -200,12 +199,18 @@ class Bot:
         self.speak(question)
         channel = random.choice([1, 2, 3])
 
-        response_user = ""
         if channel is 1:
-            response_user = self.listenMicrophone()
+            return self.listenMicrophone()
         elif channel is 2:
-            response_user = self.listenConsole()
+            return self.listenConsole()
         elif channel is 3:
-            response_user = self.listenFile()
+            return self.listenFile()
 
-        self.memorize(response_user)
+    def try_solve_crime(self):
+        hour, room, suspect, weapon, innocents, victim = self.moteur_inference.get_crime_info()
+
+        if hour and room and suspect and weapon and innocents and victim:
+            return True
+        else:
+            return False
+

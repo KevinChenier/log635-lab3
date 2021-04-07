@@ -1,15 +1,10 @@
 %start S
 
-S[SEM=<PlaiePoitrine(?vp)>] -> VP[SEM=?vp]
-VP[SEM=?n] -> N[SEM=?n] V Det Nplaie P Det2 Npoitrine
+S[SEM=<EstMort(?vp)>] -> VP[SEM=?vp]
+VP[SEM=?n] -> N[SEM=?n] V AD
 N[SEM=?np] -> Nprop[SEM=?np]
-V -> 'a'
-Det -> 'une' | 'un'
-Det2 -> 'la'
-P -> 'à'
+V -> 'est'
 AD -> 'mort' | 'morte'
-Nplaie -> 'plaie'
-Npoitrine -> 'poitrine'
 
 Nprop[SEM=<Rouge>] -> 'Rouge' | 'rouge'
 Nprop[SEM=<Mauve>] -> 'Mauve' | 'mauve'

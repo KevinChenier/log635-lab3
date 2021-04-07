@@ -183,6 +183,16 @@ class inference:
         else:
             return result[x]
 
+    # Demander à la base de connaissances la liste d'innocents
+    def get_innocent(self):
+        result = list(fol_bc_ask(self.crime_kb, expr('Innocent(x)')))
+        res = []
+
+        for elt in result:
+            if not res.__contains__(elt[x]):
+                res.append(elt[x])
+        return res
+
     # Cette fonction retourne le format d'une expression logique de premier ordre
     def results_as_string(self, results):
         res = ''
@@ -198,3 +208,7 @@ class inference:
         sent = self.results_as_string(nltk.interpret_sents(fact, grammar))
         print(sent)
         return sent
+
+    def get_crime_info(self):
+        return self.get_crime_hour(), self.get_crime_room(), self.get_suspect(), \
+               self.get_crime_weapon(), self.get_innocent(), self.get_victim()
