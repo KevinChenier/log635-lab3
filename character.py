@@ -8,3 +8,6 @@ class Character:
 
     def get_name(self):
         return self.name
+
+    def get_location_one_hour_after_crime(self):
+        return self.location_one_hour_after_crime

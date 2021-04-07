@@ -1,28 +1,29 @@
 ##############
-#1.1 paquets #
+# 1.1 paquets #
 ##############
 
-#from Ressources.SystemeDeRaisonnement.aima import *
+# from Ressources.SystemeDeRaisonnement.aima import *
 from aima.logic import *
 import nltk
 
-#Moteur de déduction basé sur la doc AIMA fourni 
+
+# Moteur de déduction basé sur la doc AIMA fourni
 class inference:
-    
+
     # Permet d'inferer qui est le meurtrier, quand, comment, où il a tué.
     def __init__(self, weapons, rooms, persons):
 
         self.weapons = weapons
         self.rooms = rooms
         self.persons = persons
-        
+
         # Liste de clauses (faits) qui seront stockées dans la base de connaissance.
-        self.clauses = []        
-        
+        self.clauses = []
+
         self.base_clauses()
         self.initialize_KB()
         self.inference_rules()
-        
+
         # Base de connaissances (First-order logic - FOL)
         self.crime_kb = FolKB(self.clauses)
 
@@ -30,16 +31,20 @@ class inference:
     def base_clauses(self):
         # Le paramètre est une arme
         self.arme_clause = 'Arme({})'
-        
+
         # Le paramètre est une pièce
         self.piece_clause = 'Piece({})'
-        
+
         # Le paramètre est une persone
         self.personne_clause = 'Personne({})'
 
         # paramètre 1 : arme; paramètre 2 : pièce
         # p.ex.: Le couteau se trouve dans la cuisine
         self.weapon_room_clause = 'Arme_Piece({},{})'
+
+        # paramètre 1 : pièce; paramètre 2 : arme
+        # p.ex.: Le couteau se trouvait dans la cuisine à l'heure du crime
+        self.room_weapon_clause = 'Piece_Arme({},{})'
 
         # paramètre 1 : personne; paramètre 2 : pièce; paramètre 3 : heure
         # p.ex.: Mustart était dans la cuisine à 11h00
@@ -52,7 +57,7 @@ class inference:
         # paramète 1 : personne
         # p. ex.: Mustard est mort
         self.dead_clause = 'EstMort({})'
-        
+
         # paramète 1 : personne
         # p. ex.: Mustard est vivant
         self.alive_clause = 'EstVivant({})'
@@ -104,7 +109,7 @@ class inference:
         for person in self.persons:
             # Mustar est une personne = Personne(Mustard)
             self.clauses.append(expr(self.personne_clause.format(person)))
-    
+
     # Expressions dans la logique du premier ordre permettant de déduire les caractéristiques du meurtre
     def inference_rules(self):
         # Determine la piece du crime
@@ -143,7 +148,7 @@ class inference:
             return False
         else:
             return result[x]
-        
+
     # Demander à la base de connaissances la pièce du meurtre
     def get_crime_room(self):
         result = self.crime_kb.ask(expr('PieceCrime(x)'))
@@ -174,7 +179,7 @@ class inference:
             return result
         else:
             return result[x]
-    
+
     # Demander à la base de connaissances le suspect
     def get_suspect(self):
         result = self.crime_kb.ask(expr('Suspect(x)'))
@@ -199,7 +204,7 @@ class inference:
         for result in results:
             # synrep = syntactic representation
             # semrep = semantic representation
-            for (synrep, semrep) in result:            
+            for (synrep, semrep) in result:
                 res += str(semrep)
         return res
 

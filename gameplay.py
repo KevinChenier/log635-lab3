@@ -24,16 +24,26 @@ class Gameplay:
                 self.bot.memorize(response)
 
                 for character in self.board.get_characters_string():
-                    if character is 'Alex':
+                    if character in ['Alex']:
                         continue
                     self.bot.memorize(character + ' est vivant')
                 found_victim = True
 
             if found_victim:
+                one_hour_after = 0 if self.bot.moteur_inference.get_crime_hour() == 24 else self.bot.moteur_inference.get_crime_hour() + 1
                 response = self.bot.askQuestion('Où se trouvait ' + current_room.get_character().get_name() +
-                                                ' à ' + str(self.bot.moteur_inference.get_crime_hour() + 1) + 'h?')
+                                                ' à ' + str(one_hour_after) + 'h?')
+                self.bot.memorize(response)
+                response = self.bot.askQuestion("Où se trouvait le " + current_room.get_weapon().get_name() + " durant le crime?")
                 self.bot.memorize(response)
 
+            hour, room, suspect, weapon, innocents, victim = self.bot.moteur_inference.get_crime_info()
+            print(hour)
+            print(room)
+            print(suspect)
+            print(weapon)
+            print(innocents)
+            print(victim)
             if self.bot.try_solve_crime():
                 hour, room, suspect, weapon, innocents, victim = self.bot.moteur_inference.get_crime_info()
                 self.bot.speak(suspect + ' a tué ' + victim + ' avec un ' + weapon + ' dans le ' + room + ' à ' + hour + ' heure.')

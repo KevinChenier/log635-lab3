@@ -1,11 +1,10 @@
 %start S
 
 S[SEM=<PlaiePoitrine(?vp)>] -> VP[SEM=?vp]
-VP[SEM=?n] -> N[SEM=?n] V Det Nplaie P Det2 Npoitrine
+VP[SEM=?n] -> N[SEM=?n] V Det Nplaie P Det Npoitrine
 N[SEM=?np] -> Nprop[SEM=?np]
 V -> 'a'
-Det -> 'une' | 'un'
-Det2 -> 'la'
+Det -> 'une' | 'un' | 'la'
 P -> 'à'
 AD -> 'mort' | 'morte'
 Nplaie -> 'plaie'

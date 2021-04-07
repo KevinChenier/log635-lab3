@@ -4,7 +4,7 @@ S[SEM=<Personne_Piece(?vp,?pp)>] -> VP[SEM=?vp] PP[SEM = ?pp]
 VP[SEM=?n] -> N[SEM=?n] Pron Vt | N[SEM=?n] V
 N[SEM=?np] -> Nprop[SEM=?np]
 Pron -> 'se'
-Vt -> 'trouve' 
+Vt -> 'trouve'
 V -> 'est'
 PP[SEM=?vp] -> Prep Det N[SEM = ?vp]
 Prep -> 'dans'
@@ -19,7 +19,7 @@ N[SEM=<Studio>] -> 'studio' | 'Studio'
 N[SEM=<Lounge>] -> 'lounge' | 'Lounge'
 N[SEM=<Toilette>] -> 'toilette' | 'Toilette'
 N[SEM=<Corridor>] -> 'corridor' | 'Corridor'
-N[SEM=<Entrée>] -> 'entrée' | 'Entrée'
+N[SEM=<Entrée>] -> 'entrée' | 'Entrée' | 'entree' | 'Entree'
 
 Nprop[SEM=<Rouge>] -> 'Rouge' | 'rouge'
 Nprop[SEM=<Mauve>] -> 'Mauve' | 'mauve'

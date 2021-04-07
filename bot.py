@@ -40,49 +40,53 @@ class Bot:
 
     def interpret_text(self, text):
         # Heure information
-        if any(char.isdigit() for char in text) \
-                and any(sub in text for sub in ['se trouvait', 'était dans']) \
-                and any(room in text for room in self.board.get_rooms_string()) \
-                and any(character in text for character in self.board.get_characters_string()):
+        if (any(char.isdigit() for char in text) or 'minuit' in text or 'midi' in text) \
+                and any(sub in text for sub in ['se trouvait', 'était', 'etait']) \
+                and any(room in text for room in self.board.get_rooms_all_string()) \
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_piece_heure.fcfg'
-        elif any(char.isdigit() for char in text) \
+        elif (any(char.isdigit() for char in text) or 'minuit' in text or 'midi' in text) \
                 and any(sub in text for sub in ['mort', 'morte']) \
-                and any(character in text for character in self.board.get_characters_string()):
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_mort_heure.fcfg'
 
         # Présence d'un objet ou personne dans une piece
-        elif any(sub in text for sub in ['trouve', 'est', 'dans']) \
-                and any(weapon in text for weapon in self.board.get_weapons_string()) \
-                and any(room in text for room in self.board.get_rooms_string()):
+        elif any(sub in text for sub in ['se trouvait', 'était', 'etait']) \
+                and any(weapon in text for weapon in self.board.get_weapons_all_string()) \
+                and any(room in text for room in self.board.get_rooms_all_string()):
+            return 'grammaires/piece_arme.fcfg'
+        elif any(sub in text for sub in ['trouve', 'est']) \
+                and any(weapon in text for weapon in self.board.get_weapons_all_string()) \
+                and any(room in text for room in self.board.get_rooms_all_string()):
             return 'grammaires/arme_piece.fcfg'
-        elif any(sub in text for sub in ['trouve', 'est', 'dans']) \
-                and any(character in text for character in self.board.get_characters_string()) \
-                and any(room in text for room in self.board.get_rooms_string()):
+        elif any(sub in text for sub in ['trouve', 'est']) \
+                and any(character in text for character in self.board.get_characters_all_string()) \
+                and any(room in text for room in self.board.get_rooms_all_string()):
             return 'grammaires/personne_piece.fcfg'
 
         # Mort ou vivant
         elif any(sub in text for sub in ['est mort', 'est morte'])\
-                and any(character in text for character in self.board.get_characters_string()):
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_mort.fcfg'
         elif any(sub in text for sub in ['est vivant', 'est vivante'])\
-                and any(character in text for character in self.board.get_characters_string()):
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_vivant.fcfg'
 
         # Blessure
         elif 'plaie' in text\
-                and any(character in text for character in self.board.get_characters_string()):
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_plaie.fcfg'
         elif 'peau' in text\
-                and any(character in text for character in self.board.get_characters_string()):
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_peau.fcfg'
         elif 'trou' in text\
-                and any(character in text for character in self.board.get_characters_string()):
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_trou.fcfg'
         elif any(sub in text for sub in ['marque ', 'marques'])\
-                and any(character in text for character in self.board.get_characters_string()):
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_marque.fcfg'
         elif any(sub in text for sub in ['crâne', 'crane'])\
-                and any(character in text for character in self.board.get_characters_string()):
+                and any(character in text for character in self.board.get_characters_all_string()):
             return 'grammaires/personne_crane.fcfg'
 
         return "Could not interpret text"
@@ -118,37 +122,38 @@ class Bot:
         return response
 
     def listenMicrophone(self):
-        self.speak("J'écoute...")
-        response = self.recognize_speech_from_mic()
-        transcription = response["transcription"]
-        # show the user the transcription
-        self.speak("J'ai compris: {}".format(transcription) + ", est-ce correcte?")
+        while True:
+            self.speak("J'écoute...")
+            response = self.recognize_speech_from_mic()
+            transcription = response["transcription"]
+            # show the user the transcription
+            self.speak("J'ai compris: {}".format(transcription) + ", est-ce correcte?")
 
-        if self.confirm():
-            self.speak("Confirmé")
-            return transcription
-        else:
-            self.speak("Recommençons,")
-            self.listenMicrophone()
+            if self.confirm():
+                self.speak("Confirmé")
+                return transcription
+            else:
+                self.speak("Recommençons,")
+                continue
 
     def listenConsole(self):
-        print("Entrez votre texte: ")
-        user_input = input()
-        self.speak("Vous avez écrit: " + user_input + ", est-ce correcte?")
+        while True:
+            print("Entrez votre texte: ")
+            user_input = input()
+            self.speak("Vous avez écrit: " + user_input + ", est-ce correcte?")
 
-        if self.confirm():
-            self.speak("Confirmé")
-            return user_input
-        else:
-            self.speak("Recommençons,")
-            self.listenConsole()
+            if self.confirm():
+                self.speak("Confirmé")
+                return user_input
+            else:
+                self.speak("Recommençons,")
+                continue
 
 
 
     def listenFile(self):
         print("Appuyer sur Enter pour lire le fichier texte")
         while True:
-
             if(keyboard.is_pressed('Enter')):
                 text = self.readFileText('key_log.txt')
                 self.speak("Il est écrit dans le fichier: " + text + ", est-ce correcte?")
@@ -197,7 +202,7 @@ class Bot:
 
     def askQuestion(self, question):
         self.speak(question)
-        channel = random.choice([1, 2, 3])
+        channel = random.choice([2, 2, 3])
 
         if channel is 1:
             return self.listenMicrophone()

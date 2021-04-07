@@ -22,19 +22,21 @@ class Board:
             characters = ["Rouge", "Mauve", "Bleu", "Vert", "Jaune", "Blanc", "Violet", "Turquoise", "Noir", "Rose"]
             weapons = ["Poignard", "Corde", "Revolver", "Chandelier", "Poison", "Matraque", "Couteau", "Verre", "Shotgun", "Clavier"]
 
+            # Rearrange lists
             random.shuffle(salles)
             random.shuffle(characters)
             random.shuffle(weapons)
 
+            # Only take the elements necessary
+            salles = salles[:numberOfRooms]
+            characters = characters[:numberOfRooms]
+            weapons = weapons[:numberOfRooms]
+
             # Informations
             heure_crime = randrange(24)
-            killer = characters[randrange(numberOfRooms)]
-            crime_weapon = weapons[randrange(numberOfRooms)]
-            crime_room = salles[randrange(numberOfRooms)]
-            self.crime_injury = self.set_crime_injury(crime_weapon)
-
-            print("Le tueur est ", killer)
-            print("L'arme du crime est ", crime_weapon)
+            crime_room = random.choice(salles)
+            crime_weapon = random.choice(weapons)
+            self.set_crime_injury(crime_weapon)
 
             # Construction du tableau de jeu
             data = {};
@@ -48,40 +50,50 @@ class Board:
 
             data['SalleDeJeu'] = []
 
-            for i in range(numberOfRooms):
-                positionPionOneHour = randrange(numberOfRooms)
-                positionWeaponOneHour = randrange(numberOfRooms)
+            salles_character_one_hour = salles.copy()
+            salles_weapon_during_crime = salles.copy()
+            random.shuffle(salles_character_one_hour)
+            random.shuffle(salles_weapon_during_crime)
 
-                is_killer = True if killer is characters[i] else False
+            for i in range(numberOfRooms):
+
+                is_killer = False
                 is_crime_weapon = True if crime_weapon is weapons[i] else False
                 is_crime_room = True if crime_room is salles[i] else False
+
+                weapon = Weapon(weapons[i], salles[i], salles_weapon_during_crime[i], is_crime_weapon)
+
+                # Determine le tueur:
+                # Si la personne se trouvait dans une piece qui contient l'arme
+                # qui a tué la victime une heure après le meurtre alors elle est suspecte
+                if weapon.get_is_crime_weapon() and salles_character_one_hour[i] is weapon.get_location():
+                    is_killer = True
+                character = Character(characters[i], salles[i], salles_character_one_hour[i], is_killer)
+
+                room = Room(salles[i], character, weapon, is_crime_room)
 
                 data['SalleDeJeu'].append({
                     'name': salles[i],
                     'character': {
                         'name': characters[i],
                         'location': salles[i],
-                        'location_one_hour_after_crime': salles[positionPionOneHour],
+                        'location_one_hour_after_crime': salles_character_one_hour[i],
                         'isKiller': is_killer
                     },
                     'weapon': {
                         'name': weapons[i],
                         'location': salles[i],
-                        'location_one_hour_after_crime': salles[positionWeaponOneHour],
+                        'location_during_crime': salles_weapon_during_crime[i],
                         'is_crime_weapon': is_crime_weapon
                     },
                     'is_crime_room': is_crime_room
                 })
 
-                character = Character(characters[i], salles[i], salles[positionPionOneHour], is_killer)
-                weapon = Weapon(weapons[i], salles[i], salles[positionWeaponOneHour], crime_weapon)
-                room = Room(salles[i], character, weapon, is_crime_room)
-
                 self.characters.append(character)
                 self.weapons.append(weapon)
                 self.rooms.append(room)
             # Add the known victim
-            victim = Character('Alex', '', '', False)
+            victim = Character('Alex', '?', '?', False)
             self.characters.append(victim)
 
             with open('game_board.json', 'w') as outfile:
@@ -135,17 +147,38 @@ class Board:
             characters.append(character.get_name())
         return characters
 
+    def get_rooms_all_string(self):
+        rooms = []
+        for room in self.rooms:
+            rooms.append(room.get_name())
+            rooms.append(room.get_name().lower())
+        return rooms
+
+    def get_weapons_all_string(self):
+        weapons = []
+        for weapon in self.weapons:
+            weapons.append(weapon.get_name())
+            weapons.append(weapon.get_name().lower())
+        return weapons
+
+    def get_characters_all_string(self):
+        characters = []
+        for character in self.characters:
+            characters.append(character.get_name())
+            characters.append(character.get_name().lower())
+        return characters
+
     def set_crime_injury(self, weapon):
         if weapon in ("Revolver", "Shotgun"):
-            return "un trou à la poitrine"
+            self.crime_injury = "un trou à la poitrine"
         elif weapon in ("Poignard", "Verre", "Couteau"):
-            return "un plaie à la poitrine"
+            self.crime_injury = "un plaie à la poitrine"
         elif weapon in ("Matraque", "Chandelier", "Clavier"):
-            return "le crâne fendu"
+            self.crime_injury = "le crâne fendu"
         elif weapon in ("Corde"):
-            return " une marque au cou"
+            self.crime_injury = "une marque au cou"
         elif weapon in ("Poison"):
-            return "la peau verte"
+            self.crime_injury = "la peau verte"
 
     def get_crime_injury(self):
         return self.crime_injury
