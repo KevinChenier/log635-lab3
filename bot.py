@@ -13,9 +13,7 @@ class Bot:
     voice_recognizer = sr.Recognizer()
     micro = sr.Microphone()
     file_reader = FileReader()
-
-    questions = "Ou suis-je?", \
-                "Qu'est-ce que c'est?"
+    channels = [1, 2, 3]
 
 
     def __init__(self, language, board):
@@ -25,6 +23,7 @@ class Bot:
         self.moteur_inference = inference(board.get_weapons_string(),
                                           board.get_rooms_string(),
                                           board.get_characters_string())
+        self.current_channel = self.channels[0]
 
     def readFileText(self, fileName):
         return self.file_reader.getfiletext(fileName)
@@ -202,14 +201,16 @@ class Bot:
 
     def askQuestion(self, question):
         self.speak(question)
-        channel = random.choice([2, 2, 3])
 
-        if channel is 1:
+        if self.current_channel is 1:
             return self.listenMicrophone()
-        elif channel is 2:
+        elif self.current_channel is 2:
             return self.listenConsole()
-        elif channel is 3:
+        elif self.current_channel is 3:
             return self.listenFile()
+
+        # Change channel
+        self.current_channel = 0 if self.current_channel == len(self.channels) - 1 else self.current_channel + 1
 
     def try_solve_crime(self):
         hour, room, suspect, weapon, innocents, victim = self.moteur_inference.get_crime_info()

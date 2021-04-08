@@ -4,7 +4,7 @@ from board import *
 class Gameplay:
 
     def __init__(self):
-        self.board = Board(3)
+        self.board = Board(10)
         self.bot = Bot('fr', self.board)
 
     def loop(self):
@@ -38,7 +38,7 @@ class Gameplay:
                 self.bot.memorize(response)
 
             if self.bot.try_solve_crime():
-                hour, room, suspect, weapon, innocents, victim = self.bot.moteur_inference.get_crime_info()
                 self.bot.speak("J'ai terminé mon enquête!")
+                hour, room, suspect, weapon, innocents, victim = self.bot.moteur_inference.get_crime_info()
                 self.bot.speak(str(suspect) + " a tué " + str(victim) + " avec un " + str(weapon) + " dans le " + str(room) + " à " + str(hour) + " heure.")
                 break
