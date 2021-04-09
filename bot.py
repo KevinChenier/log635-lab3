@@ -5,9 +5,10 @@ from Ressources.SyntheseVocaleSimple.tts import *
 from fileReader import *
 import speech_recognition as sr
 from inference import *
-import random
+import utils
 
 sr.__version__
+
 
 class Bot:
     voice_recognizer = sr.Recognizer()
@@ -15,6 +16,8 @@ class Bot:
     file_reader = FileReader()
     channels = [1, 2, 3]
 
+    found_victim = False
+    crime_solved = False
 
     def __init__(self, language, board):
         self.voice = Tts(language)
@@ -33,6 +36,8 @@ class Bot:
         self.voice.playaudio(textToSay)
 
     def memorize(self, text):
+        # Correct the hour if necessary
+        text = utils.correct_hour(text)
         grammar = self.interpret_text(text)
         self.speak(text)
         self.moteur_inference.add_clause(self.moteur_inference.to_fol([text], grammar))
@@ -202,15 +207,15 @@ class Bot:
     def askQuestion(self, question):
         self.speak(question)
 
+        # Change channel
+        self.current_channel = 1 if self.current_channel == len(self.channels) else self.current_channel + 1
+
         if self.current_channel is 1:
             return self.listenMicrophone()
         elif self.current_channel is 2:
             return self.listenConsole()
         elif self.current_channel is 3:
             return self.listenFile()
-
-        # Change channel
-        self.current_channel = 0 if self.current_channel == len(self.channels) - 1 else self.current_channel + 1
 
     def try_solve_crime(self):
         hour, room, suspect, weapon, innocents, victim = self.moteur_inference.get_crime_info()
@@ -220,3 +225,39 @@ class Bot:
         else:
             return False
 
+    def investigate(self):
+        self.move()
+        current_room = self.current_room
+        self.memorize(current_room.get_character().get_name() + ' se trouve dans le ' + current_room.get_name())
+        self.memorize(
+            'Le ' + current_room.get_weapon().get_name() + ' se trouve dans le ' + current_room.get_name())
+
+        # We already know who the victim is, but the bot does not
+        if current_room.get_is_crime_room() and not self.found_victim:
+            self.memorize('Alex est mort')
+            self.memorize('Alex se trouve dans le ' + current_room.get_name())
+            self.memorize('Alex a ' + self.board.get_crime_injury())
+            response = self.askQuestion('À quelle heure est mort Alex?')
+            self.memorize(response)
+
+            for character in self.board.get_characters_string():
+                if character in ['Alex']:
+                    continue
+                self.memorize(character + ' est vivant')
+            self.found_victim = True
+
+        if self.found_victim:
+            one_hour_after = 0 if self.moteur_inference.get_crime_hour() == 24 else self.moteur_inference.get_crime_hour() + 1
+            response = self.askQuestion('Où se trouvait ' + current_room.get_character().get_name() +
+                                            ' à ' + str(one_hour_after) + 'h?')
+            self.memorize(response)
+            response = self.askQuestion(
+                "Où se trouvait le " + current_room.get_weapon().get_name() + " durant le crime?")
+            self.memorize(response)
+
+        if self.try_solve_crime():
+            self.speak("J'ai terminé mon enquête!")
+            hour, room, suspect, weapon, innocents, victim = self.moteur_inference.get_crime_info()
+            self.speak(str(suspect) + " a tué " + str(victim) + " avec un " + str(weapon) + " dans le "
+                       + str(room) + " à " + str(hour) + " heure.")
+            self.crime_solved = True

@@ -1,6 +1,3 @@
-from character import *
-from weapon import *
-
 class Room:
 
     def __init__(self, name, character, weapon, is_crime_room):

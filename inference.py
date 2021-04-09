@@ -211,7 +211,6 @@ class inference:
     # Cette fonction transforme une phrase en français dans une expression logique du premier ordre
     def to_fol(self, fact, grammar):
         sent = self.results_as_string(nltk.interpret_sents(fact, grammar))
-        print(sent)
         return sent
 
     def get_crime_info(self):

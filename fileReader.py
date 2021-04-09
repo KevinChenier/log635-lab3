@@ -1,5 +1,6 @@
 import os.path
 
+
 class FileReader:
     THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
